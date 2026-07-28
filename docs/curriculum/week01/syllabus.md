@@ -19,7 +19,9 @@ By the end of this week a student should be able to:
    pinned `requirements.txt`.
 5. Load a CSV into a pandas dataframe and inspect its shape, columns, data
    types and missing values.
-6. Explain why a project validates its input data at load time, and write an
+6. Explain the difference between training and inference, and describe (not yet
+   implement) what a train/test split is for.
+7. Explain why a project validates its input data at load time, and write an
    automated test that enforces a dataset contract.
 
 ## Prerequisites
@@ -39,6 +41,9 @@ By the end of this week a student should be able to:
 | Classification vs. regression | Week 1 |
 | Multiclass classification | Week 1 |
 | Features and target | Week 1 |
+| Training set / test set (concept only) | Week 1 |
+| Generalisation, overfitting, underfitting | Week 1 |
+| Training vs. inference | Week 1 |
 | Instance (row / sample / observation) | Week 1 |
 | Label | Week 1 |
 | The ML project lifecycle | Week 1 |
@@ -79,9 +84,12 @@ answering the wrong question.
   classification problem, and justify that classification.
 * Name the seven input features and the target column without looking them up.
 * Create and activate a virtual environment, and install pinned dependencies.
-* Load the raw dataset with `load_raw_data()` and describe its shape.
-* Explain what each Week 1 dependency (`pandas`, `jupyter`, `pytest`, `ruff`)
-  contributes and why it was needed this week.
+* Load the raw dataset with `load_data()` and describe its shape.
+* Explain what each pinned Week 1 dependency contributes, and which are used
+  now (`numpy`, `pandas`, `jupyter`, `pytest`, `ruff`) versus installed now for
+  later weeks (`matplotlib`, `seaborn`, `scikit-learn`).
+* Say what a train/test split is *for*, and distinguish training from
+  inference — without having implemented either.
 * Run `ruff check .` and `pytest` and interpret the result.
 * Explain why the loader raises an exception rather than returning an empty
   dataframe when the CSV is absent.
@@ -89,7 +97,8 @@ answering the wrong question.
 ### The student CANNOT yet
 
 * Visualise or statistically summarise the data — that is Week 2 (EDA).
-* Split data into training and test sets, or explain data leakage — Week 3.
+* Actually split data into training and test sets, choose a split ratio,
+  stratify it, or explain data leakage — Week 3.
 * Scale features or encode the target — Week 3.
 * Train any model at all, including a baseline — Week 4.
 * Say anything about which crops are hard to tell apart — that needs Week 2's
@@ -99,9 +108,11 @@ answering the wrong question.
 
 ## Deliverables for the week
 
-* `src/data/loader.py` — the dataset loader and its validation contract.
+* `src/data/data_loader.py` — `load_data()`, the single entry point to the data.
+* `src/data/validate_schema.py` — `validate_dataset()`, the dataset contract.
 * `tests/test_data_loader.py` — automated enforcement of that contract.
 * `notebooks/01_problem_definition.ipynb` — the written problem framing plus a
   first look at the loaded dataframe.
-* `requirements.txt` — four pinned packages.
-* This week's four curriculum documents.
+* `requirements.txt` — nine pinned packages.
+* This week's four curriculum documents, including the recorded expected label
+  set in `validation.md`.

@@ -5,7 +5,8 @@ what the notes covered; intermediate exercises make you apply it somewhere new;
 challenge exercises deliberately go slightly beyond the notes.
 
 Keep scratch work in a new notebook or a scratch script — do not edit
-`src/data/loader.py` or the existing tests unless an exercise says so.
+`src/data/data_loader.py`, `src/data/validate_schema.py` or the existing tests
+unless an exercise says so.
 
 ---
 
@@ -13,15 +14,15 @@ Keep scratch work in a new notebook or a scratch script — do not edit
 
 **B1 — Build the environment.**
 Create a virtual environment, activate it, install `requirements.txt`, then run
-`pip list`. Confirm the four Week 1 packages appear at exactly the pinned
-versions. Why does `pip list` show more than four packages?
+`pip list`. Confirm the nine Week 1 packages appear at exactly the pinned
+versions. Why does `pip list` show far more than nine packages?
 
 **B2 — Load the data.**
 In a Python shell, load the dataset and print its shape:
 
 ```python
-from src.data import load_raw_data
-frame = load_raw_data()
+from src.data import load_data
+frame = load_data()
 print(frame.shape)
 ```
 
@@ -39,34 +40,42 @@ online. Justify each in one sentence, then check yourself against
 `syllabus.md`.
 
 **B5 — Read the failure message.**
-Call `load_raw_data(path="does_not_exist.csv")`. Read the resulting
+Call `load_data(path="does_not_exist.csv")`. Read the resulting
 `FileNotFoundError` carefully. Name two pieces of information the message gives
 you that a bare `FileNotFoundError: does_not_exist.csv` would not.
 
 **B6 — Run the guard rails.**
-Run `ruff check .` and `pytest -v`. How many tests ran, and how many were
-skipped? Explain in your own words why some are skipped rather than failed.
+Run `ruff check .` and `pytest -v`. How many tests ran? All of them should
+pass. Then rename `data/raw/Crop_recommendation.csv` temporarily, re-run, and
+explain in your own words why the contract tests now report *skipped* rather
+than *failed*. Restore the file afterwards.
+
+**B7 — Break the contract on purpose.**
+In a scratch script, load the data with `load_data()`, rename the `ph` column
+to `' ph'` (note the leading space), and pass the result to
+`validate_dataset()`. Read the error. Why is a stray space in a header exactly
+the kind of thing that is cheap to catch now and expensive to catch in Week 3?
 
 ---
 
 ## Intermediate
 
 **I1 — Make a test fail on purpose.**
-Temporarily change `EXPECTED_ROW_COUNT` in `src/data/loader.py` to `2199` and
-run `pytest`. Which tests fail, and what do the messages say? **Revert the
+Temporarily change `EXPECTED_ROW_COUNT` in `src/data/validate_schema.py` to
+`2199` and run `pytest`. Which tests fail, and what do the messages say? **Revert the
 change** and confirm the suite is green again. What does this exercise
 demonstrate about the value of exact rather than approximate checks?
 
 **I2 — Break the lint.**
-Add `import os` at the top of `src/data/loader.py` without using it, and run
-`ruff check .`. Note the rule code reported. Now remove it, and instead delete
+Add `import os` at the top of `src/data/data_loader.py` without using it, and
+run `ruff check .`. Note the rule code reported. Now remove it, and instead delete
 a function's docstring and re-run. What rule code fires this time? Restore the
 file afterwards.
 
 **I3 — Extend the contract.**
 `ph` is a pH value, so it must lie between 0 and 14, and `humidity` is a
 percentage, so it must lie between 0 and 100. Add these range checks to
-`validate_raw_data()`, and add corresponding tests. Make sure `pytest` and
+`validate_dataset()`, and add corresponding tests. Make sure `pytest` and
 `ruff check .` both pass afterwards.
 
 **I4 — Frame a different problem.**
@@ -89,7 +98,7 @@ model must *generalise* rather than memorise?
 `RAW_DATA_PATH` is built with `Path(__file__).resolve().parents[2]`. Verify
 that the loader works from at least three different working directories (repo
 root, `notebooks/`, and `/tmp`). Then explain precisely what would break if
-`loader.py` were moved to `src/loader.py` without changing that line.
+`data_loader.py` were moved to `src/data_loader.py` without changing that line.
 
 **C2 — Design a contract for streaming data.**
 Our exact checks (`== 2200`) suit a fixed file. Imagine the data now arrives

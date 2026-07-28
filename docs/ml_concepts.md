@@ -30,14 +30,25 @@ Taught in [`docs/curriculum/week01/learning_notes.md`](curriculum/week01/learnin
 | **Dataset** | The full collection of instances. | §3 |
 | **Problem statement** | The written framing of a task: inputs, output, problem type, success measure and explicit non-goals. | §3 |
 | **Raw vs. processed data** | Raw data is treated as read-only source of truth; anything derived is written elsewhere, so the input is always recoverable. | §4 |
-| **Reproducibility** | The property that the same inputs and code produce the same results for everyone — the reason data and dependency versions are pinned. | §4, §5 |
-| **Virtual environment** | An isolated per-project package directory, so projects cannot break each other's dependencies. | §5 |
-| **Pinned dependency** | A dependency fixed to an exact version, so environments are identical over time and across machines. | §5 |
-| **Dataframe** | A table of rows and named, typed columns — pandas' central data structure. | §5, §6 |
-| **Dataset contract** | The set of properties input data must satisfy (columns, size, class count, no nulls) to be considered valid. | §6 |
-| **Fail-fast validation** | Raising an error the moment invalid input is read, rather than allowing a plausible-looking wrong answer downstream. | §6 |
-| **Linting** | Automated checking of code for style and correctness problems, making a written standard machine-enforceable. | §7 |
-| **Automated testing** | Executable checks that a system still behaves as specified, run on every change. | §7 |
+| **Artificial intelligence** | The broad goal of software performing tasks we would call intelligent; machine learning is one family of techniques within it. | §1 |
+| **Deep learning** | Machine learning with many-layered neural networks; unnecessary for a small tabular problem like this one. | §1 |
+| **Training set** | The portion of the dataset a model is fitted on. | §5 |
+| **Test set** | The portion held back and looked at once, to estimate performance on unseen data. | §5 |
+| **Generalisation** | Performing well on instances never seen during training — the actual goal of learning. | §5 |
+| **Overfitting** | Learning the training examples and their noise rather than the underlying pattern; good on train, poor on test. | §5 |
+| **Underfitting** | Being too simple to capture the pattern; poor on both train and test. | §5 |
+| **Training** | The offline process of fitting a model on labelled data. | §5 |
+| **Inference** | The online process of predicting a label for one unlabelled instance. | §5 |
+| **ML lifecycle** | The loop from framing, through data, modelling and evaluation, to deployment and monitoring — and back. | §6 |
+| **Expected label set** | The exact set of 22 crop names recorded in Week 1, which every later week must match against. | §8 |
+| **Reproducibility** | The property that the same inputs and code produce the same results for everyone — the reason data and dependency versions are pinned. | §4, §7 |
+| **Virtual environment** | An isolated per-project package directory, so projects cannot break each other's dependencies. | §7 |
+| **Pinned dependency** | A dependency fixed to an exact version, so environments are identical over time and across machines. | §7 |
+| **Dataframe** | A table of rows and named, typed columns — pandas' central data structure. | §7, §8 |
+| **Dataset contract** | The set of properties input data must satisfy (columns, dtypes, size, label set, no nulls) to be considered valid. | §8 |
+| **Fail-fast validation** | Raising an error the moment invalid input is read, rather than allowing a plausible-looking wrong answer downstream. | §8 |
+| **Linting** | Automated checking of code for style and correctness problems, making a written standard machine-enforceable. | §9 |
+| **Automated testing** | Executable checks that a system still behaves as specified, run on every change. | §9 |
 
 ---
 

@@ -9,6 +9,25 @@
 
 ## 1. What machine learning actually is
 
+### Artificial intelligence, machine learning — where does this project sit?
+
+Two words get used interchangeably and should not be.
+
+**Artificial intelligence** is the broad ambition: software that performs tasks
+we would call intelligent if a person did them — planning a route, translating
+a sentence, recommending a crop. It includes approaches that involve no
+learning at all, such as hand-written expert systems and search algorithms.
+
+**Machine learning** is one family of techniques within AI: instead of encoding
+the knowledge by hand, the system derives it from data. (**Deep learning**, in
+turn, is one family within machine learning, using many-layered neural
+networks. This course does not need it: with 2,200 rows and 7 numeric
+features, classical algorithms are both stronger and easier to explain.)
+
+This project is **machine learning, not deep learning**, applied to a tabular
+dataset. That is the most common shape of real industrial ML work, and it is
+where the transferable skills are.
+
 ### What is it?
 
 Machine learning is a way of building software where you do not write the rules
@@ -208,7 +227,130 @@ directories exist separately.
 
 ---
 
-## 5. Setting up a reproducible environment
+## 5. Features, labels, and what a dataset is for
+
+The four words that the rest of the course leans on, stated once, with this
+project as the running example.
+
+A **dataset** is a collection of *instances*. An **instance** (also called a
+row, sample or observation) is one complete example. In our file, one instance
+is one line of the CSV:
+
+```
+N=90, P=42, K=43, temperature=20.88, humidity=82.00, ph=6.50, rainfall=202.94, label=rice
+```
+
+The first seven values are the **features** — the inputs, the things we get to
+measure about a plot of land. The last is the **label** (or target) — the
+answer we want the model to produce. Splitting each row into `X` (features) and
+`y` (label) is the very first thing any supervised learning code does:
+
+```
+X = the 7 numeric columns        (2200 rows x 7 columns)
+y = the label column             (2200 values, each one of 22 crops)
+```
+
+The features are all numeric here, which is convenient; the label is text,
+which is not, and Week 3 has to encode it. What makes the pair *supervised* is
+simply that `y` exists at all.
+
+### Train and test: why we deliberately hide data from ourselves
+
+A model that reproduces the answers it was shown has proved nothing — a lookup
+table does that. What we actually care about is **generalisation**: performance
+on plots of land the model has never seen.
+
+The standard way to measure that is to split the dataset before training:
+
+```
+ 2,200 instances
+ ├── training set  (~80%)  -> the model is fitted on these
+ └── test set      (~20%)  -> hidden away, used once, to estimate real performance
+```
+
+The test set is not a formality. It is the only honest estimate of how the
+system will behave in the field, and it is honest **only** while it stays
+unseen. Every decision made after looking at the test set — choosing an
+algorithm, tuning a setting, dropping a feature — leaks information from it and
+inflates the score.
+
+Two more terms follow from that:
+
+* **Overfitting** — the model has learned the training examples themselves,
+  including their noise, rather than the pattern behind them. It scores
+  brilliantly on training data and poorly on the test set.
+* **Underfitting** — the model is too simple to capture the pattern, and scores
+  poorly on both.
+
+This is **concept only for now**. No splitting happens in Week 1: the
+implementation, the reason the split must be *stratified* for a 22-class
+target, and the subtler failure mode of *data leakage* are all Week 3.
+
+### Training versus inference
+
+These are two different activities on two different clocks, and confusing them
+is the source of a lot of muddled ML systems.
+
+| | **Training** | **Inference** (prediction) |
+| --- | --- | --- |
+| Input | Many labelled instances (`X` and `y`) | One unlabelled instance (`X` only) |
+| Output | A fitted model | A predicted label |
+| Runs | Occasionally — offline, on a schedule | Constantly — online, per request |
+| Timescale | Seconds to hours | Milliseconds |
+| Needs the labels? | Yes | No — that is the whole point |
+
+In this project, training happens from Week 4 onwards on the training set;
+inference is what the API in Week 10 and the Streamlit app in Week 11 do —
+a farmer supplies seven numbers and gets back a crop name, with no `label`
+anywhere in sight.
+
+---
+
+## 6. The ML lifecycle, and where the 12 weeks sit on it
+
+Real machine learning projects follow the same loop regardless of domain. This
+course walks it once, in order, without skipping:
+
+```
+   ┌──────────────────────────────────────────────────────────────┐
+   │                                                              │
+   v                                                              │
+Frame the problem -> Get the data -> Explore -> Prepare -> Model   │
+                                                            |     │
+                                                            v     │
+        Monitor  <-  Deploy  <-  Productionize  <-  Evaluate ------┘
+                                                    (and improve)
+```
+
+Mapped onto the plan:
+
+| Stage of the lifecycle | Weeks | What happens |
+| --- | --- | --- |
+| Frame the problem | 1 | Decide what is being predicted, from what, and why ML at all |
+| Get the data | 1 | Load it, and pin down a contract it must satisfy |
+| Explore | 2 | Distributions, relationships, class balance, anomalies |
+| Prepare | 3 | Train/test split, scaling, encoding the target |
+| Model | 4–5 | A baseline first, then real classifiers |
+| Evaluate & improve | 6–7 | Model selection, tuning, and explaining the predictions |
+| Productionize | 8–9 | Pipelines, packaging, testing the whole path |
+| Deploy | 10–11 | An HTTP API, then a user-facing application |
+| Monitor & iterate | 12 | Containers, CI, deployment, and watching it in the wild |
+
+Two things to notice.
+
+**It is a loop, not a line.** The arrow back from monitoring to framing is the
+real shape of the work: production behaviour reveals that the problem was
+framed slightly wrong, or that the data has drifted, and the cycle restarts.
+
+**Earlier stages are cheaper to fix.** A mistake in framing (Week 1) that
+survives to deployment (Week 11) invalidates everything built on top of it. A
+mistake in a hyperparameter costs a re-run. That asymmetry is why this course
+spends a whole week on framing and validation before touching a model, and why
+Week 1's dataset contract is written before anything depends on it.
+
+---
+
+## 7. Setting up a reproducible environment
 
 ### What is a virtual environment?
 
@@ -226,13 +368,13 @@ disposable dependency set — if it becomes tangled, delete the folder and
 rebuild it.
 
 ```bash
-python3.11 -m venv .venv          # create it
-source .venv/bin/activate         # use it (Windows: .venv\Scripts\activate)
+python -m venv venv               # create it
+source venv/bin/activate          # use it (Windows: venv\Scripts\activate)
 pip install -r requirements.txt   # install this project's pinned packages
 ```
 
-`.venv` is listed in `.gitignore`: it holds hundreds of megabytes of files that
-are rebuildable from `requirements.txt` in seconds. **Commit the recipe, not
+Both `venv/` and `.venv/` are listed in `.gitignore`: the folder holds hundreds
+of megabytes of files that are rebuildable from `requirements.txt` in seconds. **Commit the recipe, not
 the meal.**
 
 ### Why every version is pinned
@@ -248,10 +390,21 @@ Note the difference between the two files that will eventually exist:
 each week; `deployment/requirements.txt`, introduced much later, will hold only
 the narrower set needed to serve predictions in production.
 
-### This week's four dependencies
+### This week's dependencies
 
-Each is introduced because it is needed *now*, not because it might be useful
-later.
+Nine packages are pinned. Five are needed to run the Week 1 code; four are
+installed now so that the environment is built **once**, from one file, rather
+than being rebuilt every week — a student who runs `pip install -r
+requirements.txt` in Week 1 should not hit a `ModuleNotFoundError` in Week 2.
+Each one is listed with what it does and when this project first needs it.
+
+**`numpy==2.2.1`** — the numeric array library that pandas, scikit-learn,
+matplotlib and seaborn are all built on. It provides the fixed-type,
+contiguous `ndarray` and vectorised operations on it, which is why a
+whole-column calculation in pandas is one fast C loop rather than 2,200 Python
+iterations. Used directly this week only in the tests, to build synthetic
+frames; used constantly from Week 3 onwards, where feature matrices are numpy
+arrays.
 
 **`pandas==2.2.3`** — the library for tabular data in Python. It provides the
 `DataFrame`: a table of rows and named, typed columns, with operations for
@@ -259,6 +412,26 @@ selecting, filtering, grouping and summarising. Plain Python could hold the CSV
 in a list of dictionaries, but every subsequent question ("how many rows per
 crop?", "any missing values?") would become a hand-written loop. Needed this
 week to read and inspect the CSV.
+
+**`matplotlib==3.10.0`** — the foundational plotting library; everything else
+in the Python plotting world either wraps it or imitates it. First genuinely
+used in Week 2's exploratory data analysis, where distributions and
+relationships have to be *seen* rather than described, and again whenever a
+result needs a figure (confusion matrices in Week 4, feature importances in
+Week 7).
+
+**`seaborn==0.13.2`** — a statistical plotting layer on top of matplotlib. It
+turns multi-line matplotlib code into single calls for the plots that
+exploratory analysis needs most (`histplot`, `boxplot`, `pairplot`,
+`heatmap`) and it accepts a `DataFrame` with column names directly. Also first
+used in Week 2. It does not replace matplotlib — it produces matplotlib
+figures, which are then tweaked with matplotlib.
+
+**`scikit-learn==1.6.1`** — the classical machine learning library: consistent
+`fit`/`predict`/`transform` interfaces over dozens of algorithms, plus the
+splitting, scaling, encoding, cross-validation, metric and pipeline utilities
+that surround them. First used in Week 3 for the train/test split and
+preprocessing, then for every model from Week 4 onward.
 
 **`jupyter==1.1.1`** — runs notebooks: documents interleaving code, its output
 and prose. Notebooks suit the exploratory half of ML work, where you run a
@@ -281,9 +454,7 @@ undefined names, inconsistent import order and missing docstrings. Needed from
 week one because "passes lint checks" appears in this project's Definition of
 Done, and a standard that is never machine-checked is not a standard.
 
----
-
-## 6. Loading the data, and why the loader is a module
+## 8. Loading the data, and why the loader is a module
 
 Reading a CSV with pandas is one line:
 
@@ -292,7 +463,7 @@ import pandas as pd
 frame = pd.read_csv("data/raw/Crop_recommendation.csv")
 ```
 
-So why does `src/data/loader.py` exist at all? Three reasons, each of which
+So why does `src/data/data_loader.py` exist at all? Three reasons, each of which
 would eventually bite a project that skipped it.
 
 **1. One place knows the path.** That relative path only works if you happen to
@@ -305,13 +476,14 @@ RAW_DATA_PATH: Path = PROJECT_ROOT / "data" / "raw" / "Crop_recommendation.csv"
 ```
 
 `__file__` is the path of this source file; `.resolve()` makes it absolute; and
-`.parents[2]` climbs three levels (`loader.py` → `data/` → `src/` → repo root).
+`.parents[2]` climbs three levels (`data_loader.py` → `data/` → `src/` → repo root).
 The result is correct no matter which directory you started from. If the
 dataset ever moves, exactly one line changes.
 
-**2. One place knows the expected shape.** The column names, the row count and
-the class count are named constants, so notebooks and tests agree by
-construction rather than by copy-paste:
+**2. One place knows the expected shape.** The column names, the row count, the
+class count and the exact set of crop names are named constants in
+`src/data/validate_schema.py`, so notebooks and tests agree by construction
+rather than by copy-paste:
 
 ```python
 EXPECTED_ROW_COUNT: int = 2_200
@@ -325,17 +497,50 @@ readability.)
 
 ### Fail-fast validation and the dataset contract
 
-`load_raw_data()` validates by default, and `validate_raw_data()` raises
-`DatasetValidationError` if anything deviates: wrong columns, wrong column
-*order*, wrong row count, any missing value, wrong number of crops.
+The contract lives in `src/data/validate_schema.py` and `load_data()` calls it
+immediately after `read_csv`, so **every** future week receives data that has
+already been checked. `validate_dataset()` raises `DatasetValidationError`
+unless all of the following hold:
+
+| Check | What it catches |
+| --- | --- |
+| Columns are exactly `N, P, K, temperature, humidity, ph, rainfall, label`, in that order | Renamed columns, stray whitespace in a header (`' ph'`), extra or missing columns, a re-ordered export |
+| Row count is exactly 2,200 | A truncated file, a duplicated file, rows appended by accident |
+| The seven features are numeric | A stray text cell, a `'N/A'` string, or European decimal commas — any of which make pandas read the whole column as text |
+| The seven features have no nulls | Blank cells, which would propagate as `NaN` through every later computation |
+| `label` has no nulls | Rows with no answer, which would break training |
+| `label`'s unique values are exactly the 22 crops recorded in `validation.md` | A misspelled, renamed, capitalised or brand-new crop |
 
 Why be so strict about a file we control?
 
-Because of the failure mode this prevents. Imagine the CSV is accidentally
-truncated to 1,500 rows. Nothing crashes. `read_csv` succeeds, training
-succeeds, a model is produced, accuracy is reported — and every number is
-quietly wrong, in a way that looks completely normal. Days can disappear into
-debugging that.
+**Because the file will not always be the file we think it is.** Datasets get
+swapped by hand: someone re-downloads it, re-exports it from a spreadsheet,
+appends a few rows from a new region, or "tidies" a header. None of those
+edits announce themselves. What arrives afterwards can silently have different
+column names, stray whitespace, wrong dtypes or extra label categories — and
+`pd.read_csv` will accept all of it without a murmur.
+
+The cost of catching that late is what makes the Week 1 investment worth it:
+
+* A renamed or whitespace-padded column surfaces in **Week 3** as
+  `KeyError: 'ph'` in the middle of preprocessing — an error that says nothing
+  about the real cause, three weeks and several files away from it.
+* A column read as text instead of float surfaces as a scaler failing on
+  `'6.5'`, or worse, silently producing nonsense.
+* An extra or misspelled crop surfaces in **Week 5** as a label mismatch: the
+  encoder learned 22 classes, the data now has 23, and either the code crashes
+  in a confusing place or a model is trained on categories that do not mean
+  what the report says they mean.
+* A truncated file does not surface *at all*. `read_csv` succeeds, training
+  succeeds, a model is produced, accuracy is reported — and every number is
+  quietly wrong, in a way that looks completely normal. Days can disappear into
+  debugging that.
+
+Catching all of these in Week 1, at the single point where data enters the
+project, costs one function and a handful of tests. Catching them in Week 3 or
+Week 5 costs a debugging session that starts in the wrong place. This is the
+**fixed contract** the rest of the repository is built on: from here on, every
+week loads data through `load_data()`, and therefore through validation.
 
 The rule this expresses is:
 
@@ -353,6 +558,12 @@ artifact. A loose bound would accept a truncated file, which defeats the point.
 Data arriving from a live source would need different, statistical checks —
 a topic for a later week.
 
+The expected label set is not only in the code: it is written out in
+[`validation.md`](validation.md) so a human can read it without opening a
+module. Every later week that touches `label` — encoding it in Week 3,
+reporting per-class scores in Week 5, returning a prediction from the API in
+Week 10 — must match against that recorded set and fail loudly if it does not.
+
 Defining a custom exception type rather than raising bare `ValueError` lets
 callers catch *this* problem specifically:
 
@@ -365,14 +576,14 @@ It subclasses `ValueError` so that code catching the broader type still works.
 
 ### Why validation is optional in tests
 
-`load_raw_data(validate=False)` exists for one reason: the test fixture needs
+`load_data(validate=False)` exists for one reason: the test fixture needs
 to load the data *without* validating it, so that each test can assert its own
 expectation and report a precise failure. If the fixture validated, a single
 bad row would make every test fail with the same generic message.
 
 ---
 
-## 7. Tests and lint as guard rails
+## 9. Tests and lint as guard rails
 
 `tests/test_data_loader.py` encodes the dataset contract as executable checks.
 Writing them now, in week one, is deliberate: from here on, any change that
@@ -396,10 +607,17 @@ rather than failing with a confusing error. A skip says "we did not check
 this"; a failure says "we checked this and it is broken". Conflating the two
 trains people to ignore red test runs.
 
-**Behaviour tests** build tiny in-memory dataframes to check the loader's own
-logic — that a renamed column is rejected, that a wrong row count is rejected,
-that a missing file produces a clear `FileNotFoundError`. These need no data
-file and therefore always run.
+**Behaviour tests** build a synthetic in-memory frame that satisfies the whole
+contract, then break it one way at a time — rename a column, pad a header with
+a space, reorder the columns, truncate the rows, insert a null, turn a numeric
+column into text, null a label, misspell a crop — and assert that each one is
+rejected. A last pair checks that a missing file produces a clear
+`FileNotFoundError` and that a malformed CSV on disk is refused by
+`load_data()` itself. These need no data file and therefore always run.
+
+That second group is the one that protects every later week. The contract tests
+say "today's file is right"; the behaviour tests say "if tomorrow's file is
+wrong, we will be told immediately, and told which rule it broke".
 
 Running them:
 
@@ -420,7 +638,7 @@ Both must pass before a week is considered complete.
 
 ---
 
-## 8. Where this leaves us
+## 10. Where this leaves us
 
 We can now state the problem precisely, and load the data with confidence that
 it is the data we think it is. We have said nothing yet about what the numbers
@@ -432,7 +650,10 @@ anything is anomalous. That is exploratory data analysis — **Week 2**.
 Full definitions live in [`docs/glossary.md`](../../glossary.md); the concept
 index is [`docs/ml_concepts.md`](../../ml_concepts.md).
 
-Machine learning · supervised learning · unsupervised learning ·
-classification · regression · multiclass classification · feature · target ·
-label · instance · dataset · batch learning · dataframe · virtual environment ·
-pinned dependency · dataset contract · fail-fast validation · linting.
+Artificial intelligence · machine learning · deep learning · supervised
+learning · unsupervised learning · classification · regression · multiclass
+classification · feature · target · label · instance · dataset · training set ·
+test set · generalisation · overfitting · underfitting · training · inference ·
+ML lifecycle · batch learning · dataframe · virtual environment · pinned
+dependency · dataset contract · expected label set · fail-fast validation ·
+linting.

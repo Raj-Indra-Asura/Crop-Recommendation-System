@@ -1,24 +1,19 @@
 # Week 1 — Validation
 
 Run these commands in order from the repository root. Each block shows the
-command and the **real output captured from an actual run**, so you can compare
-against what you see.
+command and the **real output captured from an actual run** on this
+repository, so you can compare against what you see.
 
-> ### ⚠️ Status of this week's validation
->
-> The raw dataset `data/raw/Crop_recommendation.csv` was **not present** in the
-> repository when these commands were run. It is supposed to be committed here.
->
-> Consequently the checks below are split into two groups:
->
-> * **Steps 1–4** are data-independent and their pasted output is a complete,
->   passing run.
-> * **Steps 5–7** need the real file. Their output shows the *actual observed*
->   behaviour with the dataset absent, together with the output you should
->   expect once it is restored.
->
-> This week is **not complete** until the CSV is restored and steps 5–7 produce
-> the expected output. See "If the dataset is missing" at the bottom.
+The four commands this week must be able to run, verbatim, are:
+
+```bash
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+pytest tests/test_data_loader.py
+jupyter notebook notebooks/01_problem_definition.ipynb
+```
+
+Everything below expands on those four, with the output each one produced.
 
 ---
 
@@ -49,27 +44,33 @@ reference version regardless of the interpreter you use. Either 3.11.x or
 ## Step 2 — Create and populate the virtual environment
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Confirm the four pinned packages are installed:
+On Windows the activation line is `venv\Scripts\activate`. Both `venv/` and
+`.venv/` are gitignored, so either name is safe.
+
+Confirm the nine pinned packages are installed:
 
 ```bash
-pip list | grep -E "^(pandas|jupyter|pytest|ruff) "
+pip list | grep -E "^(numpy|pandas|matplotlib|seaborn|scikit-learn|jupyter|pytest|ruff) "
 ```
 
-Expected output (exact versions must match `requirements.txt`):
+Actual output (exact versions must match `requirements.txt`):
 
 ```
 jupyter                   1.1.1
+matplotlib                3.10.0
+numpy                     2.2.1
 pandas                    2.2.3
 pytest                    8.3.4
 ruff                      0.8.4
+scikit-learn              1.6.1
+seaborn                   0.13.2
 ```
 
-`pip list` on its own shows far more than four packages — those are transitive
+`pip list` on its own shows far more than nine packages — those are transitive
 dependencies pulled in automatically (jupyter alone brings in several dozen).
 Only direct dependencies are pinned in `requirements.txt`.
 
@@ -93,123 +94,223 @@ changed rather than trusting it blindly.
 
 ---
 
-## Step 4 — Run the test suite
+## Step 4 — Run the Week 1 test file
 
 ```bash
-pytest -v
+pytest tests/test_data_loader.py
 ```
 
-Actual output from the run that produced this document:
+Actual output:
 
 ```
 ============================= test session starts ==============================
 platform linux -- Python 3.12.3, pytest-8.3.4, pluggy-1.6.0
-cachedir: .pytest_cache
 rootdir: /.../Crop-Recommendation-System
 configfile: pyproject.toml
-testpaths: tests
 plugins: anyio-4.14.2
-collected 10 items
+collected 20 items
 
-tests/test_data_loader.py::test_raw_dataset_file_is_committed SKIPPED    [ 10%]
-tests/test_data_loader.py::test_raw_dataset_has_expected_shape SKIPPED   [ 20%]
-tests/test_data_loader.py::test_raw_dataset_has_expected_columns_in_order SKIPPED [ 30%]
-tests/test_data_loader.py::test_raw_dataset_has_expected_number_of_crops SKIPPED [ 40%]
-tests/test_data_loader.py::test_raw_dataset_has_no_missing_values SKIPPED [ 50%]
-tests/test_data_loader.py::test_raw_dataset_features_are_numeric SKIPPED [ 60%]
-tests/test_data_loader.py::test_load_raw_data_validates_by_default SKIPPED [ 70%]
-tests/test_data_loader.py::test_validate_rejects_wrong_columns PASSED    [ 80%]
-tests/test_data_loader.py::test_validate_rejects_wrong_row_count PASSED  [ 90%]
-tests/test_data_loader.py::test_load_raw_data_reports_missing_file_clearly PASSED [100%]
+tests/test_data_loader.py ....................                           [100%]
 
-========================= 3 passed, 7 skipped in 0.02s =========================
+============================== 20 passed in 0.04s ==============================
 ```
 
-The three behaviour tests pass — the loader's own logic is verified. The seven
-skips are the contract tests, skipped because the dataset is absent. Run
-`pytest -rs` to print the skip reason:
+**All 20 tests must pass, with zero failures and zero skips.** Run `pytest -v`
+to see them named:
 
 ```
-SKIPPED [7] tests/conftest.py: Raw dataset missing at .../data/raw/Crop_recommendation.csv.
-It is meant to be committed to the repository; restore it before running the data tests.
+tests/test_data_loader.py::test_raw_dataset_file_is_committed PASSED     [  5%]
+tests/test_data_loader.py::test_raw_dataset_has_expected_shape PASSED    [ 10%]
+tests/test_data_loader.py::test_raw_dataset_has_expected_columns_in_order PASSED [ 15%]
+tests/test_data_loader.py::test_raw_dataset_has_expected_number_of_crops PASSED [ 20%]
+tests/test_data_loader.py::test_raw_dataset_label_set_matches_recorded_set PASSED [ 25%]
+tests/test_data_loader.py::test_raw_dataset_has_no_missing_values PASSED [ 30%]
+tests/test_data_loader.py::test_raw_dataset_features_are_numeric PASSED  [ 35%]
+tests/test_data_loader.py::test_load_data_validates_by_default PASSED    [ 40%]
+tests/test_data_loader.py::test_validate_accepts_a_frame_matching_the_contract PASSED [ 45%]
+tests/test_data_loader.py::test_validate_rejects_wrong_columns PASSED    [ 50%]
+tests/test_data_loader.py::test_validate_rejects_whitespace_in_column_names PASSED [ 55%]
+tests/test_data_loader.py::test_validate_rejects_reordered_columns PASSED [ 60%]
+tests/test_data_loader.py::test_validate_rejects_wrong_row_count PASSED  [ 65%]
+tests/test_data_loader.py::test_validate_rejects_null_features PASSED    [ 70%]
+tests/test_data_loader.py::test_validate_rejects_non_numeric_features PASSED [ 75%]
+tests/test_data_loader.py::test_validate_rejects_null_labels PASSED      [ 80%]
+tests/test_data_loader.py::test_validate_rejects_unexpected_label_values PASSED [ 85%]
+tests/test_data_loader.py::test_validate_rejects_wrong_number_of_labels PASSED [ 90%]
+tests/test_data_loader.py::test_load_data_reports_missing_file_clearly PASSED [ 95%]
+tests/test_data_loader.py::test_load_data_raises_on_malformed_csv PASSED [100%]
+
+============================== 20 passed in 0.04s ==============================
 ```
 
-**Once the dataset is restored, this must read `10 passed` with zero skips.**
+The first eight read the real committed CSV; the rest break a synthetic frame
+one rule at a time and assert that `validate_dataset()` refuses it.
 
 ---
 
 ## Step 5 — Load the dataset
 
 ```bash
-python -c "from src.data import load_raw_data; print(load_raw_data().shape)"
+python -c "from src.data import load_data; print(load_data().shape)"
 ```
 
-Expected output once the dataset is present:
+Actual output:
 
 ```
 (2200, 8)
 ```
 
-Actual output observed (dataset absent):
-
-```
-Traceback (most recent call last):
-  File "<string>", line 1, in <module>
-  File ".../src/data/loader.py", line 115, in load_raw_data
-    raise FileNotFoundError(
-FileNotFoundError: Raw dataset not found at .../data/raw/Crop_recommendation.csv.
-This file is version-controlled and should already be present. Download
-'Crop_recommendation.csv' from
-https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset and
-place it at .../data/raw/Crop_recommendation.csv.
-```
-
-This is the fail-fast behaviour working as designed: the error names the exact
-path and how to fix it, rather than surfacing as a confusing failure later.
+2,200 rows, 8 columns — seven features plus `label`. `load_data()` validated
+the file before returning it, so this line succeeding is itself a check.
 
 ---
 
 ## Step 6 — Inspect the crop distribution
 
 ```bash
-python -c "from src.data import load_raw_data; print(load_raw_data()['label'].value_counts())"
+python -c "from src.data import load_data; print(load_data()['label'].value_counts())"
 ```
 
-Expected once the dataset is present: 22 crop names, **100 rows each**, summing
-to 2,200. Cannot be run yet — blocked by step 5.
+Actual output:
+
+```
+label
+rice           100
+maize          100
+chickpea       100
+kidneybeans    100
+pigeonpeas     100
+mothbeans      100
+mungbean       100
+blackgram      100
+lentil         100
+pomegranate    100
+banana         100
+mango          100
+grapes         100
+watermelon     100
+muskmelon      100
+apple          100
+orange         100
+papaya         100
+coconut        100
+cotton         100
+jute           100
+coffee         100
+Name: count, dtype: int64
+```
+
+22 crops, exactly 100 rows each, summing to 2,200 — a perfectly balanced
+dataset.
 
 ---
 
-## Step 7 — Execute the Week 1 notebook
+## Step 7 — The expected label set (recorded here, permanently)
+
+```bash
+python -c "from src.data import load_data; print(sorted(load_data()['label'].unique()))"
+```
+
+Actual output:
+
+```
+['apple', 'banana', 'blackgram', 'chickpea', 'coconut', 'coffee', 'cotton', 'grapes', 'jute', 'kidneybeans', 'lentil', 'maize', 'mango', 'mothbeans', 'mungbean', 'muskmelon', 'orange', 'papaya', 'pigeonpeas', 'pomegranate', 'rice', 'watermelon']
+```
+
+**This is the expected label set for the whole project.** It is recorded here
+in prose and in code as `EXPECTED_LABELS` in `src/data/validate_schema.py`:
+
+| # | Label | # | Label |
+| --- | --- | --- | --- |
+| 1 | `apple` | 12 | `maize` |
+| 2 | `banana` | 13 | `mango` |
+| 3 | `blackgram` | 14 | `mothbeans` |
+| 4 | `chickpea` | 15 | `mungbean` |
+| 5 | `coconut` | 16 | `muskmelon` |
+| 6 | `coffee` | 17 | `orange` |
+| 7 | `cotton` | 18 | `papaya` |
+| 8 | `grapes` | 19 | `pigeonpeas` |
+| 9 | `jute` | 20 | `pomegranate` |
+| 10 | `kidneybeans` | 21 | `rice` |
+| 11 | `lentil` | 22 | `watermelon` |
+
+All names are lowercase, with no spaces and no punctuation.
+
+**The rule for every later week:** any code that encodes, filters, groups by or
+predicts `label` must match against this exact set, and must fail loudly if it
+differs — a new crop, a missing crop, a capitalised `Rice` or a padded
+`'rice '` all mean the data is not what this course was written against.
+`validate_dataset()` already enforces it at load time; later weeks must not
+weaken that check to make their own code pass.
+
+---
+
+## Step 8 — Execute the Week 1 notebook
+
+Open it interactively — this is the command a student runs:
+
+```bash
+jupyter notebook notebooks/01_problem_definition.ipynb
+```
+
+That starts a local Jupyter server and opens the notebook in a browser. Run all
+cells (*Kernel → Restart & Run All*); every cell must execute without error.
+Stop the server with `Ctrl-C` in the terminal.
+
+To check the same thing non-interactively — which is how the committed output
+was produced:
 
 ```bash
 jupyter nbconvert --to notebook --execute --inplace notebooks/01_problem_definition.ipynb
 ```
 
-Expected: exits 0, and the notebook is rewritten with fresh output cells.
+Actual output:
 
-**Not yet produced.** The notebook loads the real dataset, so executing it
-without the CSV would either fail or require faking the data. Committing a
-notebook with empty or fabricated output cells would violate this project's
-rule that notebooks are committed with genuinely executed output, so the
-notebook is deferred until the dataset is restored.
+```
+[NbConvertApp] Converting notebook notebooks/01_problem_definition.ipynb to notebook
+[NbConvertApp] Writing 20776 bytes to notebooks/01_problem_definition.ipynb
+```
+
+Exit code 0, and the notebook is rewritten with fresh output cells. The
+committed notebook contains genuinely executed output — never hand-written or
+fabricated results.
+
+---
+
+## What "done" looks like this week
+
+The student CAN:
+
+* run the repository end-to-end from a fresh virtual environment;
+* load the dataset through `load_data()` and get `(2200, 8)`;
+* explain in one paragraph what problem is being solved, and why it is a
+  supervised, multiclass classification problem.
+
+The student CANNOT yet:
+
+* explore the data statistically or visually (Week 2);
+* preprocess it — split, scale or encode (Week 3);
+* train or evaluate any model, including a baseline (Week 4 onwards).
 
 ---
 
 ## If the dataset is missing
 
-This is the situation the run above was in. To resolve it:
+`data/raw/Crop_recommendation.csv` is committed to this repository and must
+stay committed. If it is ever absent:
 
-1. Obtain `Crop_recommendation.csv` from the
+1. Obtain it from the
    [Kaggle dataset page](https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset).
 2. Place it at `data/raw/Crop_recommendation.csv`.
 3. Commit it. `data/` is deliberately **not** in `.gitignore` — see
    `learning_notes.md` §4 for why.
-4. Re-run steps 4–7. `pytest` must report **10 passed, 0 skipped**.
+4. Re-run steps 3–8. `pytest` must report **20 passed, 0 skipped**.
 
-Do not work around a missing dataset by generating random or synthetic data.
-Every later week builds on these numbers, and fabricated data would silently
-invalidate all of it while still appearing to work.
+While it is absent the eight contract tests report *skipped*, not *failed* — a
+skip says "we did not check this", a failure says "we checked and it is
+broken". Do not work around a missing dataset by generating random or synthetic
+data: every later week builds on these numbers, and fabricated data would
+silently invalidate all of it while still appearing to work.
 
 ---
 
@@ -217,17 +318,18 @@ invalidate all of it while still appearing to work.
 
 **`ModuleNotFoundError: No module named 'src'`**
 You are running Python from somewhere other than the repository root, so `src`
-is not on the import path. Change to the repo root and retry. Inside a
-notebook, this is why the notebook lives in `notebooks/` but the loader
-computes an absolute path — see `learning_notes.md` §6.
+is not on the import path. Change to the repo root and retry. (`pytest` itself
+is fine from anywhere below the root: `pyproject.toml` sets
+`pythonpath = ["."]`.) Inside a notebook this is why the first cell adds the
+repository root to `sys.path` — see `learning_notes.md` §8.
 
 **`ModuleNotFoundError: No module named 'pandas'`**
 The virtual environment is not activated, or `pip install -r requirements.txt`
-has not been run. Check with `which python` — it should point inside `.venv`.
+has not been run. Check with `which python` — it should point inside `venv`.
 
 **`command not found: ruff` / `pytest`**
 Same cause as above: the environment is not active. Either activate it, or call
-the tools by full path (`.venv/bin/ruff`).
+the tools by full path (`venv/bin/ruff`).
 
 **`pytest` collects 0 items**
 You are not in the repository root. `pyproject.toml` sets `testpaths = ["tests"]`,
@@ -238,6 +340,11 @@ The CSV has been modified. Restore the committed version with
 `git checkout data/raw/Crop_recommendation.csv`. Never "fix" this by loosening
 the constant — the constant is the specification.
 
+**`DatasetValidationError: Label set does not match ...`**
+The `label` column contains a crop that is not in the recorded set above, or is
+missing one that should be there. Same rule applies: fix the data, not the
+contract.
+
 **Permission or activation errors on Windows PowerShell**
-`.venv\Scripts\activate` may be blocked by execution policy. Run
+`venv\Scripts\activate` may be blocked by execution policy. Run
 `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned` first.
