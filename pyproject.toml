@@ -15,3 +15,6 @@ convention = "google"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Put the repository root on sys.path so `pytest` (not just `python -m pytest`)
+# can import `src` and `tests` without the project being pip-installed.
+pythonpath = ["."]

@@ -5,8 +5,19 @@
 # wholesale - each week appends the packages it introduces, and every package
 # is explained in that week's docs/curriculum/weekXX/learning_notes.md.
 
-# --- Week 1: load and validate the raw dataset ---
+# --- Week 1: load and validate the raw dataset, and set up the toolchain ---
+# Data handling
+numpy==2.2.1
 pandas==2.2.3
+
+# Visualisation (introduced now so the environment is built once; first used in Week 2)
+matplotlib==3.10.0
+seaborn==0.13.2
+
+# Modelling (introduced now for the same reason; first used in Week 3)
+scikit-learn==1.6.1
+
+# Notebooks and guard rails
 jupyter==1.1.1
 pytest==8.3.4
 ruff==0.8.4

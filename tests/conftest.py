@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from src.data import RAW_DATA_PATH, load_raw_data
+from src.data import RAW_DATA_PATH, load_data
 
 #: Skip marker applied to tests that need the real, committed CSV.
 requires_raw_dataset = pytest.mark.skipif(
@@ -23,4 +23,4 @@ def raw_data():
     Validation is switched off here so that the validation tests can make their
     own assertions rather than inheriting an exception from the fixture.
     """
-    return load_raw_data(validate=False)
+    return load_data(validate=False)
