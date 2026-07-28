@@ -42,6 +42,12 @@ perfectly. Computed by `separation_scores()` in `src/utils/eda.py`.
 category rather than a number. Predicting which of 22 crops suits a field is
 classification.
 
+**`ColumnTransformer`** *(W3)* — A scikit-learn estimator that maps sets of
+columns to the transformers applied to them, as `(name, transformer, columns)`
+triples, with `remainder` deciding whether unnamed columns are dropped or passed
+through. Built here by `build_preprocessor()` in
+`src/preprocessing/preprocessor.py`.
+
 **Correlation** *(W2)* — How strongly two numeric features move together, on a
 scale from -1 to +1.
 
@@ -52,6 +58,10 @@ drawn as a colour grid, so strong pairs are visible at a glance.
 at prediction time, so its measured performance flatters it and production
 disappoints. The commonest cause is fitting preprocessing on the full dataset
 instead of on the training set alone.
+
+**Data preparation** *(W3)* — Everything that happens between the data as
+recorded and the array a model is fitted on: encoding, splitting, scaling and,
+where justified, feature engineering. Also called preprocessing.
 
 **Dataframe** *(W1)* — pandas' table structure: rows and named, typed columns,
 with built-in operations for filtering, grouping and summarising.
@@ -99,6 +109,19 @@ has seven: `N`, `P`, `K`, `temperature`, `humidity`, `ph`, `rainfall`.
 `K` spans 200 units while `ph` spans about 6, which is why Week 3 must rescale
 before using any distance-based model.
 
+**Feature scaling** *(W3)* — Re-expressing columns so their numeric ranges are
+comparable, removing the arbitrary weighting that different units would
+otherwise impose on distances, gradients and penalties.
+
+**`fit` / `transform` / `fit_transform`** *(W3)* — The three calls of a
+scikit-learn transformer. `fit` learns parameters from data and stores them on
+the object; `transform` applies stored parameters to any data; `fit_transform`
+does both and is for training data only.
+
+**Fitted state** *(W3)* — The attributes an estimator gains by being fitted —
+`mean_`, `scale_`, `classes_`, later `coef_`. By convention they end in an
+underscore, so an object with none has not been fitted.
+
 **Generalisation** *(W1)* — Performing well on instances never seen during
 training. The actual goal of machine learning, as opposed to reproducing the
 training data.
@@ -118,6 +141,11 @@ of the data. The basis of the boxplot box and of the 1.5 IQR outlier rule.
 
 **Label** *(W1)* — The target value attached to an instance. Here, the crop
 name; also the literal name of the target column.
+
+**Label encoding** *(W3)* — Mapping class names onto the integers `0..k-1`,
+alphabetically and losslessly, so an estimator can work with them.
+`LabelEncoder` stores the mapping in `classes_`. The integers are identifiers,
+not quantities.
 
 **Linting** *(W1)* — Automatic inspection of source code for style violations
 and likely errors. Performed here by `ruff`.
@@ -147,6 +175,16 @@ unreliable. Tree-based models are largely untroubled by it.
 **Multimodality** *(W2)* — More than one peak in a distribution, usually meaning
 two different populations have been mixed into one column.
 
+**Normalisation (min-max)** *(W3)* — Rescaling a column with
+`(x - min) / (max - min)` so it lands in [0, 1]. Bounded, but highly sensitive
+to a single extreme value. The word is used loosely in the wild — say which
+operation you mean.
+
+**One-hot encoding** *(W3)* — Expanding a categorical column into one 0/1 column
+per category, so no ordering can be inferred from the codes. Needed for
+categorical *inputs*; not needed for a classifier's target, and not needed by
+this dataset, whose seven features are all numeric.
+
 **Outlier** *(W2)* — A value beyond a boxplot's whiskers under the 1.5 IQR rule.
 The output of an arithmetic rule, **not** a verdict that the value is wrong: it
 may be a data error, a legitimate rare case, or — as in this dataset — ordinary
@@ -168,12 +206,22 @@ The 50th percentile is the median.
 (`pandas==2.2.3`) rather than loosely (`pandas`), so that every install
 produces an identical environment.
 
+**`Pipeline`** *(W3)* — A scikit-learn estimator chaining named steps into one
+object with a single `fit`/`transform`/`predict`. Putting preprocessing inside
+it makes train-only fitting structural, makes cross-validation correct by
+construction, and makes the deployed artifact a single object.
+
 **Processed data** *(W1)* — Data derived from the raw input by cleaning,
 splitting or transformation. Written to `data/processed/`; never written back
 over the raw data.
 
 **Quartile** *(W2)* — The 25th, 50th and 75th percentiles, which cut a column
 into four equal-sized parts.
+
+**`random_state` (seed)** *(W3)* — The fixed number that makes a shuffle
+deterministic, so a split — and everything computed from it — is reproducible.
+Recorded once as `DEFAULT_RANDOM_STATE = 42` in `src/data/split.py`. Its value is
+arbitrary; tuning it to improve a score is overfitting the test set by hand.
 
 **Raw data** *(W1)* — The original, unmodified dataset in `data/raw/`. Treated
 as strictly read-only so it remains the recoverable source of truth.
@@ -185,11 +233,27 @@ a continuous scale, such as predicting yield in kilograms.
 same results for any person at any time. The reason this project commits its
 dataset and pins its dependency versions.
 
+**Scale-invariant model** *(W3)* — A model whose output is unchanged by any
+order-preserving rescaling of a feature, because it only compares values against
+a learned threshold: decision trees and their ensembles. Scale-*sensitive*
+models — KNN, SVM, logistic regression, neural networks, PCA — combine feature
+values across columns and therefore need scaling.
+
 **Skewness** *(W2)* — How lopsided a distribution is. Positive means a long
 right tail, negative a long left tail, zero symmetric.
 
 **Standard deviation** *(W2)* — Roughly the typical distance of a value from the
 mean, expressed in the column's own units. Its square is the variance.
+
+**Standardisation (z-score)** *(W3)* — Rescaling a column with
+`(x - mean) / std`, so the data it was fitted on ends with mean 0 and standard
+deviation 1. A linear transformation: it does not remove skew, outliers or
+ordering. Implemented by `StandardScaler`.
+
+**Stratified split** *(W3)* — A train/test split drawn within each class, so
+class proportions are preserved on both sides. On this dataset it gives every
+crop exactly 80 training and 20 test rows; an unstratified split of the same data
+ranges from 11 to 27 test rows per crop.
 
 **Supervised learning** *(W1)* — Learning from examples in which the correct
 answer is provided alongside each input.
@@ -209,6 +273,11 @@ enforced from Week 3 onward; breaking it causes data leakage.
 examples. Contrast with inference.
 
 **Training set** *(W1)* — The portion of the dataset a model is fitted on.
+
+**Training/serving skew** *(W3)* — Preparing data at serving time in a way that
+differs, even slightly, from how it was prepared at training time. A common cause
+of production failures; the standard defence is shipping the fitted `Pipeline`
+rather than reimplementing preparation on the server.
 
 **Unsupervised learning** *(W1)* — Learning patterns or structure from data
 where no correct answers are supplied.
