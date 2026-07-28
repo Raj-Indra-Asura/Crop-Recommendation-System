@@ -4,8 +4,8 @@ Alphabetical quick reference for terms used across the project. For the
 teaching order and fuller treatment, see
 [`docs/ml_concepts.md`](ml_concepts.md) and the weekly learning notes.
 
-Terms are added as they are introduced. Entries marked *(W1)* were introduced
-in Week 1.
+Terms are added as they are introduced. The marker on each entry gives the week
+it was introduced — *(W1)* Week 1, *(W2)* Week 2, and so on.
 
 ---
 
@@ -18,9 +18,40 @@ produce a fixed artifact, which is then deployed and periodically retrained.
 Contrast with online learning, where the model updates continuously as data
 arrives.
 
+**Bin** *(W2)* — One slice of a histogram's range. Too few bins hide structure
+(separate peaks merge); too many turn every bar into noise.
+
+**Boxplot** *(W2)* — A plot summarising a distribution as a box spanning the
+interquartile range, a line at the median, whiskers reaching 1.5 IQR beyond the
+box, and every point past the whiskers drawn individually.
+
+**Class balance** *(W2)* — How many rows each class has. This dataset is
+perfectly balanced: 22 crops with exactly 100 rows each. Balance decides whether
+accuracy is a fair summary metric.
+
+**Class imbalance** *(W2)* — The opposite: classes with substantially different
+row counts, where a model can score well by ignoring the rare classes and
+accuracy stops being informative.
+
+**Class separation (eta-squared)** *(W2)* — The share of a feature's total
+variance that lies *between* classes rather than within them. 0 means the
+classes are indistinguishable on that feature alone; 1 means it separates them
+perfectly. Computed by `separation_scores()` in `src/utils/eda.py`.
+
 **Classification** *(W1)* — A supervised learning task whose output is a
 category rather than a number. Predicting which of 22 crops suits a field is
 classification.
+
+**Correlation** *(W2)* — How strongly two numeric features move together, on a
+scale from -1 to +1.
+
+**Correlation heatmap** *(W2)* — The full feature-by-feature correlation matrix
+drawn as a colour grid, so strong pairs are visible at a glance.
+
+**Data leakage** *(W2)* — Training a model with information it would not have
+at prediction time, so its measured performance flatters it and production
+disappoints. The commonest cause is fitting preprocessing on the full dataset
+instead of on the training set alone.
 
 **Dataframe** *(W1)* — pandas' table structure: rows and named, typed columns,
 with built-in operations for filtering, grouping and summarising.
@@ -33,25 +64,29 @@ training and evaluation.
 missing values, and exactly the 22 recorded crop names. Enforced by
 `validate_dataset()` in `src/data/validate_schema.py`.
 
+**`DatasetValidationError`** *(W1)* — This project's custom exception, raised
+when loaded data violates the dataset contract. Subclasses `ValueError`.
+
 **Deep learning** *(W1)* — Machine learning using many-layered neural networks.
 Not used in this project: with 2,200 rows and seven numeric features, classical
 algorithms are both stronger and easier to explain.
+
+**Descriptive statistic** *(W2)* — A single number summarising a property of a
+whole column — its centre (mean, median), spread (standard deviation, IQR) or
+shape (skewness).
+
+**Distribution** *(W2)* — The pattern of which values a feature takes, and how
+often.
 
 **Expected label set** *(W1)* — The exact set of 22 crop names recorded in Week
 1 (`EXPECTED_LABELS`, and written out in
 `docs/curriculum/week01/validation.md`). Every later week that touches `label`
 must match against it and fail loudly if it differs.
 
-**Generalisation** *(W1)* — Performing well on instances never seen during
-training. The actual goal of machine learning, as opposed to reproducing the
-training data.
-
-**Inference** *(W1)* — Using a trained model to predict the label of a new,
-unlabelled instance. Happens per request, in milliseconds. Contrast with
-training.
-
-**`DatasetValidationError`** *(W1)* — This project's custom exception, raised
-when loaded data violates the dataset contract. Subclasses `ValueError`.
+**Exploratory data analysis (EDA)** *(W2)* — The stage of the lifecycle that
+examines a dataset's statistics and shapes in order to understand it, before any
+preparation or modelling. The last stage in which it is safe to look at every
+row.
 
 **Fail-fast validation** *(W1)* — Design principle: detect invalid input at the
 moment it is read and stop, rather than continuing and producing a
@@ -60,8 +95,26 @@ plausible-looking but wrong result later.
 **Feature** *(W1)* — One input variable used to make a prediction. This project
 has seven: `N`, `P`, `K`, `temperature`, `humidity`, `ph`, `rainfall`.
 
+**Feature scale** *(W2)* — The range of values a feature takes. In this dataset
+`K` spans 200 units while `ph` spans about 6, which is why Week 3 must rescale
+before using any distance-based model.
+
+**Generalisation** *(W1)* — Performing well on instances never seen during
+training. The actual goal of machine learning, as opposed to reproducing the
+training data.
+
+**Histogram** *(W2)* — A plot of a distribution: the feature's range is split
+into equal-width bins and each bar counts the rows falling inside one.
+
+**Inference** *(W1)* — Using a trained model to predict the label of a new,
+unlabelled instance. Happens per request, in milliseconds. Contrast with
+training.
+
 **Instance** *(W1)* — One complete example: a set of feature values together
 with its target. Also called a sample, observation or row.
+
+**Interquartile range (IQR)** *(W2)* — `Q3 - Q1`: the width of the middle half
+of the data. The basis of the boxplot box and of the 1.5 IQR outlier rule.
 
 **Label** *(W1)* — The target value attached to an instance. Here, the crop
 name; also the literal name of the target column.
@@ -73,6 +126,12 @@ and likely errors. Performed here by `ruff`.
 desired behaviour and letting an algorithm infer rules that reproduce them and
 generalise to unseen cases.
 
+**Mean** *(W2)* — The arithmetic average of a column. Pulled around by extreme
+values, so it can differ sharply from the median in a skewed column.
+
+**Median** *(W2)* — The middle value of a sorted column; half the rows lie below
+it. Unaffected by extreme values.
+
 **ML lifecycle** *(W1)* — The loop a project travels: frame the problem, get
 the data, explore, prepare, model, evaluate and improve, productionize, deploy,
 monitor — and back to framing.
@@ -81,10 +140,29 @@ monitor — and back to framing.
 possible categories. Contrast with binary classification, which has exactly
 two.
 
+**Multicollinearity** *(W2)* — Strongly correlated inputs to a linear model,
+which make its fitted coefficients unstable and its per-feature explanation
+unreliable. Tree-based models are largely untroubled by it.
+
+**Multimodality** *(W2)* — More than one peak in a distribution, usually meaning
+two different populations have been mixed into one column.
+
+**Outlier** *(W2)* — A value beyond a boxplot's whiskers under the 1.5 IQR rule.
+The output of an arithmetic rule, **not** a verdict that the value is wrong: it
+may be a data error, a legitimate rare case, or — as in this dataset — ordinary
+class structure showing through.
+
 **Overfitting** *(W1)* — When a model learns the training examples and their
 noise instead of the pattern behind them: strong on training data, weak on
 unseen data. Its opposite, underfitting, is being too simple to capture the
 pattern at all.
+
+**Pearson correlation** *(W2)* — The default correlation measure. It captures
+*linear* association only, so a coefficient of 0 means "no straight-line
+relationship", not "unrelated".
+
+**Percentile** *(W2)* — The value below which a given share of the rows falls.
+The 50th percentile is the median.
 
 **Pinned dependency** *(W1)* — A dependency specified at an exact version
 (`pandas==2.2.3`) rather than loosely (`pandas`), so that every install
@@ -93,6 +171,9 @@ produces an identical environment.
 **Processed data** *(W1)* — Data derived from the raw input by cleaning,
 splitting or transformation. Written to `data/processed/`; never written back
 over the raw data.
+
+**Quartile** *(W2)* — The 25th, 50th and 75th percentiles, which cut a column
+into four equal-sized parts.
 
 **Raw data** *(W1)* — The original, unmodified dataset in `data/raw/`. Treated
 as strictly read-only so it remains the recoverable source of truth.
@@ -104,6 +185,12 @@ a continuous scale, such as predicting yield in kilograms.
 same results for any person at any time. The reason this project commits its
 dataset and pins its dependency versions.
 
+**Skewness** *(W2)* — How lopsided a distribution is. Positive means a long
+right tail, negative a long left tail, zero symmetric.
+
+**Standard deviation** *(W2)* — Roughly the typical distance of a value from the
+mean, expressed in the column's own units. Its square is the variance.
+
 **Supervised learning** *(W1)* — Learning from examples in which the correct
 answer is provided alongside each input.
 
@@ -114,6 +201,10 @@ the `label` column.
 used, ideally once, to estimate performance on unseen data. Implemented in
 Week 3.
 
+**Train-only fitting** *(W2)* — The rule that any preprocessing step is fitted
+on the training set alone and then applied to the test set. Stated in Week 2,
+enforced from Week 3 onward; breaking it causes data leakage.
+
 **Training** *(W1)* — The offline process of fitting a model to labelled
 examples. Contrast with inference.
 
@@ -121,6 +212,10 @@ examples. Contrast with inference.
 
 **Unsupervised learning** *(W1)* — Learning patterns or structure from data
 where no correct answers are supplied.
+
+**Variance** *(W2)* — The square of the standard deviation: the average squared
+distance from the mean. Used by the mathematics; standard deviation is what
+humans read, because it is in the original units.
 
 **Virtual environment** *(W1)* — An isolated, per-project Python package
 directory created with `venv`, preventing dependency conflicts between

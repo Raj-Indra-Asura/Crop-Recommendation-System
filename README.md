@@ -35,11 +35,12 @@ ruff check .
 pytest
 
 # 5. Open this week's notebook
-jupyter notebook notebooks/01_problem_definition.ipynb
+jupyter notebook notebooks/02_EDA.ipynb
 ```
 
 Step 5 starts a local Jupyter server and opens the notebook in your browser;
-stop it with `Ctrl-C` in the terminal when you are done.
+stop it with `Ctrl-C` in the terminal when you are done. Week 1's notebook is
+`notebooks/01_problem_definition.ipynb`.
 
 Load the data from Python:
 
@@ -83,7 +84,7 @@ Filled in one row per week as the course proceeds.
 | Week | Status | Notes |
 | --- | --- | --- |
 | 01 — Framing the problem, environment, loading & validating data | ✅ Complete | Dataset contract enforced by `validate_dataset()`; 20 tests passing. [Docs](docs/curriculum/week01/) |
-| 02 — Exploratory data analysis | ⬜ Not started | |
+| 02 — Exploratory data analysis | ✅ Complete | Statistics, distributions, correlation, outliers and data leakage; helpers in `src/utils/eda.py`, 42 tests passing. [Docs](docs/curriculum/week02/) |
 | 03 — Data preparation | ⬜ Not started | |
 | 04 — Baseline models | ⬜ Not started | |
 | 05 — Classification models | ⬜ Not started | |
@@ -107,6 +108,19 @@ Filled in one row per week as the course proceeds.
 | `docs/ml_concepts.md` has an entry per new concept | ✅ |
 | `validation.md` commands actually run, real output pasted | ✅ |
 | `notebooks/01_problem_definition.ipynb` committed with executed output | ✅ |
+
+### Week 2 Definition of Done
+
+| Requirement | Status |
+| --- | --- |
+| `docs/curriculum/week02/{syllabus,learning_notes,exercises,validation}.md` exist | ✅ |
+| New code has docstrings and passes lint (`ruff check .`) | ✅ |
+| New behaviour has tests and `pytest` passes | ✅ 42 passed (20 + 22) |
+| `requirements.txt` updated, every dependency pinned | ✅ no change — `matplotlib`/`seaborn` pinned in Week 1 |
+| README progress table updated | ✅ |
+| `docs/ml_concepts.md` has an entry per new concept | ✅ |
+| `validation.md` commands actually run, real output pasted | ✅ |
+| `notebooks/02_EDA.ipynb` committed with executed output | ✅ |
 
 ---
 

@@ -52,6 +52,38 @@ Taught in [`docs/curriculum/week01/learning_notes.md`](curriculum/week01/learnin
 
 ---
 
-## Week 2 onwards
+## Week 2 — Exploratory data analysis
+
+Taught in [`docs/curriculum/week02/learning_notes.md`](curriculum/week02/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **Exploratory data analysis (EDA)** | Looking at a dataset's statistics and shapes to understand it, before preparing or modelling it. | §0 |
+| **Descriptive statistic** | A single number summarising a property of a whole column, such as its centre or its spread. | §1 |
+| **Mean** | The arithmetic average; sensitive to extreme values. | §1 |
+| **Median** | The middle value when sorted; unaffected by extreme values, so it differs from the mean when a column is skewed. | §1 |
+| **Standard deviation** | Roughly the typical distance of a value from the mean, in the column's own units; its square is the variance. | §1 |
+| **Percentile / quartile** | The value below which a given share of rows falls; the 25th, 50th and 75th percentiles are the quartiles. | §1 |
+| **Interquartile range (IQR)** | `Q3 - Q1`, the width of the middle half of the data. | §1, §5 |
+| **Skewness** | How lopsided a distribution is: positive means a long right tail, negative a long left tail, zero symmetric. | §1, §3 |
+| **Feature scale** | The range of values a feature takes; features on very different scales must be rescaled before distance-based models are used. | §1 |
+| **Class balance / imbalance** | How many rows each class has; balanced classes make accuracy a fair metric, imbalanced ones do not. | §2 |
+| **Distribution** | The pattern of which values a feature takes and how often. | §3 |
+| **Histogram** | A plot of a distribution: the range split into equal-width bins, each bar counting the rows inside it. | §3 |
+| **Bin** | One slice of a histogram's range; too few hide structure, too many show noise. | §3 |
+| **Multimodality** | More than one peak in a distribution, usually meaning two populations have been mixed together. | §3 |
+| **Correlation** | How strongly two numeric features move together, from -1 to +1. | §4 |
+| **Pearson correlation** | The default correlation measure; captures *linear* association only, so 0 means "no straight-line relationship", not "unrelated". | §4 |
+| **Correlation heatmap** | The whole feature-by-feature correlation matrix drawn as a colour grid. | §4 |
+| **Multicollinearity** | Strongly correlated inputs making a linear model's fitted coefficients unstable and its explanation unreliable. | §4 |
+| **Boxplot** | A five-number summary drawn as a box (IQR) with median, whiskers at 1.5 IQR, and points beyond drawn individually. | §5 |
+| **Outlier** | A value beyond the whiskers under the 1.5 IQR rule — a description produced by arithmetic, not a verdict that the value is wrong. | §5 |
+| **Class separation (eta-squared)** | The share of a feature's variance lying between classes rather than within them; 0 = the classes are indistinguishable on it, 1 = perfectly separated. | §5 |
+| **Data leakage** | Training a model with information it would not have at prediction time, so its test score flatters it and production disappoints. | §6 |
+| **Train-only fitting** | The rule that any preprocessing is fitted on the training set alone and then applied to the test set — stated here, enforced from Week 3. | §6 |
+
+---
+
+## Week 3 onwards
 
 Not yet written.
