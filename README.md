@@ -15,26 +15,6 @@ numeric features.
 
 ---
 
-## ⚠️ Current status: dataset missing
-
-`data/raw/Crop_recommendation.csv` is **not present** in this repository, but
-the project is built on the assumption that it is committed here. Until it is
-restored:
-
-* the seven dataset contract tests **skip** instead of running;
-* `notebooks/01_problem_definition.ipynb` has not been created, because
-  notebooks in this project are only committed with genuinely executed output.
-
-To fix: download `Crop_recommendation.csv` from the
-[Kaggle dataset page](https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset),
-place it at `data/raw/Crop_recommendation.csv`, and commit it. See
-[`docs/curriculum/week01/validation.md`](docs/curriculum/week01/validation.md).
-
-Do **not** substitute randomly generated data — every later week's results
-would be silently invalidated.
-
----
-
 ## Quickstart
 
 Targets Python 3.11. Python 3.12 also works — the Week 1 checks were recorded
@@ -45,8 +25,7 @@ on 3.12.3 — but 3.11 is the reference version the project pins its tooling to.
 cd Crop-Recommendation-System
 
 # 2. Create an isolated environment
-python3.11 -m venv .venv          # or python3 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+python -m venv venv && source venv/bin/activate    # Windows: venv\Scripts\activate
 
 # 3. Install pinned dependencies
 pip install -r requirements.txt
@@ -54,16 +33,27 @@ pip install -r requirements.txt
 # 4. Check everything works
 ruff check .
 pytest
+
+# 5. Open this week's notebook
+jupyter notebook notebooks/01_problem_definition.ipynb
 ```
+
+Step 5 starts a local Jupyter server and opens the notebook in your browser;
+stop it with `Ctrl-C` in the terminal when you are done.
 
 Load the data from Python:
 
 ```python
-from src.data import load_raw_data
+from src.data import load_data
 
-frame = load_raw_data()   # validates shape, columns and class count
-print(frame.shape)        # -> (2200, 8)
+frame = load_data()   # validates columns, dtypes, row count and label set
+print(frame.shape)    # -> (2200, 8)
 ```
+
+If `data/raw/Crop_recommendation.csv` is ever missing, `load_data()` fails with
+a message naming the file and where to obtain it. Restore the committed file —
+never substitute randomly generated data, or every later week's results are
+silently invalidated.
 
 ---
 
@@ -88,20 +78,22 @@ exercise the same code.
 
 ## Course progress
 
-| Week | Topic | Status | Docs |
-| --- | --- | --- | --- |
-| 01 | Framing the problem, environment setup, loading & validating data | ⚠️ Partial — blocked on missing dataset | [week01](docs/curriculum/week01/) |
-| 02 | Exploratory data analysis | ⬜ Not started | — |
-| 03 | Data preparation | ⬜ Not started | — |
-| 04 | Baseline models | ⬜ Not started | — |
-| 05 | Classification models | ⬜ Not started | — |
-| 06 | Model selection & tuning | ⬜ Not started | — |
-| 07 | Model explainability | ⬜ Not started | — |
-| 08 | Pipelines | ⬜ Not started | — |
-| 09 | Testing & packaging | ⬜ Not started | — |
-| 10 | Serving an API | ⬜ Not started | — |
-| 11 | Streamlit application | ⬜ Not started | — |
-| 12 | Containerisation, CI & deployment | ⬜ Not started | — |
+Filled in one row per week as the course proceeds.
+
+| Week | Status | Notes |
+| --- | --- | --- |
+| 01 — Framing the problem, environment, loading & validating data | ✅ Complete | Dataset contract enforced by `validate_dataset()`; 20 tests passing. [Docs](docs/curriculum/week01/) |
+| 02 — Exploratory data analysis | ⬜ Not started | |
+| 03 — Data preparation | ⬜ Not started | |
+| 04 — Baseline models | ⬜ Not started | |
+| 05 — Classification models | ⬜ Not started | |
+| 06 — Model selection & tuning | ⬜ Not started | |
+| 07 — Model explainability | ⬜ Not started | |
+| 08 — Pipelines | ⬜ Not started | |
+| 09 — Testing & packaging | ⬜ Not started | |
+| 10 — Serving an API | ⬜ Not started | |
+| 11 — Streamlit application | ⬜ Not started | |
+| 12 — Containerisation, CI & deployment | ⬜ Not started | |
 
 ### Week 1 Definition of Done
 
@@ -109,14 +101,12 @@ exercise the same code.
 | --- | --- |
 | `docs/curriculum/week01/{syllabus,learning_notes,exercises,validation}.md` exist | ✅ |
 | New code has docstrings and passes lint (`ruff check .`) | ✅ |
-| New behaviour has tests and `pytest` passes | ⚠️ 3 passed, 7 skipped — contract tests need the dataset |
+| New behaviour has tests and `pytest` passes | ✅ 20 passed |
 | `requirements.txt` updated, every dependency pinned | ✅ |
 | README progress table updated | ✅ |
 | `docs/ml_concepts.md` has an entry per new concept | ✅ |
 | `validation.md` commands actually run, real output pasted | ✅ |
-| `notebooks/01_problem_definition.ipynb` committed with executed output | ❌ Blocked on missing dataset |
-
-Week 2 does not begin until the two blocked items are resolved.
+| `notebooks/01_problem_definition.ipynb` committed with executed output | ✅ |
 
 ---
 

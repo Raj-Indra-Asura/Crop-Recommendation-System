@@ -12,6 +12,9 @@ convention = "google"
 [tool.ruff.lint.per-file-ignores]
 # Tests document themselves through their names; module docstrings still required.
 "tests/*" = ["D103"]
+# Notebooks must adjust sys.path before importing `src`, so imports cannot all
+# sit at the top of the cell.
+"notebooks/*" = ["E402"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
