@@ -12,6 +12,8 @@ env/
 
 # --- Jupyter ---
 .ipynb_checkpoints/
+# Output of `jupyter nbconvert --to notebook --execute` without `--inplace`.
+*.nbconvert.ipynb
 
 # --- Trained model artifacts ---
 # Model binaries are rebuilt on demand (see Week 9-10), never committed.
