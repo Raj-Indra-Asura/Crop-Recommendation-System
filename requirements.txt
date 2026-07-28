@@ -1,0 +1,12 @@
+# Crop Recommendation System - dependencies
+# Target interpreter: Python 3.11
+#
+# This file is extended incrementally, one week at a time. Never rewrite it
+# wholesale - each week appends the packages it introduces, and every package
+# is explained in that week's docs/curriculum/weekXX/learning_notes.md.
+
+# --- Week 1: load and validate the raw dataset ---
+pandas==2.2.3
+jupyter==1.1.1
+pytest==8.3.4
+ruff==0.8.4
