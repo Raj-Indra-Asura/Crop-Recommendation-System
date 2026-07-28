@@ -37,14 +37,15 @@ would be silently invalidated.
 
 ## Quickstart
 
-Requires Python 3.11.
+Targets Python 3.11. Python 3.12 also works — the Week 1 checks were recorded
+on 3.12.3 — but 3.11 is the reference version the project pins its tooling to.
 
 ```bash
 # 1. Clone and enter the repository
 cd Crop-Recommendation-System
 
 # 2. Create an isolated environment
-python3.11 -m venv .venv
+python3.11 -m venv .venv          # or python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 
 # 3. Install pinned dependencies

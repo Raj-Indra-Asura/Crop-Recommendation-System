@@ -28,7 +28,8 @@ against what you see.
 python3 --version
 ```
 
-Expected: Python 3.11.x, which is this project's target version.
+Expected: Python 3.11.x — the project's reference version — or Python 3.12.x,
+which is also supported.
 
 Actual output from the run that produced this document:
 
@@ -36,11 +37,12 @@ Actual output from the run that produced this document:
 Python 3.12.3
 ```
 
-**Note the discrepancy.** The recording environment provided 3.12.3, not 3.11.
-Everything in Week 1 works identically on both, and `ruff` is configured with
-`target-version = "py311"` so style rules stay pinned to 3.11 regardless. If
-you see 3.11.x, that is correct and expected; if you see 3.12.x, Week 1 will
-still pass.
+Python 3.11 was not available in the environment used to record these
+commands, so every command below was genuinely run on 3.12.3. This is
+supported: nothing in Week 1 depends on version-specific behaviour, and `ruff`
+is configured with `target-version = "py311"` so style rules stay pinned to the
+reference version regardless of the interpreter you use. Either 3.11.x or
+3.12.x is a correct result here.
 
 ---
 
