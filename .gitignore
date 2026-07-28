@@ -1,0 +1,26 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Trained model artifacts ---
+# Model binaries are rebuilt on demand (see Week 9-10), never committed.
+models/*.joblib
+models/*.pkl
+
+# IMPORTANT: data/ is deliberately NOT ignored.
+# data/raw/Crop_recommendation.csv is small (~150 KB) and must stay
+# version-controlled so every student runs against the identical dataset.
+
+# --- OS noise ---
+.DS_Store
