@@ -84,6 +84,33 @@ Taught in [`docs/curriculum/week02/learning_notes.md`](curriculum/week02/learnin
 
 ---
 
-## Week 3 onwards
+## Week 3 — Data preparation
+
+Taught in [`docs/curriculum/week03/learning_notes.md`](curriculum/week03/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **Data preparation / preprocessing** | Everything that happens between the data as recorded and the array a model is fitted on. | §0 |
+| **Feature scaling** | Re-expressing columns so their numeric ranges are comparable, removing an arbitrary weighting caused purely by units. | §1, §2 |
+| **Standardisation (z-score)** | `(x - mean) / std` per column; the data it was fitted on ends with mean 0 and standard deviation 1. | §2 |
+| **Normalisation (min-max)** | `(x - min) / (max - min)`, mapping a column onto [0, 1]; bounded, but very sensitive to a single extreme value. | §2 |
+| **Scale-sensitive model** | A model whose result depends on feature units — KNN, SVM, logistic regression, neural networks, PCA. | §1 |
+| **Scale-invariant model** | A model unchanged by monotone rescaling, because it only compares a feature against a threshold — decision trees and their ensembles. | §1 |
+| **Label encoding** | Mapping class names onto integers `0..k-1` (alphabetically, and losslessly) so an estimator can work with them. | §3 |
+| **One-hot encoding** | Expanding a categorical column into one 0/1 column per category, so no false ordering is implied. Contrasted here; not yet needed. | §3 |
+| **Stratified split** | Splitting within each class so that class proportions are preserved on both sides of the split. | §4 |
+| **`random_state` / seed** | The fixed number that makes a shuffle deterministic, so a split — and every result depending on it — is reproducible. | §4 |
+| **`fit`** | Learn parameters from data and store them on the estimator. Training data only. | §5 |
+| **`transform`** | Apply the stored parameters to any data — train, test, or a single request in production. | §5 |
+| **`fit_transform`** | Both at once; a convenience for training data, never for test data. | §5 |
+| **Fitted state** | The attributes an estimator gains by being fitted (`mean_`, `scale_`, `classes_`); by convention they end in an underscore. | §5 |
+| **Train-only fitting, enforced** | The Week 2 rule made procedural: exactly 0/1 statistics on train, near-but-not-equal on test, is the evidence it was obeyed. | §5 |
+| **`ColumnTransformer`** | An estimator mapping sets of columns to the transformers applied to them, with `remainder` deciding the fate of the rest. | §6 |
+| **`Pipeline`** | An estimator chaining named steps into one object with a single `fit`/`transform`/`predict`, so preparation travels with the model. | §6 |
+| **Training/serving skew** | Preparing data differently at serving time than at training time; shipping the fitted pipeline is the standard defence. | §6 |
+
+---
+
+## Week 4 onwards
 
 Not yet written.

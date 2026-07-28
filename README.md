@@ -35,12 +35,12 @@ ruff check .
 pytest
 
 # 5. Open this week's notebook
-jupyter notebook notebooks/02_EDA.ipynb
+jupyter notebook notebooks/03_data_preparation.ipynb
 ```
 
 Step 5 starts a local Jupyter server and opens the notebook in your browser;
-stop it with `Ctrl-C` in the terminal when you are done. Week 1's notebook is
-`notebooks/01_problem_definition.ipynb`.
+stop it with `Ctrl-C` in the terminal when you are done. Earlier weeks are
+`notebooks/01_problem_definition.ipynb` and `notebooks/02_EDA.ipynb`.
 
 Load the data from Python:
 
@@ -49,6 +49,16 @@ from src.data import load_data
 
 frame = load_data()   # validates columns, dtypes, row count and label set
 print(frame.shape)    # -> (2200, 8)
+```
+
+From Week 3 the prepared splits are also on disk, so a later week can start
+without re-running the notebook:
+
+```python
+import pandas as pd
+
+train = pd.read_csv("data/processed/train.csv")   # 1,760 rows, stratified
+test = pd.read_csv("data/processed/test.csv")     # 440 rows, 20 per crop
 ```
 
 If `data/raw/Crop_recommendation.csv` is ever missing, `load_data()` fails with
@@ -66,7 +76,7 @@ silently invalidated.
 | `docs/ml_concepts.md` | Running index of every concept, by week |
 | `docs/glossary.md` | Alphabetical term reference |
 | `data/raw/` | The original dataset — read-only, and deliberately **not** gitignored |
-| `data/processed/` | Anything derived from the raw data |
+| `data/processed/` | Anything derived from the raw data — from Week 3, the train/test splits |
 | `src/` | Reusable, tested implementation code |
 | `notebooks/` | Exploratory analysis, importing from `src/` |
 | `models/` | Trained artifacts — generated on demand, never committed |
@@ -85,7 +95,7 @@ Filled in one row per week as the course proceeds.
 | --- | --- | --- |
 | 01 — Framing the problem, environment, loading & validating data | ✅ Complete | Dataset contract enforced by `validate_dataset()`; 20 tests passing. [Docs](docs/curriculum/week01/) |
 | 02 — Exploratory data analysis | ✅ Complete | Statistics, distributions, correlation, outliers and data leakage; helpers in `src/utils/eda.py`, 42 tests passing. [Docs](docs/curriculum/week02/) |
-| 03 — Data preparation | ⬜ Not started | |
+| 03 — Data preparation | ✅ Complete | Label encoding, stratified 80/20 split and a train-fitted `ColumnTransformer`; helpers in `src/data/split.py` and `src/preprocessing/preprocessor.py`, 74 tests passing. [Docs](docs/curriculum/week03/) |
 | 04 — Baseline models | ⬜ Not started | |
 | 05 — Classification models | ⬜ Not started | |
 | 06 — Model selection & tuning | ⬜ Not started | |
@@ -121,6 +131,19 @@ Filled in one row per week as the course proceeds.
 | `docs/ml_concepts.md` has an entry per new concept | ✅ |
 | `validation.md` commands actually run, real output pasted | ✅ |
 | `notebooks/02_EDA.ipynb` committed with executed output | ✅ |
+
+### Week 3 Definition of Done
+
+| Requirement | Status |
+| --- | --- |
+| `docs/curriculum/week03/{syllabus,learning_notes,exercises,validation}.md` exist | ✅ |
+| New code has docstrings and passes lint (`ruff check .`) | ✅ |
+| New behaviour has tests and `pytest` passes | ✅ 74 passed (20 + 22 + 32) |
+| `requirements.txt` updated, every dependency pinned | ✅ no change — `scikit-learn` pinned in Week 1 |
+| README progress table updated | ✅ |
+| `docs/ml_concepts.md` has an entry per new concept | ✅ |
+| `validation.md` commands actually run, real output pasted | ✅ |
+| `notebooks/03_data_preparation.ipynb` committed with executed output | ✅ |
 
 ---
 
