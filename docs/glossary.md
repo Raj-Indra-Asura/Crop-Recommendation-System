@@ -9,9 +9,18 @@ it was introduced — *(W1)* Week 1, *(W2)* Week 2, and so on.
 
 ---
 
+**Accuracy** *(W4)* — The share of predictions that were correct. A fair
+headline metric when the classes are balanced and every mistake costs the same,
+as here — but never a complete one, because it cannot show *which* classes fail.
+
 **Artificial intelligence** *(W1)* — The broad field of building software that
 performs tasks we would call intelligent. Machine learning is one family of
 techniques within it; deep learning is one family within machine learning.
+
+**Baseline model** *(W4)* — A deliberately unintelligent model, fitted and
+scored exactly like a real candidate but ignoring the features entirely. Its
+score is the floor: a model that fails to beat it has learned nothing from the
+features. This project's baseline is 4.55% (`1/22`).
 
 **Batch learning** *(W1)* — Training a model once on a complete dataset to
 produce a fixed artifact, which is then deployed and periodically retrained.
@@ -42,6 +51,11 @@ perfectly. Computed by `separation_scores()` in `src/utils/eda.py`.
 category rather than a number. Predicting which of 22 crops suits a field is
 classification.
 
+**Classification report** *(W4)* — scikit-learn's per-class table of precision,
+recall, F1 and support, returned as a string by `evaluate_model()`. Shown from
+Week 4 so that accuracy is never read alone; the metrics in it are taught in
+Week 8.
+
 **`ColumnTransformer`** *(W3)* — A scikit-learn estimator that maps sets of
 columns to the transformers applied to them, as `(name, transformer, columns)`
 triples, with `remainder` deciding whether unnamed columns are dropped or passed
@@ -53,6 +67,15 @@ scale from -1 to +1.
 
 **Correlation heatmap** *(W2)* — The full feature-by-feature correlation matrix
 drawn as a colour grid, so strong pairs are visible at a glance.
+
+**Cross-validation (k-fold)** *(W4)* — Splitting the training data into `k`
+folds and fitting the model `k` times, each time on `k - 1` folds and scoring on
+the one left out, so every row is validated exactly once and the result is a
+distribution of scores rather than a single number.
+
+**`cross_val_score`** *(W4)* — scikit-learn's function running that loop. It
+clones the estimator for every fold and returns a NumPy array with one score per
+fold, in fold order — report its mean *and* its standard deviation.
 
 **Data leakage** *(W2)* — Training a model with information it would not have
 at prediction time, so its measured performance flatters it and production
@@ -88,6 +111,16 @@ shape (skewness).
 **Distribution** *(W2)* — The pattern of which values a feature takes, and how
 often.
 
+**`DummyClassifier`** *(W4)* — scikit-learn's baseline estimator. `fit` looks
+only at `y`; `predict` answers from the recorded label distribution using a
+chosen strategy (`most_frequent`, `prior`, `stratified`, `uniform`, `constant`).
+
+**Evaluation protocol** *(W4)* — The metric, the fitting/scoring procedure and
+the reference point, all fixed *before* any model is trained, so the judgement
+cannot be shaped by the results. Here: accuracy with a per-class report, 5-fold
+stratified cross-validation on the training rows with seed 42, against a 4.55%
+baseline.
+
 **Expected label set** *(W1)* — The exact set of 22 crop names recorded in Week
 1 (`EXPECTED_LABELS`, and written out in
 `docs/curriculum/week01/validation.md`). Every later week that touches `label`
@@ -121,6 +154,10 @@ does both and is for training data only.
 **Fitted state** *(W3)* — The attributes an estimator gains by being fitted —
 `mean_`, `scale_`, `classes_`, later `coef_`. By convention they end in an
 underscore, so an object with none has not been fitted.
+
+**Fold** *(W4)* — One of the `k` equal parts a dataset is cut into for
+cross-validation, used once as the validation part and `k - 1` times as part of
+the training data.
 
 **Generalisation** *(W1)* — Performing well on instances never seen during
 training. The actual goal of machine learning, as opposed to reproducing the
@@ -233,6 +270,15 @@ a continuous scale, such as predicting yield in kilograms.
 same results for any person at any time. The reason this project commits its
 dataset and pins its dependency versions.
 
+**Sanity check (smoke test)** *(W4)* — A cheap end-to-end run whose only job is
+to prove the plumbing works. Fitting a baseline is the cheapest one available:
+it exercises load, split, fit, predict and score in milliseconds and catches
+shuffled labels, misaligned indexes and metrics wired to the wrong vector.
+
+**Score variance (fold spread)** *(W4)* — How much a score moves between splits
+of the same data. Measured as the standard deviation of the per-fold scores; a
+difference between two models smaller than this spread is not yet a difference.
+
 **Scale-invariant model** *(W3)* — A model whose output is unchanged by any
 order-preserving rescaling of a feature, because it only compares values against
 a learned threshold: decision trees and their ensembles. Scale-*sensitive*
@@ -254,6 +300,11 @@ ordering. Implemented by `StandardScaler`.
 class proportions are preserved on both sides. On this dataset it gives every
 crop exactly 80 training and 20 test rows; an unstratified split of the same data
 ranges from 11 to 27 test rows per crop.
+
+**`StratifiedKFold`** *(W4)* — The cross-validation splitter that draws folds
+within each class, so every class appears in every fold in the same proportion.
+Built here by `build_cv()` in `src/evaluation/metrics.py` with
+`n_splits=5, shuffle=True, random_state=42`.
 
 **Supervised learning** *(W1)* — Learning from examples in which the correct
 answer is provided alongside each input.
@@ -281,6 +332,11 @@ rather than reimplementing preparation on the server.
 
 **Unsupervised learning** *(W1)* — Learning patterns or structure from data
 where no correct answers are supplied.
+
+**Validation set** *(W4)* — Data held out from training and used to *choose*
+between models or hyperparameters, as often as needed. Distinct from the test
+set, which answers "how good is the final choice?" once, at the end.
+Cross-validation manufactures validation sets from the training data.
 
 **Variance** *(W2)* — The square of the standard deviation: the average squared
 distance from the mean. Used by the mathematics; standard deviation is what

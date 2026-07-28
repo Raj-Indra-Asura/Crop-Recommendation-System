@@ -111,6 +111,32 @@ Taught in [`docs/curriculum/week03/learning_notes.md`](curriculum/week03/learnin
 
 ---
 
-## Week 4 onwards
+## Week 4 — Baseline models and evaluation
+
+Taught in [`docs/curriculum/week04/learning_notes.md`](curriculum/week04/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **Evaluation** | Measuring performance on data the model was not fitted on, with a metric, a protocol and a reference point all fixed in advance. | §0 |
+| **Evaluation protocol** | The trio of metric, fitting/scoring procedure and baseline, chosen before any model is trained so the judgement cannot be shaped by the results. | §0 |
+| **Accuracy** | The share of predictions that were correct; fair when classes are balanced and errors cost the same, never complete on its own. | §1 |
+| **Baseline model** | A deliberately unintelligent model, fitted and scored like a real one but ignoring the features, whose score is the floor every real model must beat. | §2 |
+| **`DummyClassifier`** | scikit-learn's baseline estimator: `fit` looks only at `y`, `predict` answers from the label distribution. | §3 |
+| **Dummy strategies** | `most_frequent` and `prior` always predict one class; `stratified` and `uniform` guess randomly, with and without regard to class frequencies. | §3 |
+| **The 1/k rule** | On a balanced k-class dataset a constant guess scores exactly 1/k — here 1/22 = 4.55%. | §4 |
+| **Majority-class accuracy** | On imbalanced data the same naive model scores the majority class's share, which can look like an excellent result. | §5 |
+| **Classification report** | The per-class table of precision, recall, F1 and support, printed beside accuracy so one number cannot hide 22 behaviours. | §5 |
+| **Sanity check (smoke test)** | Fitting the baseline exercises the whole pipeline in milliseconds and catches shuffled labels, misaligned indexes and misdirected metrics. | §2 |
+| **k-fold cross-validation** | Fitting `k` times on `k - 1` folds and scoring on the one left out, so every row is validated exactly once. | §7 |
+| **Fold** | One of the `k` equal parts the data is cut into; validation part once, training part `k - 1` times. | §7 |
+| **`StratifiedKFold`** | The splitter that draws folds within each class, so all 22 crops appear in every fold. | §7 |
+| **`cross_val_score`** | The function running the loop; returns one score per fold, clones the estimator each time, and leaves the original unfitted. | §7 |
+| **Score variance (fold spread)** | How much a score moves between splits; a gap between two models smaller than the spread is not yet a gap. | §6, §7 |
+| **Validation set** | Data used to *choose* between models, as often as needed — distinct from the test set, which is read once at the end. | §8 |
+| **Dataset difficulty / performance ceiling** | How much accuracy is achievable at all; on this unusually separable dataset it is ~99%, which is a property of the data, not of the modeller. | §9 |
+
+---
+
+## Week 5 onwards
 
 Not yet written.
