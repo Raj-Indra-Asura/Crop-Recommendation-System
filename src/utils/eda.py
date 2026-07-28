@@ -164,16 +164,16 @@ def plot_feature_histograms(
 
     Raises:
         KeyError: If any requested column is absent from ``frame``.
-        ValueError: If ``columns`` is empty, or ``bins``/``n_cols`` is not
-            positive.
+        ValueError: If ``columns`` is empty, or ``bins`` or ``n_cols`` is
+            less than 1.
     """
     requested = _require_columns(frame, columns)
     if not requested:
         raise ValueError("`columns` must name at least one column to plot.")
     if bins < 1:
-        raise ValueError(f"`bins` must be a positive integer, got {bins}.")
+        raise ValueError(f"`bins` must be at least 1, got {bins}.")
     if n_cols < 1:
-        raise ValueError(f"`n_cols` must be a positive integer, got {n_cols}.")
+        raise ValueError(f"`n_cols` must be at least 1, got {n_cols}.")
 
     n_rows = -(-len(requested) // n_cols)  # ceiling division
     fig, axes = plt.subplots(
