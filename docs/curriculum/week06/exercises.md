@@ -28,7 +28,13 @@ from sklearn.pipeline import Pipeline
 
 from src.data import FEATURE_COLUMNS, TARGET_COLUMN
 from src.evaluation import build_cv, cross_validated_accuracy, evaluate_model
-from src.models import get_decision_tree, get_naive_bayes, get_svm
+from src.models import (
+    CLASSICAL_MODEL_FACTORIES,
+    get_decision_tree,
+    get_logistic_regression,
+    get_naive_bayes,
+    get_svm,
+)
 from src.preprocessing import build_preprocessor
 from src.utils.visualization import plot_decision_boundary
 
@@ -49,7 +55,9 @@ demonstration did.
 
 `cross_validated_accuracy(pipeline, X, y)` returns a dict with keys `scores`,
 `mean`, `std` and `n_splits`; quote `mean` and `std`. `evaluate_model` needs a
-**fitted** model.
+**fitted** model. `CLASSICAL_MODEL_FACTORIES` is the five-entry registry from
+[the learning notes §1](learning_notes.md); loop over it whenever an exercise
+says "all five models" (B4).
 
 ---
 

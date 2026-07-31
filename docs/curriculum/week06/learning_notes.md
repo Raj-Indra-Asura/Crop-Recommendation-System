@@ -48,9 +48,9 @@ What is genuinely new is the *purpose*. Week 5 asked "do the seven features
 carry information?" and answered yes by more than ninety points. That question
 is settled and does not need re-asking. This week asks a harder one: **when does
 adding capacity to a model start to hurt?** The SVM and the tree both have a
-flexibility dial — `C` and `gamma` for the SVM, `max_depth` for the tree — and
-the point of the week is to watch what those dials do rather than to chase a new
-best score.
+flexibility dial — `C` (§2) and `gamma` (§3) for the SVM, `max_depth` (§5) for
+the tree — and the point of the week is to watch what those dials do rather than
+to chase a new best score.
 
 ### Common mistakes
 
@@ -162,7 +162,9 @@ margin: rows are allowed to sit inside the corridor, or even on the wrong side o
 the boundary, at a price. `C` sets that price.
 
 * **small `C`** — violations are cheap. The model tolerates many rows inside the
-  margin in exchange for a wider, smoother corridor. More bias, less variance.
+  margin in exchange for a wider, smoother corridor. More bias, less variance
+  (both terms are defined properly in §5; for now read them as "too rigid" and
+  "too impressionable").
 * **large `C`** — violations are expensive. The boundary bends to get the
   training rows right, and the margin narrows around them. Less bias, more
   variance.
@@ -236,7 +238,8 @@ similarity function alone — is the **kernel trick**. In one sentence: **a kern
 lets an SVM draw a curved boundary by measuring similarity instead of
 position.**
 
-The two kernels this project can select:
+The two kernels this week uses (`get_svm` also accepts scikit-learn's `poly` and
+`sigmoid`, but neither is fitted anywhere in the course):
 
 * **`linear`** — plain inner product. The boundary stays flat, like logistic
   regression's, but positioned by the margin rather than by likelihood.
@@ -326,8 +329,9 @@ rainfall <= 30.18   ?
 
 "Is rainfall under about 30 mm? If so, is humidity under about 28%?" is a
 sentence a farmer could read and check. No other model in this project produces
-one: logistic regression hands you 176 weights, KNN hands you the entire training
-set, naive Bayes hands you 308 means and variances. A tree hands you a flowchart.
+one: logistic regression hands you 176 numbers (154 weights and 22 intercepts),
+KNN hands you the entire training set, naive Bayes hands you 308 means and
+variances. A tree hands you a flowchart.
 That legibility is why **Week 7 returns to trees for explainability**, and why
 `humidity` and `rainfall` — the tree's own first two splits — are the two
 features used for the boundary pictures in §6.
@@ -346,8 +350,9 @@ identical inputs (§0); the scaling has no effect on what the tree learns.
 Nothing in the greedy procedure knows when to stop. Left alone
 (`max_depth=None`), the tree keeps splitting until every leaf is pure — in the
 limit, one leaf per training row. On this data the unlimited tree grows to
-**depth 17, 38 leaves, 75 nodes**, and scores a **perfect 100% on its own
-training data**.
+**depth 17 with 38 leaves** (the two numbers the notebook prints — and since a
+binary tree with 38 leaves has 37 internal splits, 75 nodes in all), and scores
+a **perfect 100% on its own training data**.
 
 That 100% is not a result. It is the *definition* of the algorithm's stopping
 rule: it splits until it cannot be wrong on the rows it was shown. Its
@@ -491,10 +496,13 @@ For a picture, that cost is fine.
 
 ### It is an illustration, never a score
 
-The helper enforces one honesty condition and raises `ValueError` if you break
-it: the model must have been **fitted on exactly the two columns being plotted**.
-So every panel shows a genuine *two-feature* model — not a slice through the
-seven-feature model whose accuracy the results table reports. The accuracies you
+The plots below follow one honesty condition: each model is **fitted on exactly
+the two columns being plotted**. So every panel shows a genuine *two-feature*
+model — not a slice through the seven-feature model whose accuracy the results
+table reports. (The helper does not — and cannot — check how a model was
+fitted; break the rule by passing a seven-feature model and the mismatch
+surfaces as scikit-learn's own error about the wrong number of features, which
+is exactly what exercise I2 stages.) The accuracies you
 could compute from these plots are lower than the table's for the obvious reason
 that five features are missing. **No number in a boundary plot is ever a
 reported result.** `humidity` and `rainfall` are chosen because the unlimited
@@ -520,7 +528,8 @@ The stray points that fall in the "wrong" colour are the crops these two
 features alone cannot separate; the full seven-feature models in the table below
 resolve almost all of them.
 
-The helper also validates its inputs beyond the two-column rule: it rejects a `y`
+The helper also validates its inputs: it rejects an `X_2d` that does not have
+exactly two columns, a `y`
 whose length does not match `X_2d`, a `resolution` below 2, and a negative
 `padding`, each with a clear `ValueError` rather than a confusing plot.
 
@@ -558,8 +567,8 @@ How to read it:
   the concrete reason to distrust training scores.
 * **Error rates make the ranking legible.** 0.51%, 1.48%, 2.10%, 3.18%, 3.47% —
   a nearly seven-fold spread in mistakes that the accuracy column compresses into
-  three percentage points. On 440 held-out rows that is roughly 2 errors versus
-  15.
+  three percentage points. On the 352 rows each cross-validation fold holds out,
+  that is roughly 2 errors versus 12.
 * **Some gaps are still inside the noise.** The SVM and the tree are 0.62 points
   apart with fold standard deviations of about 1.0 and 0.7; by [Week 4's
   rule](../week04/learning_notes.md) — a gap smaller than the fold-to-fold
