@@ -70,8 +70,9 @@ from src.data.split import DEFAULT_RANDOM_STATE
 DEFAULT_LOGISTIC_C: float = 1.0
 
 #: Default iteration budget for logistic regression's solver. scikit-learn ships
-#: 100, which is not enough for 22 classes here and produces a
-#: ``ConvergenceWarning``; 1,000 converges comfortably on scaled features.
+#: 100; this project asks for 1,000 as headroom. Behind the Week 3 scaler
+#: ``lbfgs`` converges in roughly 50 iterations, but on unscaled features it
+#: exhausts whatever budget it is given and raises a ``ConvergenceWarning``.
 DEFAULT_LOGISTIC_MAX_ITER: int = 1_000
 
 #: Default number of neighbours consulted by KNN. Odd values avoid ties in the
@@ -123,8 +124,10 @@ def get_logistic_regression(
         C: Inverse regularisation strength; must be strictly positive. Defaults
             to :data:`DEFAULT_LOGISTIC_C`.
         max_iter: Maximum solver iterations. Defaults to
-            :data:`DEFAULT_LOGISTIC_MAX_ITER` (1,000), which avoids the
-            ``ConvergenceWarning`` scikit-learn's default of 100 raises here.
+            :data:`DEFAULT_LOGISTIC_MAX_ITER` (1,000), which is generous
+            headroom: on standardised features ``lbfgs`` converges in about 50
+            iterations, while on unscaled features it exhausts any budget and
+            raises a ``ConvergenceWarning``.
         random_state: Seed, so a fit is reproducible. Defaults to the
             project-wide :data:`src.data.split.DEFAULT_RANDOM_STATE`.
 

@@ -296,6 +296,12 @@ object with a single `fit`/`transform`/`predict`. Putting preprocessing inside
 it makes train-only fitting structural, makes cross-validation correct by
 construction, and makes the deployed artifact a single object.
 
+**`predict_proba`** *(W5)* — The classifier method returning one probability per
+class per row, in `classes_` order and summing to 1 across each row, instead of
+the single label `predict` returns. `predict` is the class with the largest of
+them. Useful, but only as trustworthy as the model's calibration — Gaussian
+naive Bayes' are systematically overconfident.
+
 **Processed data** *(W1)* — Data derived from the raw input by cleaning,
 splitting or transformation. Written to `data/processed/`; never written back
 over the raw data.

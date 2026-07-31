@@ -21,7 +21,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 
 from src.data import FEATURE_COLUMNS, TARGET_COLUMN
-from src.evaluation import cross_validated_accuracy, evaluate_model
+from src.evaluation import build_cv, cross_validated_accuracy, evaluate_model
 from src.models import get_baseline_model, get_knn, get_logistic_regression, get_naive_bayes
 from src.preprocessing import build_preprocessor
 
@@ -33,6 +33,12 @@ X, y = train[FEATURES], train[TARGET_COLUMN]
 def make_pipeline(model):
     return Pipeline([("preprocess", build_preprocessor()), ("model", model)])
 ```
+
+`build_preprocessor()` with no arguments expects exactly the seven feature
+columns. Any exercise that changes the columns — two features only (I1),
+synthetic data (I2, C1), extra noise columns (I5) — must pass the new column
+list, `build_preprocessor(list(frame.columns))`, exactly as the notebook's noise
+demonstration does.
 
 ---
 
@@ -46,8 +52,11 @@ do, and which of them is allowed to see `y`?
 **B2 — Count what each model stores.**
 Fit all three models. Print `coef_.shape` and `intercept_.shape` for logistic
 regression, `theta_.shape` and `var_.shape` for naive Bayes, and
-`_fit_X.shape` for KNN. How many numbers does each model keep? Which one keeps
-the training data itself, and what does that imply for shipping it in Week 10?
+`_fit_X.shape` for KNN (the leading underscore marks it as scikit-learn's own
+private attribute — KNN has no public one, which is itself a hint about how
+little it learns). How many numbers does each model keep? Which one keeps the
+training data itself, and what does that imply for saving it to disk in Week 9
+and serving it from an API in Week 10?
 
 **B3 — Watch the probabilities.**
 For the first field in `X`, print the top three classes and their probabilities
@@ -82,8 +91,9 @@ Standardise `X` with `StandardScaler`, then re-fit KNN and naive Bayes on both
 the raw and the standardised frames and compare their predictions row by row.
 Which model's predictions changed and which did not? Explain both results in
 terms of what the algorithm computes. Then multiply `K` by 1,000 instead and
-re-check naive Bayes: a handful of rows move — find `var_smoothing` in the
-scikit-learn docs and explain why.
+re-check naive Bayes: seven rows move — re-read the `var_smoothing` note in
+[§4 of the learning notes](learning_notes.md) and explain why an invariance that
+is exact in theory is only nearly exact in floating point.
 
 **B9 — Break naive Bayes' assumption on purpose.**
 Add a column that is an exact copy of `K` and cross-validate naive Bayes again.
@@ -118,7 +128,11 @@ and what does that say about "linear"?
 
 **I3 — Where do the mistakes go?**
 For each model, collect its cross-validated predictions with
-`sklearn.model_selection.cross_val_predict` and list the rows it got wrong.
+`sklearn.model_selection.cross_val_predict` and list the rows it got wrong. It
+is new here, and it is the only new function this section needs: give it the
+same `cv=build_cv()` splitter from `src.evaluation` that
+`cross_validated_accuracy` uses, and instead of a score it returns one
+prediction per row, each made by a model that did not see that row.
 Which crops does each model confuse? Do the three models make the *same*
 mistakes or different ones? (You are not asked to interpret precision or recall
 — that is Week 8; just count.)
@@ -183,7 +197,10 @@ rigorous.
 
 **C5 — A calibration check.**
 Bucket every cross-validated prediction by its predicted probability (0.5-0.6,
-0.6-0.7, ... 0.9-1.0) and compute the actual accuracy within each bucket. Do this
+0.6-0.7, ... 0.9-1.0) and compute the actual accuracy within each bucket. Get
+the probabilities the same way I3 got the predictions —
+`cross_val_predict(..., method="predict_proba")` — and take each row's largest
+one as its confidence. Do this
 for naive Bayes and for logistic regression. Which model's confidence matches
 reality more closely, and how does the result support §4's claim that naive
 Bayes' probabilities should be distrusted even when its predictions should not?

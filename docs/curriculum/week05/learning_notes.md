@@ -12,10 +12,14 @@ This week spends that number. Three algorithms from three different families are
 trained on the same 1,760 training rows, through the same pipeline, and scored
 on the same five cross-validation folds:
 
-* **logistic regression** — linear, discriminative, readable;
-* **k-nearest neighbours** — distance-based, lazy, shape-agnostic;
-* **Gaussian naive Bayes** — probabilistic, generative, built on an assumption
+* **logistic regression** — linear, readable, and *discriminative*;
+* **k-nearest neighbours** — distance-based, *lazy*, shape-agnostic;
+* **Gaussian naive Bayes** — probabilistic, *generative*, built on an assumption
   that is provably false here.
+
+The three italicised words are the jargon this week introduces: "lazy" is
+defined in §3, "discriminative" and "generative" in §4. Nothing below assumes
+you already know them.
 
 The result is a four-row table (three models plus the baseline) which Weeks 6-8
 **extend rather than replace**.
@@ -139,9 +143,13 @@ to 1. The predicted crop is the one with the largest probability — and since
 
 Training chooses the weights that make the observed training labels as probable
 as possible (maximum likelihood), by gradient-based optimisation — the `lbfgs`
-solver by default. There is no closed-form answer, which is why `max_iter`
-exists and why the project sets it to 1,000: scikit-learn's default of 100 is
-not enough for 22 classes here and produces a `ConvergenceWarning`.
+solver by default. There is no closed-form answer, so the solver iterates until
+it converges or runs out of budget, and `max_iter` is that budget. This project
+sets it to 1,000 rather than scikit-learn's 100 purely as headroom: behind the
+Week 3 preprocessor `lbfgs` converges in about 50 iterations, well inside either
+figure, but on *unscaled* features it never converges at all and stops at
+whichever cap it is given, emitting a `ConvergenceWarning` (§2, common
+mistakes).
 
 The whole fitted model on this dataset is **176 numbers**: a 22 x 7 coefficient
 matrix plus 22 intercepts. The training rows are discarded once fitting ends.
@@ -173,8 +181,9 @@ Two ways to make an inherently two-class method handle 22 classes:
   fits here, because `lbfgs` supports it.
 * **One-vs-rest (OvR)** — train 22 separate "is it rice or not?" classifiers and
   return whichever is most confident. Simple, parallel, and usable with any
-  binary method, but the 22 confidences are not calibrated against one another
-  because each was trained on a different, badly imbalanced problem.
+  binary method, but the 22 confidences are not *calibrated* against one another
+  — that is, a 0.9 from one of them does not mean the same thing as a 0.9 from
+  another, because each was trained on a different, badly imbalanced problem.
 
 OvR is available as `OneVsRestClassifier`. Knowing the distinction matters more
 than choosing between them here: several algorithms you will meet are binary
@@ -197,7 +206,9 @@ scores would be tuning without admitting it.
 ### Common mistakes
 
 * **Thinking "regression" means it predicts numbers.** It predicts classes; the
-  regression happens on the log-odds.
+  weighted sum it computes is a *log-odds* — the logarithm of "how many times
+  more likely this class is than the alternatives" — and that quantity, not the
+  label, is what the model is linear in.
 * **Reading `C` backwards.** Larger `C` means *less* regularisation.
 * **Skipping the scaler and then blaming the algorithm.** Unscaled features make
   the solver crawl and hit `max_iter`; the resulting `ConvergenceWarning` is a
@@ -230,9 +241,10 @@ regression cannot — and means it can never justify an answer beyond "the
 neighbours voted this way".
 
 The cost profile is inverted compared with every other model here: fitting is
-instant, prediction is O(rows x features) per query, and the "model" that must
-be shipped is the entire training set (1,760 rows x 7 features here, and the
-labels).
+instant, while every single prediction has to touch every stored row and every
+column — 1,760 x 7 arithmetic operations per query here, growing in proportion
+to the training set — and the "model" that must be shipped is the entire
+training set (1,760 rows x 7 features, and the labels).
 
 ### The effect of `k`
 
@@ -248,7 +260,8 @@ overfitting/underfitting axis you will meet:
   outvoted and the boundary smooths.
 * **very large `k`** — the neighbourhood grows until it spans most of the data
   and every query returns the overall majority class. That is precisely the Week
-  4 baseline, reached from the other direction. Maximum bias.
+  4 baseline, reached from the other direction. Maximum bias: the model barely
+  changes whatever the data says, because it has stopped listening to it.
 
 The notebook's sweep on this dataset shows the curve flat and high for small `k`
 and falling away as `k` grows:
@@ -400,12 +413,14 @@ being asked.
 
 * **Standardisation does not affect it.** A per-column linear rescale moves every
   class's mean and variance for that column identically, so predictions are
-  unchanged — verified on this dataset: raw and standardised features give
-  identical predictions for all 1,760 rows. (The invariance is exact only up to
-  `var_smoothing`, which scikit-learn scales by the *largest* feature variance
-  in the data, so an extreme rescale of one column can still nudge a handful of
-  rows.) The preprocessor stays in front of it only so all three models receive
-  identical inputs.
+  unchanged — verified on this dataset in
+  [validation.md Step 4](validation.md#scaling-changes-knns-answers-and-not-naive-bayes),
+  where raw and standardised features give identical predictions for all 1,760
+  rows. (The invariance is exact only up to `var_smoothing`, which scikit-learn
+  scales by the *largest* feature variance in the data, so an extreme rescale of
+  one column can still nudge a handful of rows: multiplying `K` by 1,000 moves
+  7 of the 1,760, which is exercise B8.) The preprocessor stays in front of it
+  only so all three models receive identical inputs.
 * **Trust its predictions more than its probabilities.** If you need calibrated
   confidence — "recommend a crop only above 90% certainty" — this is the wrong
   model, or it needs a calibration step.
@@ -557,8 +572,9 @@ Design decisions worth noticing:
   weighting or a negative `var_smoothing` raise `ValueError` immediately, rather
   than surfacing as an obscure failure inside `fit`.
 * **`max_iter` defaults to 1,000, not scikit-learn's 100**, which is the one
-  place the project overrides a library default; 100 does not converge on 22
-  classes here.
+  place the project overrides a library default. It is headroom rather than a
+  necessity: behind the preprocessor the solver finishes in about 50 iterations,
+  but on unscaled features it exhausts any budget it is given.
 * **`CLASSICAL_MODEL_FACTORIES`** maps names to factories so the notebook can
   loop over the candidates instead of repeating itself, and so Weeks 6-8 can add
   entries rather than rewrite the loop.
