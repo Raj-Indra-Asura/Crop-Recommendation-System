@@ -88,6 +88,12 @@ Pipeline([
 ])
 ```
 
+That is the shape of what `build_training_pipeline()` returns in
+`src/pipelines/training_pipeline.py`. The real function looks the model up by
+name (`FINAL_MODEL_NAME`) instead of calling `get_naive_bayes` directly, so
+changing the model is a config edit rather than a code edit — §5 — but the
+object it builds is exactly the two steps above.
+
 A `Pipeline` is itself an estimator. Calling `fit(X, y)` fits the preprocessor
 on `X`, transforms `X`, and fits the model on the result. Calling `predict(X)`
 applies the **already-fitted** preprocessor and then the model. Two steps, one
@@ -115,11 +121,22 @@ code forgot, and the model quietly returns nonsense with high confidence.
 Naming the steps (`"preprocess"`, `"model"`) rather than relying on their
 position is what makes `pipeline.named_steps["model"]` readable, and what let
 Week 8's searches address `model__var_smoothing` — the `step__parameter`
-convention.
+convention. The same trick works one level down: the preprocess step is a
+`ColumnTransformer`, and the scaler inside it is
+`pipeline.named_steps["preprocess"].named_transformers_["numeric"]`, because
+Week 3 named that branch `"numeric"` too.
 
 ---
 
 ## §3 — Serialization: what `joblib` saves, and what it does not
+
+**Serialization** is turning a live Python object into a stream of bytes that a
+later process can turn back into an equivalent object. Python's built-in format
+for this is called **pickle**, and the two directions have names: *pickling* is
+writing, *unpickling* is reading. `joblib` is pickle with a faster path for
+large NumPy arrays, which is why scikit-learn's own documentation recommends it
+for fitted estimators. Nothing here is specific to machine learning — a fitted
+pipeline is just a Python object with a lot of numbers in it.
 
 ```python
 import joblib
@@ -128,12 +145,16 @@ joblib.dump(pipeline, "models/crop_model.joblib")   # write
 pipeline = joblib.load("models/crop_model.joblib")  # read
 ```
 
-`joblib` is pickle with a faster path for large NumPy arrays. `dump` walks the
-object graph and writes out, for our pipeline:
+Two calls, and that is the whole API this week needs: `dump` takes the object
+and a destination, `load` takes a path and gives the object back. `dump` walks
+the object graph — the pipeline, the two steps inside it, and every array they
+hold — and writes out, for our pipeline:
 
-* the **learned parameters** — `StandardScaler`'s seven means and seven scales,
-  `GaussianNB`'s per-class means, variances and priors (22 classes x 7 features
-  x 2, plus 22 priors);
+* the **learned parameters** — `StandardScaler`'s seven means and seven scales
+  (`mean_`, `scale_`), `GaussianNB`'s per-class means, variances and priors
+  (`theta_`, `var_`, `class_prior_`: 22 classes x 7 features x 2, plus 22
+  priors). The trailing underscore is scikit-learn's mark for "learned during
+  `fit`", from Week 5;
 * the **hyperparameters** — `var_smoothing=1e-9`, the column list, the step
   names;
 * **references to the classes** by import path: "this is a
@@ -179,8 +200,11 @@ being able to *rebuild* it, and that needs four things fixed:
 
 "Works on my machine" is the failure of item 4, and it is not a joke about
 sloppiness — it is a genuine problem. The same code, the same seed and the same
-data can produce different numbers under a different BLAS build, a different
-NumPy version or a different Python. Pinning does not make that impossible; it
+data can produce different numbers under a different NumPy version, a different
+Python, or even a different **BLAS** build — BLAS being the low-level linear
+algebra library NumPy delegates its arithmetic to, and which may sum a column of
+floats in a different order on a different machine. Pinning does not make that
+impossible; it
 makes it *diagnosable*, because the environment is written down and can be
 compared.
 
@@ -245,8 +269,10 @@ truth that can silently disagree with the code.
 
 **The consequence, and the design it forces.** In a fresh clone there is no
 model file. If `predict()` simply raised `FileNotFoundError`, then the tests,
-next week's API and CI would all fail on a clean checkout until somebody
-remembered to run the trainer. So `load_pipeline()` trains one on demand:
+next week's API and CI — *continuous integration*, the automated test run a
+service like GitHub Actions performs on every push — would all fail on a clean
+checkout until somebody remembered to run the trainer. So `load_pipeline()`
+trains one on demand:
 
 ```python
 if not path.is_file():
@@ -272,7 +298,8 @@ python -m src.pipelines.training_pipeline
 
 `python -m` runs a module *as a script* with the repository root on `sys.path`,
 which is why `import src.config` works without installing the project. The
-script's shape is the whole course in eight lines:
+script's shape is the whole course in six calls (a sketch of `main()`, not
+literal code):
 
 ```
 load_data()                  # Week 1 — read and validate
@@ -287,9 +314,30 @@ It prints what it did — the model and its hyperparameters, the split sizes,
 accuracy, macro and weighted F1, and the path written — because a training run
 that reports nothing cannot be trusted by whoever finds the file later.
 
+Two flags exist for the cases where the defaults are wrong:
+
+```bash
+python -m src.pipelines.training_pipeline --model-path /tmp/scratch.joblib
+python -m src.pipelines.training_pipeline --model-name random_forest
+```
+
+`--model-path` writes somewhere other than `MODEL_PATH`; `--model-name` picks a
+different model from the registry the script merges out of Weeks 5-7
+(`naive_bayes`, `decision_tree`, `random_forest`, …). Passing a name that is not
+in the registry fails immediately, listing the ones that are. Note that
+`--model-name` also drops `FINAL_MODEL_PARAMS`, because `var_smoothing` means
+nothing to a random forest; the flag is for experiments, and `src.config` is
+still where a *decision* is recorded.
+
 `train_pipeline()` is the importable version of the same thing, and it takes the
-data as an argument. That is what lets the tests train on 220 sampled rows in
-about a second while the script trains on all 2,200.
+data as an argument. That is what lets `tests/test_training_pipeline.py` train
+on 220 sampled rows in about a second while the script trains on all 2,200. It
+returns a dictionary rather than printing: `"pipeline"` (the fitted object),
+`"metrics"` (the Week 4 evaluation dictionary, so
+`result["metrics"]["accuracy"]` is the held-out score), `"model_path"`,
+`"n_train"`, `"n_test"`, `"model_name"` and `"model_params"`. `main()` is only a
+formatter for those seven keys, which is why a caller never has to parse
+printed output.
 
 ### 7.2 Prediction
 
@@ -312,7 +360,12 @@ Three things happen before the model sees anything:
 3. **Loading.** The artifact is loaded, or trained first if absent (§6). A caller
    making many predictions passes `pipeline=` to load once.
 
-`predict_proba()` returns all 22 probabilities, sorted. For the input above:
+That seven-key dictionary is exported from the module as `EXAMPLE_INPUT`, so
+the demo, the docs and the tests all quote one copy of it rather than four:
+`predict(EXAMPLE_INPUT)` is the same call as the one above.
+
+`predict_proba()` returns all 22 probabilities, sorted, or the best `top_k` of
+them if you ask for a number. For the input above:
 `jute 0.7253`, `rice 0.2747`, everything else effectively zero. Week 8's
 `rice -> jute` confusion pair, met in the confusion matrix, is now something you
 can see at the point of use — and it is exactly the material for the
@@ -327,7 +380,8 @@ probabilities rather than the single word.
 
 ## §8 — What the tests are actually checking
 
-Two files, 32 tests, and neither of them tries to prove the model is good — that
+Two files, 32 tests — 15 for training and 17 for prediction — and neither of
+them tries to prove the model is good — that
 was Week 8's job.
 
 `tests/test_training_pipeline.py` checks that the *script* behaves like a
@@ -346,7 +400,11 @@ fact that key order in the request does not matter, and the agreement between
 Every test writes into `tmp_path`. A test suite that overwrites
 `models/crop_model.joblib` would be a test suite with a side effect on the
 developer's working copy, and side effects are what this whole week is about
-removing.
+removing. The two files pay different prices for that: the training tests fit on
+a 220-row stratified sample (10 rows per crop) passed in as `frame=`, while the
+prediction tests need a *realistic* model to make "is the answer one of the 22
+crops" meaningful, so their fixture trains once per module on the full 2,200
+rows — into `tmp_path_factory`, still never into `models/`.
 
 ---
 
@@ -359,7 +417,10 @@ The honest list, in the order the industry usually hits it:
 * **No versioning.** One filename, overwritten in place. Nothing records which
   data, which commit or which library versions produced the file sitting in
   `models/` right now. A production system writes that metadata beside the
-  artifact, or uses a model registry.
+  artifact, or uses a **model registry** — a service that stores every trained
+  model under a version number together with its metrics, its inputs and its
+  stage (staging, production, archived), so a deployment can name a version
+  rather than a file path, and roll back to the previous one.
 * **No monitoring.** Nothing notices if next season's soil measurements drift
   away from the 2,200 rows this model was fitted on. The model will keep
   answering confidently regardless.
