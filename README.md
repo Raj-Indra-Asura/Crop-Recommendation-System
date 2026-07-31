@@ -117,6 +117,28 @@ demand when it is missing, and a clean clone works with no extra step. That
 example input also shows Week 8's `rice -> jute` confusion pair at the point of
 use: `jute` at 0.7253 with `rice` second at 0.2747.
 
+Week 10 puts HTTP and a form in front of that function. The API is a FastAPI
+app; the UI is a Streamlit demo, and each runs on its own:
+
+```bash
+uvicorn api.main:app --host 127.0.0.1 --port 8000   # then open /docs
+streamlit run app/streamlit_app.py                  # the demo form, on :8501
+```
+
+```bash
+curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" \
+  -d '{"N":90,"P":42,"K":43,"temperature":25,"humidity":80,"ph":6.5,"rainfall":200}'
+# {"crop":"jute","confidence":0.7253,"probabilities":{"jute":0.7253,"rice":0.2747,...}}
+```
+
+Seven typed, range-checked fields in `api/schemas.py` mean a malformed request
+gets a **422** naming the offending field, while an internal failure gets a
+**500** whose traceback stays in the server log. The Streamlit app calls
+`predict()` **in-process** rather than calling the API over HTTP — the reasoning
+is in [`docs/architecture.md`](docs/architecture.md), which also draws the
+request flow. There is still no container, no authentication and no public
+address: that is Week 12.
+
 If `data/raw/Crop_recommendation.csv` is ever missing, `load_data()` fails with
 a message naming the file and where to obtain it. Restore the committed file —
 never substitute randomly generated data, or every later week's results are
@@ -135,6 +157,9 @@ silently invalidated.
 | `data/processed/` | Anything derived from the raw data — from Week 3, the train/test splits |
 | `src/` | Reusable, tested implementation code |
 | `src/pipelines/` | Runnable entry points — train the model, predict from it (Week 9) |
+| `api/` | The FastAPI service — schemas and endpoints (Week 10) |
+| `app/` | The Streamlit demo UI (Week 10) |
+| `docs/architecture.md` | How a request flows: UI/client -> API -> pipeline -> model |
 | `notebooks/` | Exploratory analysis, importing from `src/` |
 | `models/` | Trained artifacts — generated on demand, never committed |
 | `tests/` | Automated test suite |
@@ -159,7 +184,7 @@ Filled in one row per week as the course proceeds.
 | 07 — Ensemble models | ✅ Complete | Random forest (**99.26%**) and gradient boosting (**99.09%**, XGBoost with an automatic `GradientBoostingClassifier` fallback) added to the same comparison; bagging vs boosting shown mechanically and `feature_importances_` plotted with its limitations; helpers in `src/models/ensemble_models.py`, 292 tests passing. [Docs](docs/curriculum/week07/) |
 | 08 — Model evaluation & explainability | ✅ Complete | Held-out test set opened once — **99.55%** for both finalists; grid and randomised search, confusion matrices and error analysis of the 2 wrong rows, permutation importance with its correlation trap, and SHAP (optional `shap==0.46.0`, with a documented fallback) explaining one prediction; helpers in `src/evaluation/tuning.py` and `src/evaluation/explainability.py`, 345 tests passing. [Docs](docs/curriculum/week08/) |
 | 09 — Productionizing the model | ✅ Complete | Notebook experiments turned into runnable code: `python -m src.pipelines.training_pipeline` fits the Week 3 preprocessing plus the Week 8 model as one `Pipeline` (**99.55%**, unchanged) and saves it to the git-ignored `models/crop_model.joblib`; `predict({...})` reloads it — training one on demand if a clean clone has none — and returns a crop label; paths, seed and chosen hyperparameters consolidated in `src/config.py`, 377 tests passing. [Docs](docs/curriculum/week09/) |
-| 10 — Serving an API | ⬜ Not started | |
+| 10 — Serving an API | ✅ Complete | `POST /predict` and `GET /health` on FastAPI, with Pydantic validating the seven fields (**422** on a bad request, **500** on an internal failure) and interactive docs at `/docs`; a Streamlit demo form calling `predict()` in-process, so it runs with or without the API; request flow written down in [`docs/architecture.md`](docs/architecture.md), 404 tests passing. [Docs](docs/curriculum/week10/) |
 | 11 — Streamlit application | ⬜ Not started | |
 | 12 — Containerisation, CI & deployment | ⬜ Not started | |
 
@@ -283,6 +308,22 @@ Filled in one row per week as the course proceeds.
 | `validation.md` commands actually run, real output pasted | ✅ |
 | Trained artifact rebuilt on demand, never committed | ✅ `.gitignore` line 20; `load_pipeline()` trains when absent |
 | `src/` is notebook-independent | ✅ every module imports without a kernel; no notebook-only logic left |
+
+### Week 10 Definition of Done
+
+| Requirement | Status |
+| --- | --- |
+| `docs/curriculum/week10/{syllabus,learning_notes,exercises,validation}.md` exist | ✅ |
+| New code has docstrings and passes lint (`ruff check .`) | ✅ |
+| New behaviour has tests and `pytest` passes | ✅ 404 passed, 1 skipped (377 + 27) |
+| `requirements.txt` updated, every dependency pinned | ✅ `fastapi==0.115.6`, `pydantic==2.10.4`, `uvicorn==0.34.0`, `streamlit==1.41.1`, `httpx==0.28.1` |
+| README progress table updated | ✅ |
+| `docs/ml_concepts.md` has an entry per new concept | ✅ |
+| `validation.md` commands actually run, real output pasted | ✅ servers backgrounded, output captured, processes killed |
+| `docs/architecture.md` records the request flow | ✅ UI/client -> API -> pipeline -> model |
+| Valid payload returns 200 with a crop label; invalid returns 422 | ✅ `tests/test_api.py`, and by `curl` in `validation.md` |
+| API and UI depend only on `src/pipelines/predict_pipeline.py` | ✅ `api/` never imports `app/`, `app/` never imports `api/` |
+| Streamlit runs without the API running | ✅ in-process `predict()` call, decision recorded in the notes |
 
 ---
 

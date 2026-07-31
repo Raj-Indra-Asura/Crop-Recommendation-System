@@ -9,13 +9,27 @@ it was introduced — *(W1)* Week 1, *(W2)* Week 2, and so on.
 
 ---
 
+**422 vs 500** *(W10)* — *You sent something invalid* vs *we failed*. A 422 names
+the offending field and is fixed by sending a different request; a 500 means the
+request was fine, the traceback belongs in the server log and not in the
+response body, and retrying identically will not help.
+
 **Accuracy** *(W4)* — The share of predictions that were correct. A fair
 headline metric when the classes are balanced and every mistake costs the same,
 as here — but never a complete one, because it cannot show *which* classes fail.
 
+**API** *(W10)* — Application Programming Interface: the set of things one piece
+of software promises another it can do, plus the exact way to ask. `predict()`
+is an API; a *web* API is the same promise made reachable over a network, so the
+caller need not share a language, a library or a machine.
+
 **Artificial intelligence** *(W1)* — The broad field of building software that
 performs tasks we would call intelligent. Machine learning is one family of
 techniques within it; deep learning is one family within machine learning.
+
+**ASGI** *(W10)* — The asynchronous interface between a Python web framework and
+the server that runs it. FastAPI builds an ASGI application object; `uvicorn` is
+the process that listens on a port and calls it — hence `uvicorn api.main:app`.
 
 **Axis-aligned split** *(W6)* — A decision tree's only kind of cut: a threshold
 on one feature, so its regions are rectangles with horizontal and vertical
@@ -229,6 +243,11 @@ plausible-looking but wrong result later.
 missed, and a non-member it wrongly claimed. Misses damage recall, false alarms
 damage precision.
 
+**FastAPI** *(W10)* — The web framework used to serve the model. Its central
+trick is that a type hint *is* the validation: from one Pydantic model it
+generates request parsing, per-field error messages and the interactive `/docs`
+page, so the documentation cannot drift from the behaviour.
+
 **Feature** *(W1)* — One input variable used to make a prediction. This project
 has seven: `N`, `P`, `K`, `temperature`, `humidity`, `ph`, `rainfall`.
 
@@ -299,8 +318,17 @@ rows. Cost is the product of the list lengths times the number of folds — 24
 candidates and 120 fits for this project's forest grid. Wrapped by
 `tune_model(..., search="grid")`.
 
+**Health endpoint** *(W10)* — A cheap `GET` that reports whether the service can
+actually serve — here, whether a model is loaded — rather than merely whether a
+process is alive. It takes no dependencies, because it is asked precisely when
+something is broken.
+
 **Histogram** *(W2)* — A plot of a distribution: the feature's range is split
 into equal-width bins and each bar counts the rows falling inside one.
+
+**HTTP status code** *(W10)* — The three-digit verdict on a request. Read the
+first digit: 2xx worked, 3xx look elsewhere, 4xx the client was wrong (422), 5xx
+the server was wrong (500, 503). The class says who has to act.
 
 **Hyperparameter** *(W5, W8)* — A setting chosen *before* fitting that controls
 how the fitting happens (`max_depth`, `n_estimators`, `var_smoothing`), as
@@ -322,6 +350,10 @@ with its target. Also called a sample, observation or row.
 
 **Interquartile range (IQR)** *(W2)* — `Q3 - Q1`: the width of the middle half
 of the data. The basis of the boxplot box and of the 1.5 IQR outlier rule.
+
+**JSON** *(W10)* — The text format requests and responses are written in. Every
+language can read it, which is the point; it has no tuples, no `NaN` and no NumPy
+types, so values must be converted before they are serialised.
 
 **k-nearest neighbours (KNN)** *(W5)* — A classifier that stores the training
 rows and predicts by majority vote among the `k` closest of them. Small `k`
@@ -438,6 +470,11 @@ The output of an arithmetic rule, **not** a verdict that the value is wrong: it
 may be a data error, a legitimate rare case, or — as in this dataset — ordinary
 class structure showing through.
 
+**Out-of-distribution input** *(W10)* — A request whose every field is inside its
+allowed range but whose *combination* appears nowhere in the training data. A
+classifier over 22 crops has no way to say "none of these", so it answers anyway
+— often with near-perfect confidence.
+
 **Overfitting** *(W1)* — When a model learns the training examples and their
 noise instead of the pattern behind them: strong on training data, weak on
 unseen data. Its opposite, underfitting, is being too simple to capture the
@@ -483,6 +520,11 @@ naive Bayes' are systematically overconfident.
 splitting or transformation. Written to `data/processed/`; never written back
 over the raw data.
 
+**Pydantic** *(W10)* — The validation library behind FastAPI. A Pydantic model
+declares each field's type and constraints (`ge`, `le`, required,
+`extra="forbid"`), and rejects anything that does not fit before a single line of
+handler code runs.
+
 **Quartile** *(W2)* — The 25th, 50th and 75th percentiles, which cut a column
 into four equal-sized parts.
 
@@ -520,6 +562,10 @@ an SVM's `C` (W6) plays the same role for the soft margin.
 **Reproducibility** *(W1)* — The property that the same code and data yield the
 same results for any person at any time. The reason this project commits its
 dataset and pins its dependency versions.
+
+**REST** *(W10)* — A style for web APIs rather than a standard: resources have
+paths, HTTP methods are used for what they mean, and every request carries
+everything needed to answer it, so any replica can serve any request.
 
 **Sanity check (smoke test)** *(W4)* — A cheap end-to-end run whose only job is
 to prove the plumbing works. Fitting a baseline is the cheapest one available:
@@ -570,6 +616,11 @@ mean, expressed in the column's own units. Its square is the variance.
 deviation 1. A linear transformation: it does not remove skew, outliers or
 ordering. Implemented by `StandardScaler`.
 
+**Statelessness** *(W10)* — The property that a server keeps no memory of a caller
+between requests. It is what makes horizontal scaling possible, and it is why a
+model held in memory (server state) is not a violation while a remembered user
+(client state) would be.
+
 **Stratified split** *(W3)* — A train/test split drawn within each class, so
 class proportions are preserved on both sides. On this dataset it gives every
 crop exactly 80 training and 20 test rows; an unstratified split of the same data
@@ -579,6 +630,11 @@ ranges from 11 to 27 test rows per crop.
 within each class, so every class appears in every fold in the same proportion.
 Built here by `build_cv()` in `src/evaluation/metrics.py` with
 `n_splits=5, shuffle=True, random_state=42`.
+
+**Streamlit** *(W10)* — A library that renders a Python script as a web page, used
+here for the demo UI. Explicitly *not* a production frontend: it re-runs the
+whole script on every interaction, keeps session state in server memory, and
+ships with no authentication.
 
 **Supervised learning** *(W1)* — Learning from examples in which the correct
 answer is provided alongside each input.
@@ -607,6 +663,11 @@ the `label` column.
 used, ideally once, to estimate performance on unseen data. Implemented in
 Week 3.
 
+**`TestClient`** *(W10)* — FastAPI's in-process test driver. It exercises the full
+request/response cycle — routing, validation, status codes — without opening a
+port or starting a server, which is why `tests/test_api.py` runs in under two
+seconds.
+
 **Train-only fitting** *(W2)* — The rule that any preprocessing step is fitted
 on the training set alone and then applied to the test set. Stated in Week 2,
 enforced from Week 3 onward; breaking it causes data leakage.
@@ -628,6 +689,10 @@ rather than reimplementing preparation on the server.
 
 **Unsupervised learning** *(W1)* — Learning patterns or structure from data
 where no correct answers are supplied.
+
+**Uvicorn** *(W10)* — The ASGI server that listens on a TCP port and speaks HTTP,
+calling the FastAPI application for each request. The framework and the server
+are different things; only the server has a port.
 
 **Validation set** *(W4)* — Data held out from training and used to *choose*
 between models or hyperparameters, as often as needed. Distinct from the test
