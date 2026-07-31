@@ -71,6 +71,12 @@ naive Bayes reaches **99.49%**, logistic regression 96.82% and KNN (`k = 5`)
 96.53% — all untuned defaults, and all training-set cross-validation, with
 `data/processed/test.csv` still unopened until Week 8.
 
+Week 6 adds a support vector machine (**97.90%** with an RBF kernel, 98.18%
+linear) and a decision tree (**98.52%**), so naive Bayes still leads. Its real
+lesson is the tree-depth sweep: an unlimited tree reaches depth 17 and a perfect
+100% on the rows it was fitted on while validation accuracy stops at 98.52% —
+overfitting made visible rather than merely defined.
+
 If `data/raw/Crop_recommendation.csv` is ever missing, `load_data()` fails with
 a message naming the file and where to obtain it. Restore the committed file —
 never substitute randomly generated data, or every later week's results are
@@ -108,7 +114,7 @@ Filled in one row per week as the course proceeds.
 | 03 — Data preparation | ✅ Complete | Label encoding, stratified 80/20 split and a train-fitted `ColumnTransformer`; helpers in `src/data/split.py` and `src/preprocessing/preprocessor.py`, 74 tests passing. [Docs](docs/curriculum/week03/) |
 | 04 — Baseline models | ✅ Complete | `DummyClassifier` baseline at **4.55%** (1/22) under 5-fold stratified CV; helpers in `src/models/baseline.py` and `src/evaluation/metrics.py`, 112 tests passing. [Docs](docs/curriculum/week04/) |
 | 05 — Classification models | ✅ Complete | Logistic regression, KNN and Gaussian naive Bayes compared on identical folds; best so far **99.49%** (naive Bayes) against the 4.55% baseline; helpers in `src/models/classical_models.py`, 169 tests passing. [Docs](docs/curriculum/week05/) |
-| 06 — Model selection & tuning | ⬜ Not started | |
+| 06 — Margin-based & tree-based models | ✅ Complete | SVM and decision trees added to the same comparison; overfitting shown directly with a tree-depth sweep (100% train vs 98.52% validation) and decision boundaries drawn on two features; helpers in `src/models/classical_models.py` and `src/utils/visualization.py`, 231 tests passing. [Docs](docs/curriculum/week06/) |
 | 07 — Model explainability | ⬜ Not started | |
 | 08 — Pipelines | ⬜ Not started | |
 | 09 — Testing & packaging | ⬜ Not started | |
@@ -180,6 +186,19 @@ Filled in one row per week as the course proceeds.
 | `docs/ml_concepts.md` has an entry per new concept | ✅ |
 | `validation.md` commands actually run, real output pasted | ✅ |
 | `notebooks/05_classification_models.ipynb` committed with executed output | ✅ |
+
+### Week 6 Definition of Done
+
+| Requirement | Status |
+| --- | --- |
+| `docs/curriculum/week06/{syllabus,learning_notes,exercises,validation}.md` exist | ✅ |
+| New code has docstrings and passes lint (`ruff check .`) | ✅ |
+| New behaviour has tests and `pytest` passes | ✅ 231 passed (20 + 22 + 32 + 38 + 119) |
+| `requirements.txt` updated, every dependency pinned | ✅ no change — `scikit-learn`/`matplotlib` pinned in Week 1 |
+| README progress table updated | ✅ |
+| `docs/ml_concepts.md` has an entry per new concept | ✅ |
+| `validation.md` commands actually run, real output pasted | ✅ |
+| `notebooks/05_classification_models.ipynb` Part 2 committed with executed output | ✅ |
 
 ---
 

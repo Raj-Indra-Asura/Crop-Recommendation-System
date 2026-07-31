@@ -17,6 +17,10 @@ as here — but never a complete one, because it cannot show *which* classes fai
 performs tasks we would call intelligent. Machine learning is one family of
 techniques within it; deep learning is one family within machine learning.
 
+**Axis-aligned split** *(W6)* — A decision tree's only kind of cut: a threshold
+on one feature, so its regions are rectangles with horizontal and vertical
+edges. A diagonal boundary can only be approximated by a staircase.
+
 **Baseline model** *(W4)* — A deliberately unintelligent model, fitted and
 scored exactly like a real candidate but ignoring the features entirely. Its
 score is the floor: a model that fails to beat it has learned nothing from the
@@ -26,6 +30,16 @@ features. This project's baseline is 4.55% (`1/22`).
 produce a fixed artifact, which is then deployed and periodically retrained.
 Contrast with online learning, where the model updates continuously as data
 arrives.
+
+**Bias (model bias)** *(W6)* — Error caused by a model being too simple to
+represent the truth. A depth-1 decision tree has high bias: on this dataset it
+scores 9.09% on the training rows and 9.09% on held-out rows alike. High bias
+shows up as two curves that are low *and together*.
+
+**Bias-variance tradeoff** *(W6)* — The observation that total error is roughly
+bias plus variance, and that every dial controlling how flexible a model is —
+`max_depth`, `min_samples_leaf`, `k`, `C` — trades one for the other. Week 6
+plots it with tree depth.
 
 **Bin** *(W2)* — One slice of a histogram's range. Too few bins hide structure
 (separate peaks merge); too many turn every bar into noise.
@@ -112,7 +126,16 @@ when loaded data violates the dataset contract. Subclasses `ValueError`.
 
 **Decision boundary** *(W5)* — The surface in feature space where a model
 switches from predicting one class to another. Logistic regression's is always
-flat (linear); KNN's takes whatever shape the training rows imply.
+flat (linear); KNN's takes whatever shape the training rows imply; an RBF SVM's
+curves; a decision tree's is made of rectangles. Week 6 draws all three by
+classifying a fine grid of points over two features
+(`src/utils/visualization.py`).
+
+**Decision tree** *(W6)* — A classifier made of `feature <= threshold`
+questions chosen greedily, each split picked to leave the two sides as pure as
+possible. Readable, scale-invariant, and the model in this project most eager to
+overfit: grown without limit it reaches depth 17, 38 leaves and a perfect,
+worthless 100% training accuracy.
 
 **Deep learning** *(W1)* — Machine learning using many-layered neural networks.
 Not used in this project: with 2,200 rows and seven numeric features, classical
@@ -132,6 +155,10 @@ often.
 **`DummyClassifier`** *(W4)* — scikit-learn's baseline estimator. `fit` looks
 only at `y`; `predict` answers from the recorded label distribution using a
 chosen strategy (`most_frequent`, `prior`, `stratified`, `uniform`, `constant`).
+
+**Entropy (split criterion)** *(W6)* — A measure of node impurity: the number
+of bits needed to encode the node's labels. Zero for a single class, largest
+when classes are evenly mixed. Interchangeable with Gini impurity in practice.
 
 **Evaluation protocol** *(W4)* — The metric, the fitting/scoring procedure and
 the reference point, all fixed *before* any model is trained, so the judgement
@@ -185,9 +212,19 @@ feature per class (308 numbers here). The best of Week 5's models at 99.49%.
 training. The actual goal of machine learning, as opposed to reproducing the
 training data.
 
+**Generalisation gap** *(W6)* — Training accuracy minus validation accuracy.
+For the unlimited decision tree here it is 100% - 98.52% = 1.5 points, and that
+gap is precisely the part of the training score that does not survive contact
+with unseen rows.
+
 **Generative model** *(W5)* — A model of `P(features | class)`: it describes how
 each class's data arises and derives the classification from that. Naive Bayes
 is generative.
+
+**Gini impurity** *(W6)* — The default split criterion for a decision tree: the
+chance of mislabelling a random row in a node if you guessed at the node's own
+class frequencies. Cheaper than entropy because it needs no logarithm, and it
+almost always chooses the same splits.
 
 **Histogram** *(W2)* — A plot of a distribution: the feature's range is split
 into equal-width bins and each bar counts the rows falling inside one.
@@ -206,6 +243,15 @@ of the data. The basis of the boxplot box and of the 1.5 IQR outlier rule.
 rows and predicts by majority vote among the `k` closest of them. Small `k`
 overfits, large `k` underfits towards the baseline, and every distance depends
 on the features' units — so it must be preceded by scaling.
+
+**Kernel** *(W6)* — A function measuring the similarity between two rows, equal
+to the inner product those rows would have in some higher-dimensional space. It
+lets an SVM draw a *curved* boundary by measuring similarity instead of
+positions.
+
+**Kernel trick** *(W6)* — The reason a kernel is cheap: because an SVM only ever
+needs inner products, it can fit a flat boundary in that higher-dimensional
+space without computing a single coordinate there.
 
 **Label** *(W1)* — The target value attached to an instance. Here, the crop
 name; also the literal name of the target column.
@@ -230,6 +276,15 @@ boundaries.
 **Machine learning** *(W1)* — Building software by supplying examples of the
 desired behaviour and letting an algorithm infer rules that reproduce them and
 generalise to unseen cases.
+
+**Margin** *(W6)* — The width of the empty corridor either side of an SVM's
+boundary. Maximising it is the SVM's entire objective, and a wide margin is a
+form of caution: a boundary in the middle of a wide corridor is not moved by one
+new point.
+
+**`max_depth`** *(W6)* — The maximum number of questions on any path from a
+tree's root to a leaf. The most direct control over overfitting in this project:
+shallow means high bias, unlimited means high variance.
 
 **Mean** *(W2)* — The arithmetic average of a column. Pulled around by extreme
 values, so it can differ sharply from the median in a skewed column.
@@ -278,7 +333,8 @@ class structure showing through.
 **Overfitting** *(W1)* — When a model learns the training examples and their
 noise instead of the pattern behind them: strong on training data, weak on
 unseen data. Its opposite, underfitting, is being too simple to capture the
-pattern at all.
+pattern at all. Week 6 makes both visible by plotting training and validation
+accuracy against decision-tree depth.
 
 **Pearson correlation** *(W2)* — The default correlation measure. It captures
 *linear* association only, so a coefficient of 0 means "no straight-line
@@ -322,8 +378,8 @@ a continuous scale, such as predicting yield in kilograms.
 
 **Regularisation strength (`C`)** *(W5)* — Logistic regression's *inverse*
 penalty on large weights. Small `C` shrinks the weights and simplifies the
-model; large `C` lets it fit the training data closely. Left at 1.0 until
-Week 6 tunes it.
+model; large `C` lets it fit the training data closely. Left at 1.0 throughout;
+an SVM's `C` (W6) plays the same role for the soft margin.
 
 **Reproducibility** *(W1)* — The property that the same code and data yield the
 same results for any person at any time. The reason this project commits its
@@ -346,6 +402,11 @@ values across columns and therefore need scaling.
 
 **Skewness** *(W2)* — How lopsided a distribution is. Positive means a long
 right tail, negative a long left tail, zero symmetric.
+
+**Soft margin** *(W6)* — The practical version of margin maximisation, in which
+rows are allowed inside the corridor or across the boundary at a price set by
+`C`. Small `C` buys a wider, smoother boundary by tolerating violations; large
+`C` narrows it around the training rows.
 
 **Softmax** *(W5)* — The function turning a vector of class scores into positive
 probabilities that sum to 1, by exponentiating each and dividing by the total.
@@ -371,6 +432,19 @@ Built here by `build_cv()` in `src/evaluation/metrics.py` with
 
 **Supervised learning** *(W1)* — Learning from examples in which the correct
 answer is provided alongside each input.
+
+**Support vector** *(W6)* — A training row sitting on the edge of an SVM's
+margin. Only these rows decide where the boundary goes; on this dataset 943 of
+the 1,760 training rows are support vectors at `C = 1`.
+
+**Support vector machine (SVM)** *(W6)* — A classifier that chooses, among all
+boundaries separating the classes, the one with the widest margin. Works in
+distances, so it needs scaled features; reaches 97.90% here with an RBF kernel
+and 98.18% with a linear one.
+
+**Support-vector count as a diagnostic** *(W6)* — The number of support vectors
+falls as `C` rises (1,760 at `C = 0.01`, 612 at `C = 100`), which makes the
+margin narrowing visible without plotting anything.
 
 **Target** *(W1)* — The value a model is trained to predict. In this project,
 the `label` column.
@@ -405,6 +479,11 @@ where no correct answers are supplied.
 between models or hyperparameters, as often as needed. Distinct from the test
 set, which answers "how good is the final choice?" once, at the end.
 Cross-validation manufactures validation sets from the training data.
+
+**Variance (model variance)** *(W6)* — Error caused by a model being flexible
+enough to change a great deal when the training sample changes. An unlimited
+decision tree has high variance: fit it on a different 1,760 rows and its
+thresholds and leaves differ visibly.
 
 **Variance** *(W2)* — The square of the standard deviation: the average squared
 distance from the mean. Used by the mathematics; standard deviation is what

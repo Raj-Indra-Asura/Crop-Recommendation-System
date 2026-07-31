@@ -2,9 +2,15 @@
 
 from __future__ import annotations
 
+import matplotlib
 import pytest
 
-from src.data import RAW_DATA_PATH, load_data
+# A non-interactive backend, chosen here so it is in force before any test
+# module imports pyplot: the suite must run on machines with no display
+# attached (CI included).
+matplotlib.use("Agg")
+
+from src.data import RAW_DATA_PATH, load_data  # noqa: E402
 
 #: Skip marker applied to tests that need the real, committed CSV.
 requires_raw_dataset = pytest.mark.skipif(

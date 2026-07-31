@@ -503,7 +503,7 @@ And, in words — the student can now:
   — and when the reverse.
 
 The student cannot yet tune hyperparameters systematically or use ensembles.
-Both are Week 6.
+Both are a later week.
 
 ---
 
