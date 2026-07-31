@@ -36,3 +36,10 @@ xgboost==2.1.3
 # install - see docs/curriculum/week08/learning_notes.md. The pin is the last
 # release that installs against the numpy/pandas/scikit-learn versions above.
 shap==0.46.0
+
+# --- Week 9: saving the trained pipeline to disk ---
+# joblib arrives anyway as a scikit-learn dependency; it is pinned explicitly
+# here because Week 9 calls it directly (`joblib.dump`/`joblib.load`), and an
+# artifact written by one version must be reloaded by a version that can read
+# it - see docs/curriculum/week09/learning_notes.md.
+joblib==1.5.3
