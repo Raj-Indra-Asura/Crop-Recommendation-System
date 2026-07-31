@@ -62,7 +62,7 @@ No new dependencies: `scikit-learn==1.6.1` was pinned in Week 1.
 | Softmax | Week 5 |
 | One-vs-rest (OvR) | Week 5 |
 | Linear decision boundary | Week 5 |
-| Regularisation strength `C` | Week 5 (named), Week 6 (tuned) |
+| Regularisation strength `C` | Week 5 (named), a later week (tuned) |
 | k-nearest neighbours | Week 5 |
 | Lazy (instance-based) learning | Week 5 |
 | Effect of `k` on the decision boundary | Week 5 |
@@ -72,7 +72,7 @@ No new dependencies: `scikit-learn==1.6.1` was pinned in Week 1.
 | Generative vs. discriminative models | Week 5 (brief) |
 | Fair model comparison (shared folds) | Week 5 |
 | Results table as a running record | Week 5 |
-| Underfitting and overfitting, seen in `k` | Week 5 (observed), Week 6 (treated) |
+| Underfitting and overfitting, seen in `k` | Week 5 (observed), a later week (treated) |
 
 Each also appears in [`docs/ml_concepts.md`](../../ml_concepts.md) and
 [`docs/glossary.md`](../../glossary.md).
@@ -138,11 +138,11 @@ standard it is judged by.
   `var_smoothing = 1e-9` are scikit-learn's defaults, not choices supported by
   evidence. The `k` sweep in the notebook is a demonstration of a curve, not a
   search, and nothing from it is adopted. Grid search, random search and
-  validation curves are **Week 6**.
+  validation curves are a later week.
 * **Use ensembles.** No random forest, no gradient boosting, no voting or
-  stacking classifier — **Week 6**.
+  stacking classifier — a later week.
 * Decide reliably between two models that are a fraction of a point apart;
-  repeated cross-validation and significance testing are **Week 6**.
+  repeated cross-validation and significance testing are a later week.
 * Say which features drive a prediction — **Week 7**.
 * Interpret precision, recall, F1 or a confusion matrix — **Week 8**.
 * Quote a test-set score. `data/processed/test.csv` stays unopened until Week 8.

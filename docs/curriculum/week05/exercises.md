@@ -192,7 +192,7 @@ Repeat the whole comparison with ten different cross-validation seeds
 (`cross_validated_accuracy(..., random_state=seed)`), collect the ten means per
 model, and plot the distributions. Does naive Bayes lead on all ten? Do logistic
 regression and KNN ever swap? Write the two-sentence conclusion you would be
-willing to defend — and note which parts of your procedure Week 6 will make
+willing to defend — and note which parts of your procedure a later week will make
 rigorous.
 
 **C5 — A calibration check.**
@@ -211,5 +211,5 @@ or `SGDClassifier` — and add it to the comparison *without* changing the
 protocol: same folds, same preprocessor, same metric. Where does it land? Then
 write the factory function you would add to
 `src/models/classical_models.py` for it, with the docstring it would need to
-match the module's style. (Do not commit it; Week 6 decides which models the
+match the module's style. (Do not commit it; a later week decides which models the
 project actually adopts.)

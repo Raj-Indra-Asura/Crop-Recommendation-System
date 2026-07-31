@@ -162,6 +162,34 @@ Taught in [`docs/curriculum/week05/learning_notes.md`](curriculum/week05/learnin
 
 ---
 
-## Week 6 onwards
+## Week 6 — Margin-based and tree-based models
+
+Taught in [`docs/curriculum/week06/learning_notes.md`](curriculum/week06/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **Support vector machine (SVM)** | A classifier that places the boundary where the empty corridor between the classes is widest. | §9 |
+| **Margin** | The width of that corridor; maximising it is the SVM's entire objective. | §9 |
+| **Support vectors** | The training rows on the edge of the margin — the only ones that decide where the boundary sits (943 of 1,760 here). | §9 |
+| **Soft margin / `C` for an SVM** | The price charged for a row inside or across the margin: small `C` buys a wider, smoother boundary, large `C` a tighter one. | §9 |
+| **Kernel** | A similarity function between two rows, equal to their inner product in a higher-dimensional space. | §9 |
+| **Kernel trick** | Fitting a flat boundary in that space without ever computing a coordinate there, so the boundary curves in the original features. | §9 |
+| **RBF kernel and `gamma`** | Similarity decaying with distance; `gamma` sets how fast, and therefore how wiggly the boundary may be. | §9 |
+| **Decision tree** | A chain of `feature <= threshold` questions, chosen greedily, ending in leaves that predict a class. | §10 |
+| **Node purity (Gini, entropy)** | How mixed a node's labels are: 0 for a single class, largest when evenly mixed. The split chosen is the one that reduces it most. | §10 |
+| **Information gain** | The drop in impurity a split buys, weighted by how many rows go each way. | §10 |
+| **`max_depth`, `min_samples_leaf`** | The two dials that stop a tree splitting, and therefore stop it memorising. | §10, §11 |
+| **Model capacity** | How much structure a model can express at all; the quantity every such dial adjusts. | §11 |
+| **Generalisation gap** | Training accuracy minus validation accuracy — 100% against 98.52% for the unlimited tree here. | §11 |
+| **Bias** | Error from a model too simple to represent the truth; a depth-1 tree scores 9.09% on training *and* validation rows. | §11 |
+| **Variance** | Error from a model so flexible that it changes a great deal when the training sample does. | §11 |
+| **Bias-variance tradeoff** | Total error as the sum of the two, with every complexity dial moving the model between them. | §11 |
+| **Decision boundary, drawn** | Classify a fine grid of points and colour the plane by the answers; the seams are the boundary. | §12 |
+| **Axis-aligned splits** | A tree can only cut parallel to the axes, so its regions are rectangles and diagonals become staircases. | §12 |
+| **Scale invariance of trees** | A threshold split selects the same rows however the column is rescaled, so trees need no scaler. | §10 |
+
+---
+
+## Week 7 onwards
 
 Not yet written.

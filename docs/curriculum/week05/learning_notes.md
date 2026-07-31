@@ -55,7 +55,7 @@ were built first and are shared by every candidate.
 
 ## 1. The training loop, named once and for all
 
-Every supervised model in scikit-learn — this week's three, Week 6's random
+Every supervised model in scikit-learn — this week's three, a later week's random
 forest, Week 9's saved artifact — is driven by two method calls:
 
 ```python
@@ -200,7 +200,7 @@ underneath, and the wrapper is how they reach a 22-class problem.
 
 It is left at the default 1.0 this week on principle: choosing it by trying
 values and keeping the best is a *search*, searches need a protocol, and that
-protocol is Week 6's subject. Adjusting it now by watching cross-validated
+protocol is a later week's subject. Adjusting it now by watching cross-validated
 scores would be tuning without admitting it.
 
 ### Common mistakes
@@ -280,7 +280,7 @@ and falling away as `k` grows:
 
 It is a *demonstration of a shape*, not a search: nothing from it is adopted,
 because "run several values and keep the winner" is a procedure with pitfalls
-(Week 6) rather than a free lunch.
+(a later week) rather than a free lunch.
 
 ### Why scaling matters most here
 
@@ -333,7 +333,7 @@ and why dimensionality reduction is usually its prerequisite there.
 * **Assuming odd `k` avoids ties.** It does for two classes; with 22 classes ties
   are perfectly possible and are broken by class order.
 * **Treating the `k` sweep as tuning.** Picking the best value off a curve you
-  also scored on is how Week 6's cautions get earned.
+  also scored on is how a later week's cautions get earned.
 
 ---
 
@@ -468,7 +468,7 @@ logistic regression, against spreads of 0.42 and 0.66, is a real difference by
 the same standard.
 
 Distinguishing genuinely close models — repeated cross-validation, paired tests
-over the same folds — is Week 6.
+over the same folds — is a later week.
 
 ### Keep the baseline in the table
 
@@ -620,11 +620,11 @@ drift away from the numbers.
 **Not produced, on purpose**
 
 * No tuned hyperparameter. `C = 1.0`, `k = 5`, `var_smoothing = 1e-9` are
-  defaults; the `k` sweep is a demonstration, not a search — **Week 6**.
+  defaults; the `k` sweep is a demonstration, not a search — a later week.
 * No ensemble: no random forest, gradient boosting, voting or stacking —
-  **Week 6**.
+  a later week.
 * No verdict on logistic regression versus KNN; their gap is smaller than the
-  noise — **Week 6**.
+  noise — a later week.
 * No statement about which features drive a prediction — **Week 7**.
 * No precision, recall, F1 or confusion matrix — **Week 8**.
 * No test-set score. `data/processed/test.csv` remains unopened.
