@@ -48,7 +48,7 @@ Weeks 1-7, in full. This week assumes and does **not** re-explain:
 * the dataset contract and the 22-crop label set
   ([Week 1 notes](../week01/learning_notes.md));
 * class separation and the **0.74 correlation between `P` and `K`**
-  ([Week 2 notes](../week02/learning_notes.md)) — §3 of the explainability
+  ([Week 2 notes](../week02/learning_notes.md)) — §2 of the explainability
   notebook is unreadable without it;
 * the stratified 80/20 split, `random_state=42`, and why
   `data/processed/test.csv` was sealed

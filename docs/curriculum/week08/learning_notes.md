@@ -33,7 +33,8 @@ another — and it is still incapable of answering any of these:
 * Is the error spread thinly over all 22 crops, or concentrated in one pair?
 
 Two models can share an accuracy of 99.55% and fail completely differently. On
-this test set they do: the tuned forest makes one `rice -> jute` error and one
+this test set they do: the tuned forest — the Week 7 random forest after the
+hyperparameter search of §5 — makes one `rice -> jute` error and one
 `blackgram -> maize` error; Gaussian naive Bayes makes two `rice -> jute` errors.
 Same headline, different failure mode, and the difference matters when choosing
 which to deploy.
@@ -108,11 +109,13 @@ For one class — say jute — the four possibilities are:
 The tension is real and it has a direction in this project. A model that
 recommends jute for every ambiguous field has high jute *recall* and poor jute
 *precision*, and the cost lands on farmers who planted jute on the advice.
-The classification report on the tuned forest shows exactly this shape:
+The classification report on the tuned forest — printed by `evaluate_model()`
+under `"report"`, one row per crop and four columns — shows exactly this shape:
 
 ```
-       jute       0.95      1.00      0.98        20
-       rice       1.00      0.95      0.97        20
+              precision    recall  f1-score   support
+        jute       0.95      1.00      0.98        20
+        rice       1.00      0.95      0.97        20
 ```
 
 Jute has perfect recall (all 20 real jute fields found) and 0.95 precision (it
@@ -194,9 +197,17 @@ from src.evaluation import tune_model
 result = tune_model(pipeline, {"model__max_depth": [None, 10, 20]}, X_train, y_train)
 result["best_params"]     # the winning settings
 result["best_score"]      # its mean over the 5 held-out folds
+result["best_std"]        # the fold-to-fold spread of that mean - the noise to beat
+result["best_estimator"]  # the winner, already refitted on all the training rows
 result["cv_results"]      # every candidate, sorted best first
+result["n_candidates"]    # how many settings were actually evaluated
 result["n_fits"]          # candidates x folds - the real cost
 ```
+
+Those seven keys are the ones this week's exercises use; the docstring in
+`src/evaluation/tuning.py` lists the rest (the scoring, the search strategy, the
+fold count and the elapsed time, all recorded so a result can never be quoted
+without its protocol).
 
 ### Grid vs randomised search
 
@@ -278,6 +289,11 @@ Applied here:
 | Errors | `rice -> jute`, `blackgram -> maize` | `rice -> jute` x 2 |
 | Tuning risk | 24 candidates tried, winner inside the noise | nothing to tune |
 
+Both fit times are measured by the searches themselves: the forest's winning
+candidate reports `mean_fit_time` 0.247 s in `cv_results`, and naive Bayes'
+twelve-candidate search finished all 60 fits in 0.52 s — about forty times
+cheaper per fit.
+
 > **Decision: Gaussian naive Bayes is the final model.** It ties on every
 > accuracy measure, costs ~40x less to fit and far less to serve, stores 308
 > numbers instead of a hundred trees, has no hyperparameter that changes its
@@ -333,9 +349,12 @@ was visibly unsure rather than confidently wrong.
    the mistakes in one or two of them. That is genuine class overlap, not a
    broken model.
 2. **The model reports its own uncertainty.** Both errors left the true crop as a
-   strong runner-up (0.32 and 0.25 for the forest, 0.16 and 0.26 for naive
-   Bayes). A deployment rule of "route anything whose runner-up exceeds 15% to a
-   human" would have caught every error on this test set.
+   strong runner-up: 0.32 and 0.25 for the forest, printed in notebook 06 §13,
+   and 0.16 for the naive Bayes row explained in notebook 07 §4 (its other error
+   leaves 0.26 on rice). A deployment rule of "route anything whose runner-up
+   exceeds 15% to a human" would therefore have caught every error on this test
+   set — Exercise 6 asks you to reproduce that, and to count how many *correct*
+   predictions the same rule would escalate.
 3. **Error pattern is a selection criterion.** It is the tie-breaker used in §6,
    and it is only available because the confusion matrix was read.
 
@@ -474,15 +493,24 @@ transforms the sample explicitly before handing it over.
 ## 10. `explain_prediction()`, and the documented fallback
 
 ```python
-from src.evaluation import explain_prediction
+from src.evaluation import EXPLAINER_BACKEND, SHAP_AVAILABLE, explain_prediction
+
+SHAP_AVAILABLE            # did `import shap` succeed in this environment?
+EXPLAINER_BACKEND         # 'shap' or 'permutation' - what method='auto' will pick
 
 result = explain_prediction(final_model, X_test.iloc[[378]], background=X_train.sample(100))
 result["prediction"]      # 'jute'
 result["probability"]     # 0.8354
 result["probabilities"]   # every class, largest first: jute 0.84, rice 0.16, ...
 result["contributions"]   # per-feature, largest absolute value first
+result["top_feature"]     # 'rainfall' - the first entry of that series
+result["base_value"]      # the SHAP base value; None for the fallback
 result["method"]          # 'shap' or 'permutation' - always recorded
 ```
+
+`final_model` here is the chosen pipeline — Week 3's preprocessor followed by
+`get_naive_bayes()`, fitted on the training rows — and `background` is a sample
+of those same training rows, which is what the explainer perturbs towards.
 
 Three pieces come back **together**, because none of them is an explanation on
 its own: what was predicted, how confident the model was and what the runners-up
@@ -558,7 +586,33 @@ Three properties make that usable:
 
 ---
 
-## 12. What this week does not license
+## 12. The code this week, and where every number above came from
+
+Nothing in these notes is a number someone typed from memory; each one is
+printed by a cell you can re-run.
+
+* `src/evaluation/tuning.py` — `tune_model()` (§5), tested by
+  `tests/test_tuning.py` (22 tests).
+* `src/evaluation/metrics.py` — `confusion_frame()` and the macro/weighted F1
+  and confusion matrix now returned by `evaluate_model()` (§2-§4).
+* `src/evaluation/explainability.py` — `permutation_feature_importance()` (§8),
+  `explain_prediction()` (§9-§11) and the `SHAP_AVAILABLE` /
+  `EXPLAINER_BACKEND` flags, tested by `tests/test_explainability.py`
+  (32 tests, one skipped depending on whether `shap` is installed). 346 in the
+  whole suite.
+* `notebooks/06_model_selection.ipynb`, **Part 2 (§8-§15)** — §9 the grid
+  search, §10 the randomised search, §11 the naive Bayes search that changed
+  nothing, §12 the test set opened once with both classification reports and
+  confusion matrices, §13 the error analysis, §14 the final-model decision, §15
+  the guard rails. Everything in §2-§7 above is printed there.
+* `notebooks/07_model_explainability.ipynb` — §1 permutation importance against
+  MDI, §2 the correlation trap, §3 the SHAP plots, §4 one prediction explained
+  end to end, §5 the fallback compared against SHAP. Everything in §8-§11 above
+  is printed there.
+
+---
+
+## 13. What this week does not license
 
 * **No causal claims.** Every number describes the fitted model. "The model
   relies on rainfall" is not "rainfall causes rice". SHAP attributes a

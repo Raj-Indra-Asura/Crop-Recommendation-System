@@ -10,12 +10,58 @@ Several exercises below use it. That is fine for learning — but if you change 
 model because of something you see there, the test measurement is spent and the
 honest move is to say so in writing.
 
+Most exercises start from the same lines, which rebuild the two finalists
+`notebooks/06_model_selection.ipynb` §14 ended with:
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.pipeline import Pipeline
+
+from src.data import DEFAULT_RANDOM_STATE, FEATURE_COLUMNS, TARGET_COLUMN
+from src.evaluation import (
+    EXPLAINER_BACKEND,
+    SHAP_AVAILABLE,
+    confusion_frame,
+    cross_validated_accuracy,
+    evaluate_model,
+    explain_prediction,
+    permutation_feature_importance,
+    tune_model,
+)
+from src.models import get_naive_bayes, get_random_forest
+from src.preprocessing import build_preprocessor
+
+FEATURES = list(FEATURE_COLUMNS)
+train = pd.read_csv("data/processed/train.csv")
+test = pd.read_csv("data/processed/test.csv")
+X_train, y_train = train[FEATURES], train[TARGET_COLUMN]
+X_test, y_test = test[FEATURES], test[TARGET_COLUMN]
+
+
+def make_pipeline(model):
+    return Pipeline([("preprocess", build_preprocessor()), ("model", model)])
+
+
+# The chosen model, and the runner-up with the settings the grid search picked.
+final_model = make_pipeline(get_naive_bayes()).fit(X_train, y_train)
+tuned_forest = make_pipeline(
+    get_random_forest(n_estimators=100, max_depth=10)
+).fit(X_train, y_train)
+background = X_train.sample(100, random_state=DEFAULT_RANDOM_STATE)
+```
+
+`evaluate_model(model, X, y)` returns `"accuracy"`, `"macro_f1"`,
+`"weighted_f1"`, `"report"` and `"confusion_matrix"` — everything Exercises 1
+and 2 need — and `print(SHAP_AVAILABLE, EXPLAINER_BACKEND)` says which explainer
+your environment will use before you quote any contribution from it.
+
 ---
 
 ## Exercise 1 — Read the matrix out loud
 
-Open `notebooks/06_model_selection.ipynb` and find the tuned forest's confusion
-matrix.
+Open `notebooks/06_model_selection.ipynb` (§12-§13) and find the tuned forest's
+confusion matrix.
 
 1. Locate every non-zero off-diagonal cell. There are two. For each one, write
    the sentence "`N` field(s) whose true crop was ___ were predicted as ___".
@@ -65,8 +111,8 @@ Using `tune_model()` from `src/evaluation/tuning.py`:
 
 ## Exercise 4 — Does tuning actually help?
 
-1. Cross-validate an untuned `RandomForestClassifier(random_state=42)` pipeline
-   on the training set. Record the mean and the standard deviation.
+1. Cross-validate an untuned `get_random_forest()` pipeline on the training set
+   with `cross_validated_accuracy`. Record the mean and the standard deviation.
 2. Run the notebook's grid search. Record `best_score` and `best_std`.
 3. Compute `best_score − untuned_mean`. Compare it to `best_std`.
 4. Write one sentence, for a stakeholder, on whether the tuning was worth the 120
@@ -128,7 +174,7 @@ For each of the two misclassified test rows (the `rice -> jute` field and the
 
 Week 2 measured a correlation of 0.74 between `P` and `K`.
 
-1. Reproduce the joint-shuffle table from `notebooks/07_model_explainability.ipynb`:
+1. Reproduce the joint-shuffle table from `notebooks/07_model_explainability.ipynb` (§2):
    baseline, `P` alone, `K` alone, `P` and `K` together.
 2. Do the same for `temperature` and `ph`, which are not correlated. Compare the
    "together vs sum of parts" gap in the two cases.
