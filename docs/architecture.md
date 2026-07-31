@@ -67,8 +67,8 @@ decision, not an oversight:
 
 * the demo runs with nothing else running — one command, no port, no base URL,
   no CORS, no "connection refused" as a first-run experience;
-* Week 12 containerises the **API**, and a UI that hard-codes an API address is
-  a second deployment topology to configure and debug;
+* Week 11 containerises the **API** alone, and a UI that hard-codes an API
+  address is a second deployment topology to configure and debug;
 * there is no HTTP hop to pay for when both sides are the same Python process.
 
 The trade-off is real and worth naming: the UI does not exercise the API, so a
@@ -107,6 +107,7 @@ alone, and both entry points get it for free.
 | `uvicorn api.main:app` | long-running server | `POST /predict`, `GET /health`, `/docs` |
 | `streamlit run app/streamlit_app.py` | long-running server | the demo form on port 8501 |
 | `pytest` | one-shot | the whole suite, including the API via `TestClient` |
+| `docker run -p 8000:8000 crop-api` | long-running container | the same API, from an image built by `deployment/Dockerfile` (Week 11) |
 
 `TestClient` drives the FastAPI app in-process: the tests open no port and start
 no server, which is why they are fast and cannot collide with a running dev
@@ -116,8 +117,11 @@ server on 8000.
 
 ## What is not here yet
 
-* **No container.** Both servers run from a checkout with the pinned
-  environment installed. Week 12.
+* **No public deployment.** Week 11 added a container
+  ([`docs/deployment_guide.md`](deployment_guide.md)), so the API runs anywhere
+  Docker runs — but on your machine only: no registry, no host, no domain, no
+  TLS. The Streamlit demo is not containerised and still needs a checkout with
+  the pinned environment installed.
 * **No authentication, rate limiting or TLS.** The API is open, and is meant for
   `127.0.0.1`.
 * **No persistence.** Requests and predictions are not stored, so there is

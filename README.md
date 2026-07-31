@@ -1,5 +1,7 @@
 # 🌱 Crop Recommendation System
 
+[![CI](https://github.com/Raj-Indra-Asura/Crop-Recommendation-System/actions/workflows/ci.yml/badge.svg)](https://github.com/Raj-Indra-Asura/Crop-Recommendation-System/actions/workflows/ci.yml)
+
 A machine learning project **and** a beginner-friendly ML course in one
 repository. It takes a student from zero knowledge to a deployed ML system,
 using a single running example: given the growing conditions of a plot of land,
@@ -136,8 +138,32 @@ gets a **422** naming the offending field, while an internal failure gets a
 **500** whose traceback stays in the server log. The Streamlit app calls
 `predict()` **in-process** rather than calling the API over HTTP — the reasoning
 is in [`docs/architecture.md`](docs/architecture.md), which also draws the
-request flow. There is still no container, no authentication and no public
-address: that is Week 12.
+request flow.
+
+Week 11 packages that API as a container and lets a robot run the tests. With
+Docker installed — and no Python, no virtual environment and no `pip install` —
+the whole service is two commands:
+
+```bash
+docker build -t crop-api -f deployment/Dockerfile .
+docker run -p 8000:8000 crop-api          # then: curl http://127.0.0.1:8000/health
+```
+
+```json
+{"status":"ok","model_loaded":true,"n_classes":22}
+```
+
+The image installs `deployment/requirements.txt` — seven pinned packages, the
+ones `api/main.py` actually reaches, with no Jupyter, plots, tests, Streamlit,
+XGBoost or SHAP — trains the model during the build so containers start by
+reading a file, runs as a non-root user and declares a `HEALTHCHECK` against
+`/health`. Exact commands, ports and troubleshooting are in
+[`docs/deployment_guide.md`](docs/deployment_guide.md). Separately,
+`.github/workflows/ci.yml` runs `ruff check .` and `pytest` on a clean Ubuntu
+runner for every push and pull request to `main`.
+
+There is still no authentication and no public address — the container runs on
+your machine, not on the internet. The final review is Week 12.
 
 If `data/raw/Crop_recommendation.csv` is ever missing, `load_data()` fails with
 a message naming the file and where to obtain it. Restore the committed file —
@@ -159,6 +185,9 @@ silently invalidated.
 | `src/pipelines/` | Runnable entry points — train the model, predict from it (Week 9) |
 | `api/` | The FastAPI service — schemas and endpoints (Week 10) |
 | `app/` | The Streamlit demo UI (Week 10) |
+| `deployment/` | The serving image: `Dockerfile` and its trimmed `requirements.txt` (Week 11) |
+| `.github/workflows/` | Continuous integration — lint and tests on every push and PR (Week 11) |
+| `docs/deployment_guide.md` | Build, run and health-check the container |
 | `docs/architecture.md` | How a request flows: UI/client -> API -> pipeline -> model |
 | `notebooks/` | Exploratory analysis, importing from `src/` |
 | `models/` | Trained artifacts — generated on demand, never committed |
@@ -185,8 +214,8 @@ Filled in one row per week as the course proceeds.
 | 08 — Model evaluation & explainability | ✅ Complete | Held-out test set opened once — **99.55%** for both finalists; grid and randomised search, confusion matrices and error analysis of the 2 wrong rows, permutation importance with its correlation trap, and SHAP (optional `shap==0.46.0`, with a documented fallback) explaining one prediction; helpers in `src/evaluation/tuning.py` and `src/evaluation/explainability.py`, 345 tests passing. [Docs](docs/curriculum/week08/) |
 | 09 — Productionizing the model | ✅ Complete | Notebook experiments turned into runnable code: `python -m src.pipelines.training_pipeline` fits the Week 3 preprocessing plus the Week 8 model as one `Pipeline` (**99.55%**, unchanged) and saves it to the git-ignored `models/crop_model.joblib`; `predict({...})` reloads it — training one on demand if a clean clone has none — and returns a crop label; paths, seed and chosen hyperparameters consolidated in `src/config.py`, 377 tests passing. [Docs](docs/curriculum/week09/) |
 | 10 — Serving an API | ✅ Complete | `POST /predict` and `GET /health` on FastAPI, with Pydantic validating the seven fields (**422** on a bad request, **500** on an internal failure) and interactive docs at `/docs`; a Streamlit demo form calling `predict()` in-process, so it runs with or without the API; request flow written down in [`docs/architecture.md`](docs/architecture.md), 404 tests passing. [Docs](docs/curriculum/week10/) |
-| 11 — Streamlit application | ⬜ Not started | |
-| 12 — Containerisation, CI & deployment | ⬜ Not started | |
+| 11 — Containerisation & CI | ✅ Complete | `deployment/Dockerfile` builds a `python:3.11-slim` image that serves the Week 10 API with uvicorn on port 8000 — trimmed `deployment/requirements.txt` (7 pins, no Jupyter/plots/tests/Streamlit/XGBoost/SHAP), dependencies installed before source for the layer cache, the model trained during the build (**99.55%**, unchanged), a non-root user and a `HEALTHCHECK` on `/health`; `.github/workflows/ci.yml` runs `ruff` and `pytest` on every push and PR to `main`; commands in [`docs/deployment_guide.md`](docs/deployment_guide.md), 404 tests passing (no new Python code this week). [Docs](docs/curriculum/week11/) |
+| 12 — Final review & portfolio polish | ⬜ Not started | |
 
 ### Week 1 Definition of Done
 
@@ -324,6 +353,22 @@ Filled in one row per week as the course proceeds.
 | Valid payload returns 200 with a crop label; invalid returns 422 | ✅ `tests/test_api.py`, and by `curl` in `validation.md` |
 | API and UI depend only on `src/pipelines/predict_pipeline.py` | ✅ `api/` never imports `app/`, `app/` never imports `api/` |
 | Streamlit runs without the API running | ✅ in-process `predict()` call, decision recorded in the notes |
+
+### Week 11 Definition of Done
+
+| Requirement | Status |
+| --- | --- |
+| `docs/curriculum/week11/{syllabus,learning_notes,exercises,validation}.md` exist | ✅ |
+| `deployment/Dockerfile` builds an image that serves the API via uvicorn | ✅ built and run; `/health` and `/predict` answered from the container |
+| `deployment/requirements.txt` trimmed and fully pinned | ✅ 7 pins, each version identical to the root file's |
+| `.dockerignore` present | ✅ `.git/`, `tests/`, `notebooks/`, `app/`, `docs/`, caches and artifacts excluded |
+| `.github/workflows/ci.yml` runs `pytest` on push/PR to `main` | ✅ file present; the green run is checked in the Actions tab after merge |
+| `docs/deployment_guide.md` gives exact build/run/health commands | ✅ |
+| `requirements.txt` updated, every dependency pinned | ✅ no change — this week adds no Python dependency |
+| New behaviour has tests and `pytest` passes | ✅ 404 passed, 1 skipped — unchanged; no Python code added |
+| README progress table updated | ✅ |
+| `docs/ml_concepts.md` has an entry per new concept | ✅ |
+| `validation.md` commands actually run, real output pasted | ✅ build, run, `/health`, `/predict`, layer cache and image inspection |
 
 ---
 
