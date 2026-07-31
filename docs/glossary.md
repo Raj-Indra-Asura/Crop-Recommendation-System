@@ -27,6 +27,11 @@ combining them by voting or averaging. It attacks *variance*: the members stay
 individually overfit, but their independent mistakes largely cancel. A random
 forest is bagging plus feature randomness.
 
+**Base value** *(W8)* — In a SHAP explanation, the model's average output over
+the background data: the number the contributions are added to. Base value plus
+the seven feature contributions reproduces this row's prediction exactly, which
+is what makes a SHAP explanation complete rather than merely a ranking.
+
 **Baseline model** *(W4)* — A deliberately unintelligent model, fitted and
 scored exactly like a real candidate but ignoring the features entirely. Its
 score is the floor: a model that fails to beat it has learned nothing from the
@@ -96,6 +101,12 @@ through. Built here by `build_preprocessor()` in
 that within a class, each feature is independent of the others, so their joint
 probability is the product of seven one-dimensional ones. False on this dataset
 (`P` and `K` correlate at 0.74) and yet harmless to which class wins.
+
+**Confusion matrix** *(W8)* — A table with one row per true class and one
+column per predicted class; cell `(i, j)` counts the examples that really were
+`i` and were called `j`. The diagonal is the correct answers, every off-diagonal
+cell is a named mistake. Read rows for recall, columns for precision. Available
+from `confusion_frame()` and from `evaluate_model()`'s `"confusion_matrix"` key.
 
 **Correlation** *(W2)* — How strongly two numeric features move together, on a
 scale from -1 to +1.
@@ -185,6 +196,11 @@ rows; a hundred identical copies of a model are still that model.
 of bits needed to encode the node's labels. Zero for a single class, largest
 when classes are evenly mixed. Interchangeable with Gini impurity in practice.
 
+**Error analysis** *(W8)* — Studying the individual wrong predictions rather
+than the aggregate score: which classes are confused with which, what those rows
+measure, and how confident the model was. When accuracy saturates — 438 of 440
+here — it is the only remaining source of information about the model.
+
 **Evaluation protocol** *(W4)* — The metric, the fitting/scoring procedure and
 the reference point, all fixed *before* any model is trained, so the judgement
 cannot be shaped by the results. Here: accuracy with a per-class report, 5-fold
@@ -201,9 +217,17 @@ examines a dataset's statistics and shapes in order to understand it, before any
 preparation or modelling. The last stage in which it is safe to look at every
 row.
 
+**F1 score** *(W8)* — The harmonic mean of precision and recall,
+`2 · P · R / (P + R)`. The harmonic mean is used because it punishes imbalance:
+precision 1.0 with recall 0.0 scores 0.0, not 0.5.
+
 **Fail-fast validation** *(W1)* — Design principle: detect invalid input at the
 moment it is read and stop, rather than continuing and producing a
 plausible-looking but wrong result later.
+
+**False negative / false positive** *(W8)* — A member of the class the model
+missed, and a non-member it wrongly claimed. Misses damage recall, false alarms
+damage precision.
 
 **Feature** *(W1)* — One input variable used to make a prediction. This project
 has seven: `N`, `P`, `K`, `temperature`, `humidity`, `ph`, `rainfall`.
@@ -269,8 +293,25 @@ the errors the running sum still makes, scaled by a `learning_rate`. Strong on
 tabular data; supplied here by XGBoost when it is installed and by scikit-learn's
 `GradientBoostingClassifier` otherwise.
 
+**`GridSearchCV`** *(W8)* — scikit-learn's exhaustive hyperparameter search:
+every combination of the grid, each scored by cross-validation on the training
+rows. Cost is the product of the list lengths times the number of folds — 24
+candidates and 120 fits for this project's forest grid. Wrapped by
+`tune_model(..., search="grid")`.
+
 **Histogram** *(W2)* — A plot of a distribution: the feature's range is split
 into equal-width bins and each bar counts the rows falling inside one.
+
+**Hyperparameter** *(W5, W8)* — A setting chosen *before* fitting that controls
+how the fitting happens (`max_depth`, `n_estimators`, `var_smoothing`), as
+opposed to a parameter, which is learned from the data during `fit`. Nothing in
+the training loop chooses one, so a search must.
+
+**Hyperparameter search** *(W8)* — Trying candidate settings and keeping the
+best, with cross-validation *inside* the loop so candidates are ranked on
+held-out folds and the test set is never consulted. The winner's score is
+optimistic — the maximum of many noisy numbers is partly noise — so it is not an
+estimate of the model's accuracy.
 
 **Inference** *(W1)* — Using a trained model to predict the label of a new,
 unlabelled instance. Happens per request, in milliseconds. Contrast with
@@ -316,6 +357,11 @@ with two handles.
 **Linting** *(W1)* — Automatic inspection of source code for style violations
 and likely errors. Performed here by `ruff`.
 
+**Local explanation** *(W8)* — An explanation of one prediction rather than of
+the model as a whole: what was predicted, with what probability, what came
+second, and which measurement decided it. SHAP and the per-sample permutation
+fallback both produce one; permutation importance does not.
+
 **Logistic regression** *(W5)* — A linear classifier, despite the name: one
 weighted sum of the features per class, converted to probabilities by softmax.
 176 numbers on this dataset, readable, and restricted to flat decision
@@ -324,6 +370,10 @@ boundaries.
 **Machine learning** *(W1)* — Building software by supplying examples of the
 desired behaviour and letting an algorithm infer rules that reproduce them and
 generalise to unseen cases.
+
+**Macro average** *(W8)* — The mean of the per-class scores with equal weight
+per class, whatever their support. The average that notices failure on a rare
+class, and the default to report when every class matters equally.
 
 **Margin** *(W6)* — The width of the empty corridor either side of an SVM's
 boundary. Maximising it is the SVM's entire objective, and a wide margin is a
@@ -358,6 +408,11 @@ two different populations have been mixed into one column.
 **Naive Bayes** *(W5)* — A probabilistic classifier applying Bayes' rule under
 the assumption that features are conditionally independent given the class.
 Cheap, assumption-driven, and a strong baseline even where the assumption fails.
+
+**Nested cross-validation** *(W8, not used)* — Wrapping a whole hyperparameter
+search inside an outer cross-validation loop, to estimate the *tuning procedure*
+without bias. This project uses one inner loop plus a single held-out test set:
+honest, but not the stronger protocol.
 
 **Normalisation (min-max)** *(W3)* — Rescaling a column with
 `(x - min) / (max - min)` so it lands in [0, 1]. Bounded, but highly sensitive
@@ -396,6 +451,15 @@ relationship", not "unrelated".
 **Percentile** *(W2)* — The value below which a given share of the rows falls.
 The 50th percentile is the median.
 
+**Permutation importance** *(W7 named, W8 used)* — Shuffle one column of
+held-out data, re-score the already-fitted model, and report the score lost.
+Nothing is refitted. More trustworthy than `feature_importances_` because it is
+measured off the training data, its units are accuracy lost, and it works on any
+model with a `predict` method — including `GaussianNB`, which has no built-in
+importances. Its one trap is correlated columns: shuffling `P` alone costs 0.179
+and `K` alone 0.433, but the pair together costs 0.565, because each stands in
+for the other.
+
 **Pinned dependency** *(W1)* — A dependency specified at an exact version
 (`pandas==2.2.3`) rather than loosely (`pandas`), so that every install
 produces an identical environment.
@@ -404,6 +468,10 @@ produces an identical environment.
 object with a single `fit`/`transform`/`predict`. Putting preprocessing inside
 it makes train-only fitting structural, makes cross-validation correct by
 construction, and makes the deployed artifact a single object.
+
+**Precision** *(W8)* — `TP / (TP + FP)`: when the model names a class, how often
+it is right. Damaged by false alarms, and the number that matters when acting on
+a prediction is expensive.
 
 **`predict_proba`** *(W5)* — The classifier method returning one probability per
 class per row, in `classes_` order and summing to 1 across each row, instead of
@@ -423,6 +491,13 @@ decision trees, combined by majority vote. On this dataset it scores 0.9926
 against the single tree's 0.9852, while each member still memorises its own
 training rows perfectly.
 
+**`RandomizedSearchCV`** *(W8)* — A hyperparameter search over `n_iter` random
+draws from the space instead of every combination. The cost is chosen rather
+than inherited, and in spaces where only two or three settings matter it visits
+more distinct values of each than a budget-matched grid. Here 20 draws from a
+300-candidate space matched the exhaustive result. Wrapped by
+`tune_model(..., search="random")`.
+
 **`random_state` (seed)** *(W3)* — The fixed number that makes a shuffle
 deterministic, so a split — and everything computed from it — is reproducible.
 Recorded once as `DEFAULT_RANDOM_STATE = 42` in `src/data/split.py`. Its value is
@@ -430,6 +505,9 @@ arbitrary; tuning it to improve a score is overfitting the test set by hand.
 
 **Raw data** *(W1)* — The original, unmodified dataset in `data/raw/`. Treated
 as strictly read-only so it remains the recoverable source of truth.
+
+**Recall** *(W8)* — `TP / (TP + FN)`: of the examples that really belong to a
+class, how many the model finds. Damaged by misses.
 
 **Regression** *(W1)* — A supervised learning task whose output is a number on
 a continuous scale, such as predicting yield in kilograms.
@@ -457,6 +535,20 @@ order-preserving rescaling of a feature, because it only compares values against
 a learned threshold: decision trees and their ensembles. Scale-*sensitive*
 models — KNN, SVM, logistic regression, neural networks, PCA — combine feature
 values across columns and therefore need scaling.
+
+**SHAP (SHapley Additive exPlanations)** *(W8)* — A library and method that
+attributes one prediction across the features, with signed, additive values.
+`TreeExplainer` is fast and exact for tree ensembles; `KernelExplainer` is slow
+and sampled but works on anything with `predict_proba`. Optional here
+(`shap==0.46.0`); when it is absent, `explain_prediction()` falls back to
+per-sample permutation plus the raw `predict_proba` breakdown, and records which
+ran under `"method"`.
+
+**Shapley value** *(W8)* — From cooperative game theory: a player's average
+marginal contribution to the payout across every order in which the players
+could join. Applied to a prediction, it is the unique attribution satisfying a
+short list of fairness axioms, and it is what makes SHAP values add up to the
+model's output.
 
 **Skewness** *(W2)* — How lopsided a distribution is. Positive means a long
 right tail, negative a long left tail, zero symmetric.
@@ -490,6 +582,10 @@ Built here by `build_cv()` in `src/evaluation/metrics.py` with
 
 **Supervised learning** *(W1)* — Learning from examples in which the correct
 answer is provided alongside each input.
+
+**Support (classification report)** *(W8)* — The number of true examples of a
+class in the evaluated set. 20 for every crop in this project's test set, which
+is why macro and weighted averages agree.
 
 **Support vector** *(W6)* — A training row sitting on the edge of an SVM's
 margin. Only these rows decide where the boundary goes; on this dataset 943 of
@@ -555,6 +651,11 @@ projects. Stored in `venv/` (or `.venv/`) and never committed.
 deliberately as a boosting member. A depth-1 stump gets 61.93% of the training
 rows right on its own; sixty of them in a chain reach 98.81%. Strength comes
 from the sequence, not the link.
+
+**Weighted average** *(W8)* — The mean of the per-class scores weighted by
+support, so common classes dominate. Equal to the macro average only when the
+classes are balanced; when they are not, quoting it alone can hide total failure
+on a rare class.
 
 **XGBoost** *(W7)* — An optional third-party gradient-boosting library, faster
 than scikit-learn's implementation on this data. It is *not* a required
