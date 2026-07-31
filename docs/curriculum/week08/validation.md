@@ -389,7 +389,7 @@ temperature    0.0066
 ph             0.0045
 ```
 
-**§2 — MDI against permutation**
+**§1 (continued) — MDI against permutation**
 
 | Feature | Built-in MDI (train) | Permutation (test) |
 | --- | --- | --- |
@@ -404,7 +404,7 @@ ph             0.0045
 `N` and `rainfall` swap ranks; `temperature` and `ph` are credited by MDI and
 found nearly free to destroy on held-out data.
 
-**§3 — the correlation trap**
+**§2 — the correlation trap**
 
 ```
 baseline               0.9955
@@ -420,7 +420,7 @@ shuffle temperature+ph 0.8502   cost 0.1452
 of their parts; the uncorrelated control pair does not. A low individual score
 means "the model can manage without this column *alone*".
 
-**§4 — SHAP plots**
+**§3 — SHAP plots**
 
 A summary bar plot over all 22 classes and a per-class beeswarm. Read the
 beeswarm for `rainfall` on the rice row: red (high rainfall) to the right, blue
@@ -434,7 +434,7 @@ check.
 > quietly wrong. `StandardScaler` is monotone, so the beeswarm's high/low colours
 > still mean what they look like.
 
-**§5 — one prediction, end to end**
+**§4 — one prediction, end to end**
 
 ```
 prediction   jute
@@ -449,7 +449,7 @@ rice second at 16%; the deciding measurement was rainfall at 186.75 mm, against
 training averages of 237 mm for rice and 176 mm for jute, while all six other
 measurements are nearly identical between the two crops.*
 
-**§6 — the same row through the fallback**
+**§5 — the same row through the fallback**
 
 ```
                  SHAP    permutation

@@ -27,8 +27,16 @@ the three reasons not to over-read it.
 
 The jargon introduced this week is: *ensemble* (§1), *bagging*, *bootstrap
 sample* and *out-of-bag* (§2), *decorrelation* and *feature randomness* (§2),
-*boosting*, *weak learner* and *shrinkage* (§3), and *mean decrease in impurity*
-(§4). Nothing below assumes you already know them.
+*boosting*, *weak learner*, *stump* and *shrinkage* (§3), and *mean decrease in
+impurity* (§4). Nothing below assumes you already know them.
+
+Two of them are worth having before the first table appears:
+
+* a **weak learner** is a model only a little better than guessing — here, a
+  decision tree with its depth capped hard enough that it cannot memorise
+  anything;
+* a **stump** is the smallest weak learner there is: a tree of `max_depth=1`,
+  one question, two leaves.
 
 Code produced this week: `src/models/ensemble_models.py`,
 `tests/test_ensemble_models.py`, and Part 1 of
@@ -84,9 +92,9 @@ the time, and — this is the load-bearing word — whose mistakes are
 
 Nobody got smarter. A majority is wrong only when *most* members are wrong **at
 the same time**, and independent errors rarely line up that way. Notebook §1
-runs this simulation; it takes four lines and is worth running yourself, because
-everything in the rest of the week is a way of manufacturing that independence
-out of a single algorithm.
+runs this simulation in half a dozen lines, and it is worth running yourself,
+because everything in the rest of the week is a way of manufacturing that
+independence out of a single algorithm.
 
 > **The one condition.** Averaging cancels only the errors the members do **not**
 > share.
@@ -136,8 +144,9 @@ sample**, and it is what "bootstrap aggregating" — *bagging* — is named afte
 The arithmetic is fixed and worth remembering: the chance a given row is missed
 by a draw of size *n* is `(1 - 1/n)^n`, which converges to `1/e ≈ 0.368`. So each
 tree sees about **63%** of the distinct rows and about **37%** are left over —
-its **out-of-bag** rows. The notebook confirms it on the real data: the first
-tree of the forest was fitted on 1,114 distinct rows (63.3%), leaving 646
+its **out-of-bag** rows. The notebook confirms it on the real data: a fitted
+forest records each member's draw in `estimators_samples_`, and the first tree
+of the forest was fitted on 1,114 distinct rows (63.3%), leaving 646
 out-of-bag.
 
 Those out-of-bag rows are held-out data that came free with the resampling, and
@@ -159,7 +168,9 @@ features — `"sqrt"` by default, which scikit-learn floors, so **2 of this
 project's 7**. A tree that would have opened on `rainfall` is often not offered
 `rainfall` at all, and has to find another way.
 
-The effect is measurable. Across the 100 trees, the first question asked is:
+The effect is measurable. Every fitted tree is available in the forest's
+`estimators_` list, and each one's opening question is `tree_.feature[0]`.
+Counting that across the 100 trees:
 
 ```
 humidity       25
@@ -200,8 +211,9 @@ The evidence, on the same folds as every other row in the table:
 The forest **halves the error rate** of the very model it is built from, and its
 fold-to-fold spread shrinks too — variance reduction showing up directly in the
 measurement. Note also that a fitted forest still scores a perfect 1.0 on its
-own training data: its members memorise exactly as before. Memorisation was
-never the problem; *unshared* memorisation is the cure.
+own training data — Exercise B7 asks you to fit one and check — because its
+members memorise exactly as before. Memorisation was never the problem;
+*unshared* memorisation is the cure.
 
 ### 2.5 `n_estimators` is a budget, not a dial
 
