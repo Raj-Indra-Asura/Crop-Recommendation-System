@@ -190,6 +190,34 @@ Taught in [`docs/curriculum/week06/learning_notes.md`](curriculum/week06/learnin
 
 ---
 
-## Week 7 onwards
+## Week 7 — Ensembles
+
+Taught in [`docs/curriculum/week07/learning_notes.md`](curriculum/week07/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **Ensemble** | Many models combined into one prediction, on the bet that their mistakes are less correlated than their correct answers. | §1 |
+| **Wisdom-of-crowds condition** | Averaging only helps when the members are individually better than chance *and* err on different rows; identical members give identical predictions. | §1 |
+| **Bagging** | Fit many deep models in parallel on bootstrap samples and vote; attacks **variance**, and cannot make the members individually better. | §1, §2 |
+| **Boosting** | Fit weak models in sequence, each trained on what the chain so far still gets wrong; attacks **bias**, and can overfit if the chain runs too long. | §1, §3 |
+| **Bootstrap sample** | A draw of `n` rows *with replacement* from `n` training rows; about 63% of the rows are distinct (1,114 of 1,760 here). | §2.1 |
+| **Out-of-bag rows** | The ~37% a given tree never saw (646 here) — free held-out data for that member, and the basis of the OOB score. | §2.1 |
+| **Feature randomness / `max_features`** | Offering each split only a random subset of columns; `"sqrt"` gives 2 of these 7, so the trees stop all asking the same first question. | §2.2 |
+| **Decorrelation** | The point of both tricks: averaging cancels only the part of the error the members do not share. | §2.2 |
+| **Random forest** | Bagging plus feature randomness over unpruned decision trees; 0.9926 here against 0.9852 for one tree. | §2 |
+| **Majority voting** | The forest's combination rule for classification — the class most members name (or the highest averaged probability). | §2.3 |
+| **`n_estimators` as a budget** | More trees never really hurt a forest; the curve flattens (0.9483 → 0.9932 from 1 to 30 trees) and buys compute, not risk. | §2.5 |
+| **Weak learner** | A model barely better than chance, used deliberately: a depth-1 stump scores 0.6193 on the training rows before the chain improves it. | §3.2 |
+| **Gradient boosting** | Each round fits a small tree to the current errors of the running sum, so the ensemble descends its loss stage by stage. | §3.1 |
+| **`learning_rate` (shrinkage)** | The fraction of each round's correction actually applied; smaller steps need more rounds, so the two are one dial. | §3.3 |
+| **XGBoost, and the fallback** | An optional faster boosting library; `get_gradient_boosting()` returns scikit-learn's `GradientBoostingClassifier` when it is absent, so nothing is blocked on it. | §3.4 |
+| **`feature_importances_` (mean decrease in impurity)** | Total impurity each column removed across the fitted forest's splits, normalised to sum to 1: `rainfall` 0.2302 down to `ph` 0.0506. | §4 |
+| **Importance is training-set, biased and splittable** | It is measured where the model fitted, favours columns with many candidate thresholds, and divides credit between correlated columns — duplicating `humidity` halves its score at identical accuracy. | §4 |
+| **Permutation importance / SHAP (foreshadowed)** | The Week 8 replacements: shuffle a column and watch a held-out score fall, or attribute a single prediction across features. | §4 |
+| **A tie is a result** | The ensembles beat every other single model but sit 0.0023 behind naive Bayes — inside the fold spread, so "level with the leader" is the defensible claim. | §5 |
+
+---
+
+## Week 8 onwards
 
 Not yet written.
