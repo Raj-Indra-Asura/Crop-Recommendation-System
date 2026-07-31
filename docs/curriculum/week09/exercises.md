@@ -25,16 +25,19 @@ Write any throwaway files into a temporary directory, not into `models/`.
 
 **Goal:** feel hidden state rather than read about it.
 
-Open any notebook in `notebooks/`, add a cell containing
-`train = train.head(100)`, run it **twice**, then run a cell further down that
-reports `train.shape`.
+Open `notebooks/06_model_selection.ipynb` — the cell near the top that does
+`train = pd.read_csv(...)`. Add a cell **below** it containing
+`train = train.head(len(train) // 2)`, run that cell **twice**, then add one
+more cell containing `print(train.shape)` and run it.
 
-1. What does `train.shape` report, and why is it not what the notebook's
-   committed output says?
+1. What does `train.shape` report, and what would it have reported if you had
+   restarted the kernel and run every cell once, top to bottom? Why does
+   *halving* show the problem in a way that `train.head(100)` would not?
 2. Nothing about the file records that you ran the cell twice. Which piece of
    evidence *would* have recorded it, and why is it not saved in the `.ipynb`?
 3. Write the equivalent script — load, take the head, print the shape — and say
    what would have to happen for it to produce a different answer on two runs.
+4. Undo your edits: delete the two cells you added and restart the kernel.
 
 ---
 
@@ -86,13 +89,15 @@ model = pipeline.named_steps["model"]
 1. Run the training script twice and compare `md5sum models/crop_model.joblib`.
    Explain why the two files are identical, naming the two properties of this
    model and split that make it so.
-2. Call `train_pipeline(model_path=None, random_state=7)` and compare the
-   accuracy to the seeded run. Which of the four reproducibility requirements
-   did you just violate, and is the difference you see evidence that either
-   model is better?
-3. Swap the final model for `"random_forest"` and repeat step 1. Is the artifact
-   still byte-identical across two runs? What in `src/models/ensemble_models.py`
-   decides the answer?
+2. Call `train_pipeline(model_path=None, random_state=7)` and compare
+   `result["metrics"]["accuracy"]` to the seeded run's. Which of the four
+   reproducibility requirements did you just violate, and is the difference you
+   see evidence that either model is better?
+3. Train a random forest into a scratch path twice —
+   `python -m src.pipelines.training_pipeline --model-name random_forest
+   --model-path /tmp/rf.joblib` — and repeat step 1's `md5sum` on `/tmp/rf.joblib`.
+   Is the artifact still byte-identical across two runs? What in
+   `src/models/ensemble_models.py` decides the answer?
 4. `requirements.txt` pins `scikit-learn==1.6.1`. Describe — do not attempt —
    what could happen if a colleague loads your artifact under 1.9, and name the
    warning scikit-learn issues for exactly this case.
@@ -106,10 +111,14 @@ model = pipeline.named_steps["model"]
 1. Point at every place the number `42` is *defined* in `src/`. There should be
    one. Where is it re-exported, and why is re-exporting better than re-typing?
 2. Change `FINAL_MODEL_NAME` in `src/config.py` to `"decision_tree"` and set
-   `FINAL_MODEL_PARAMS` to `{}`. Re-run the training script. How many files did
-   you have to edit for the trainer, both tests and `predict()` to agree?
-3. Two of the Week 9 tests assert on `FINAL_MODEL_NAME` / `FINAL_MODEL_PARAMS`.
-   Did they fail? Should a test that pins the project's *decision* fail when the
+   `FINAL_MODEL_PARAMS` to `{}` (a tree has no `var_smoothing`). Re-run the
+   training script. How many files did you have to edit for the trainer, both
+   tests and `predict()` to agree?
+3. Now run `pytest tests/test_training_pipeline.py tests/test_predict_pipeline.py`
+   with that config in place. Exactly two tests fail. Read their names and their
+   assertions: are they failing because they assert on `FINAL_MODEL_NAME` /
+   `FINAL_MODEL_PARAMS`, or because they assert something the config does *not*
+   control? Should a test that pins the project's *decision* fail when the
    decision changes? Argue both sides in three sentences, then put the config
    back.
 4. `src/config.py` imports nothing that touches the filesystem. Name two things
@@ -160,8 +169,12 @@ ranked = predict_proba(EXAMPLE_INPUT)
 **Goal:** add a step without touching anything else.
 
 1. Insert a `SimpleImputer(strategy="median")` before the scaler, inside the
-   `ColumnTransformer`'s numeric branch. Re-run the tests. Which tests had to
-   change, and which did not?
+   `ColumnTransformer`'s numeric branch in `src/preprocessing/preprocessor.py`.
+   (`SimpleImputer` is scikit-learn's transformer for missing values: it learns
+   one fill value per column during `fit` — here the median — and substitutes it
+   for every `NaN` during `transform`. It is new this week, and the branch has
+   to become a small `Pipeline` of two steps to hold both it and the scaler.)
+   Re-run the tests. Which tests had to change, and which did not?
 2. The dataset has no missing values, so the imputer changes no number. Argue
    for and against shipping a step that currently does nothing.
 3. Now imagine the API in Week 10 receives a request with `ph` absent. With the
@@ -184,7 +197,7 @@ ranked = predict_proba(EXAMPLE_INPUT)
 3. Should this JSON be committed? Apply your rule from Exercise 6.3 and defend
    the answer.
 4. What is still missing that a real model registry would give you? Name two
-   things.
+   things — §9 of the notes describes what a registry stores.
 
 ---
 

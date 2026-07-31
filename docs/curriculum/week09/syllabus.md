@@ -150,8 +150,9 @@ this week.
   `main()` runnable as `python -m src.pipelines.training_pipeline`.
 * `src/pipelines/predict_pipeline.py` — `load_pipeline()` (train-on-demand),
   `predict()`, `predict_proba()` and a `main()` for a quick manual check.
-* `tests/test_training_pipeline.py` (17 tests) and
-  `tests/test_predict_pipeline.py` (15 tests) — 378 in the whole suite.
+* `tests/test_training_pipeline.py` (15 tests) and
+  `tests/test_predict_pipeline.py` (17 tests) — 377 passed and 1 skipped in the
+  whole suite.
 * `.gitignore` — `models/*.joblib` stays ignored; the artifact is rebuilt, never
   committed.
 * This week's four curriculum documents.

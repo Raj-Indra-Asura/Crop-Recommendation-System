@@ -106,6 +106,28 @@ ls -l models/
 the artifact is neither. It holds learned numbers and references to classes, and
 nothing else.
 
+The script takes two flags for the cases where the defaults are wrong —
+`--model-path` to write elsewhere, and `--model-name` to try a different model
+from the Week 5-7 registry:
+
+```bash
+python -m src.pipelines.training_pipeline --model-name random_forest --model-path /tmp/rf.joblib
+```
+
+```
+Model:        random_forest {}
+Train rows:   1760
+Test rows:    440
+Accuracy:     0.9955
+Macro F1:     0.9955
+Weighted F1:  0.9955
+Saved to:     /tmp/rf.joblib
+```
+
+`--model-name` drops `FINAL_MODEL_PARAMS` (a `var_smoothing` means nothing to a
+forest). The flag is for experiments; `src/config.py` is still where the
+project's *decision* is recorded.
+
 ---
 
 ## Step 3 — The artifact is derived, not source
@@ -302,10 +324,13 @@ pytest tests/test_training_pipeline.py tests/test_predict_pipeline.py
 32 passed, 909 warnings in 1.37s
 ```
 
-15 for the training pipeline and 17 for the prediction pipeline. They train on a
-220-row stratified sample (10 rows per crop) and write into pytest's `tmp_path`,
-so the suite never touches `models/crop_model.joblib` and passes on a clone with
-no artifact present.
+15 for the training pipeline and 17 for the prediction pipeline. Both write into
+pytest's temporary directories, so the suite never touches
+`models/crop_model.joblib` and passes on a clone with no artifact present. The
+training tests fit on a 220-row stratified sample (10 rows per crop) to stay
+fast; the prediction tests train once per module on the full 2,200 rows, because
+"the answer is one of the 22 crops" is only a meaningful assertion for a model
+that has seen every crop's real spread.
 
 The warnings are the pre-existing NumPy deprecation notices from `shap`'s
 import, unrelated to this week.
