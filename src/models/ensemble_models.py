@@ -37,8 +37,8 @@ bootstrap resamples of the same data are still highly correlated: if one feature
 is strongly predictive, nearly every tree splits on it first and they all make
 the same kind of mistake. A random forest therefore adds a second source of
 randomness — at **every node**, each tree may only consider a random subset of
-the features (``max_features``, ``"sqrt"`` by default: 2 or 3 of this project's
-7). That forces the trees apart, decorrelates their errors, and is what makes
+the features (``max_features``, ``"sqrt"`` by default: 2 of this project's 7).
+That forces the trees apart, decorrelates their errors, and is what makes
 the average worth more than its members.
 
 Gradient boosting = sequential error-correction
@@ -124,7 +124,7 @@ DEFAULT_FOREST_N_ESTIMATORS: int = 100
 DEFAULT_FOREST_MAX_DEPTH: int | None = None
 
 #: Default number of features considered at each split. ``"sqrt"`` gives
-#: ``round(sqrt(7)) = 3`` of this project's seven columns — the setting that
+#: ``int(sqrt(7)) = 2`` of this project's seven columns — the setting that
 #: decorrelates the trees and turns bagged trees into a random forest.
 DEFAULT_FOREST_MAX_FEATURES: str | int | float | None = "sqrt"
 
