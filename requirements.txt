@@ -43,3 +43,17 @@ shap==0.46.0
 # artifact written by one version must be reloaded by a version that can read
 # it - see docs/curriculum/week09/learning_notes.md.
 joblib==1.5.3
+
+# --- Week 10: serving the pipeline over HTTP, and a demo UI ---
+# FastAPI turns type hints into request validation and interactive docs; it is
+# the ASGI framework, not the server. Pydantic does the validating and is
+# already a FastAPI dependency - pinned explicitly because `api/schemas.py`
+# imports it directly. Uvicorn is the ASGI server that actually listens on a
+# port. Streamlit builds the demo UI (a demo, not a production frontend), and
+# httpx is what `fastapi.testclient.TestClient` drives the app with in
+# `tests/test_api.py` - see docs/curriculum/week10/learning_notes.md.
+fastapi==0.115.6
+pydantic==2.10.4
+uvicorn==0.34.0
+streamlit==1.41.1
+httpx==0.28.1
