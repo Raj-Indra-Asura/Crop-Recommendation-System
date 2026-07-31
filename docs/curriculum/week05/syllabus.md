@@ -1,5 +1,7 @@
 # Week 5 — Classification Models
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 5 — Classification Models](README.md) › **§5.1 Syllabus**
+
 ## Title
 
 **The first real algorithms: three ways to draw a boundary, compared fairly**
@@ -163,3 +165,13 @@ standard it is judged by.
   table.
 
 No change to `requirements.txt`.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 5 — Classification Models](README.md) | [Chapter 5 — Classification Models](README.md) · 🗺 [Roadmap](../README.md) | [§5.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

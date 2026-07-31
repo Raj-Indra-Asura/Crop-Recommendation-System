@@ -1,5 +1,7 @@
 # Week 11 — Containerization and Continuous Integration
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 11 — Containerization and Continuous Integration](README.md) › **§11.1 Syllabus**
+
 ## Title
 
 **"It works on my machine" is not a deployment: an image, a trimmed
@@ -164,3 +166,13 @@ the model: accuracy is still 99.55%, and the same seeded pipeline answers
 * This week's four curriculum documents.
 * `requirements.txt` unchanged; `docs/ml_concepts.md` and the README progress
   table updated.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 11 — Containerization and Continuous Integration](README.md) | [Chapter 11 — Containerization and Continuous Integration](README.md) · 🗺 [Roadmap](../README.md) | [§11.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

@@ -1,5 +1,7 @@
 # Week 8 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part III — Evaluation and Explanation (Week 8)](../README.md#part-iii--evaluation-and-explanation-week-8) › [Chapter 8 — Model Evaluation & Explainability](README.md) › **§8.3 Exercises**
+
 Work through these after reading [`learning_notes.md`](learning_notes.md) and
 executing both notebooks. Nothing here needs a new dependency; everything runs
 against the artefacts already in the repository.
@@ -272,3 +274,13 @@ You are ready for Week 9 when you can, without looking anything up:
 * explain one prediction end to end, including the runner-up;
 * state the correlation trap with the P/K numbers that demonstrate it;
 * say which explainer produced any number you quote.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§8.2 Learning notes](learning_notes.md) | [Chapter 8 — Model Evaluation & Explainability](README.md) · 🗺 [Roadmap](../README.md) | [§8.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

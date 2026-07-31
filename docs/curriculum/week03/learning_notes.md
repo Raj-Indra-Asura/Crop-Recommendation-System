@@ -1,5 +1,7 @@
 # Week 3 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 3 — Data Preparation](README.md) › **§3.2 Learning notes**
+
 **Data preparation: turning raw data into model-ready data, correctly.**
 
 Week 1 secured the data and wrote down what it must look like. Week 2 looked at
@@ -660,3 +662,13 @@ floor every later model has to beat by a margin worth caring about.
 | **`ColumnTransformer`** | An object mapping sets of columns to the transformers applied to them. |
 | **`Pipeline`** | An object chaining named steps into one estimator with a single `fit`/`predict`. |
 | **Training/serving skew** | Preparing data differently at serving time than at training time; the standard defence is shipping the pipeline. |
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§3.1 Syllabus](syllabus.md) | [Chapter 3 — Data Preparation](README.md) · 🗺 [Roadmap](../README.md) | [§3.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->

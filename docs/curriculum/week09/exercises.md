@@ -1,5 +1,7 @@
 # Week 9 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 9 — Productionizing the Model](README.md) › **§9.3 Exercises**
+
 Work through these after reading [`learning_notes.md`](learning_notes.md) and
 running the two commands in [`validation.md`](validation.md). Nothing here needs
 a new dependency, and nothing here needs a notebook — that is the point of the
@@ -214,3 +216,13 @@ Answer each in three sentences or fewer.
    program would raise?
 4. What can you do at the end of Week 9 that you could not at the end of Week 8,
    and what can you still not do?
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§9.2 Learning notes](learning_notes.md) | [Chapter 9 — Productionizing the Model](README.md) · 🗺 [Roadmap](../README.md) | [§9.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

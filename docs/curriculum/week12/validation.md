@@ -1,5 +1,7 @@
 # Week 12 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part V — Review (Week 12)](../README.md#part-v--review-week-12) › [Chapter 12 — Final Review and Portfolio Polish](README.md) › **§12.4 Validation**
+
 Run these in order from the repository root. Each step lists the exact command
 and the output captured from a real run on 2026-07-31 (Ubuntu, Python 3.12.3,
 Docker 28.0.4, the pinned `requirements.txt`).
@@ -410,3 +412,13 @@ proves and an in-place run cannot:
 Those are the five properties of §1.2 of this week's notes, each with a command
 next to it. That is what "finished" means here — not a feeling, a checklist
 somebody else can re-run.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§12.3 Exercises](exercises.md) | [Chapter 12 — Final Review and Portfolio Polish](README.md) · 🗺 [Roadmap](../README.md) | [§12.5 Capstone reflection](capstone_reflection.md) ▶ |
+
+<!-- nav:end -->

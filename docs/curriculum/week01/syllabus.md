@@ -1,5 +1,7 @@
 # Week 1 — Framing the Problem and Meeting the Data
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 1 — Framing the Problem and Meeting the Data](README.md) › **§1.1 Syllabus**
+
 ## Title
 
 **From a vague wish to a machine learning problem statement**
@@ -116,3 +118,13 @@ answering the wrong question.
 * `requirements.txt` — nine pinned packages.
 * This week's four curriculum documents, including the recorded expected label
   set in `validation.md`.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 1 — Framing the Problem and Meeting the Data](README.md) | [Chapter 1 — Framing the Problem and Meeting the Data](README.md) · 🗺 [Roadmap](../README.md) | [§1.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

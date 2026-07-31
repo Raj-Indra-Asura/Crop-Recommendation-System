@@ -1,5 +1,7 @@
 # Capstone Reflection
 
+> 🗺 [Roadmap](../README.md) › [Part V — Review (Week 12)](../README.md#part-v--review-week-12) › [Chapter 12 — Final Review and Portfolio Polish](README.md) › **§12.5 Capstone reflection**
+
 Twelve weeks, one dataset, one running example. This is what was built, in
 order, and what a person who worked through it can now do without help.
 
@@ -125,3 +127,13 @@ say what building them would involve.
 Knowing what you did not build, and being able to say what you would build next
 and why, is the last thing this course teaches — and the first thing anybody
 reading a portfolio actually asks.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§12.4 Validation](validation.md) | [Chapter 12 — Final Review and Portfolio Polish](README.md) · 🗺 [Roadmap](../README.md) | [Appendix A — Concepts by chapter](../../ml_concepts.md) ▶ |
+
+<!-- nav:end -->

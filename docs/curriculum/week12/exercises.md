@@ -1,5 +1,7 @@
 # Week 12 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part V — Review (Week 12)](../README.md#part-v--review-week-12) › [Chapter 12 — Final Review and Portfolio Polish](README.md) › **§12.3 Exercises**
+
 Work through these after reading [`learning_notes.md`](learning_notes.md) and
 running the commands in [`validation.md`](validation.md).
 
@@ -275,3 +277,13 @@ data is wrong.
 
 **Expected:** an afternoon, not a week. That difference is what twelve weeks
 bought.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§12.2 Learning notes](learning_notes.md) | [Chapter 12 — Final Review and Portfolio Polish](README.md) · 🗺 [Roadmap](../README.md) | [§12.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

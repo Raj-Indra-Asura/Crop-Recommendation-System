@@ -1,5 +1,7 @@
 # Week 7 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 7 — Ensembles](README.md) › **§7.2 Learning notes**
+
 **The week the answer stops being "a better model" and starts being "more
 models".**
 
@@ -583,3 +585,13 @@ notebook in a later week, exactly as Week 6 extended Week 5's.
 * No voting or stacking classifier, and no ensemble across model families.
 * No precision, recall, F1 or confusion matrix — Week 8.
 * No test-set score. `data/processed/test.csv` remains unopened.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§7.1 Syllabus](syllabus.md) | [Chapter 7 — Ensembles](README.md) · 🗺 [Roadmap](../README.md) | [§7.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->

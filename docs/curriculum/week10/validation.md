@@ -1,5 +1,7 @@
 # Week 10 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 10 — Serving the Model Over HTTP](README.md) › **§10.4 Validation**
+
 Run these in order from the repository root. Each step lists the exact command
 and the output captured from a real run on 2026-07-31 (Python 3.12.3, the pinned
 `requirements.txt`).
@@ -369,3 +371,13 @@ and confirm, in the browser:
 | Invalid payload returns 422 | ✅ Step 3, five ways |
 | API and UI depend only on `src/pipelines/predict_pipeline.py` | ✅ no import of `app` in `api/`, none of `api` in `app/` |
 | Streamlit runs without the API | ✅ Step 7, human-verified |
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§10.3 Exercises](exercises.md) | [Chapter 10 — Serving the Model Over HTTP](README.md) · 🗺 [Roadmap](../README.md) | [Chapter 11 — Containerization and Continuous Integration](../week11/README.md) ▶ |
+
+<!-- nav:end -->

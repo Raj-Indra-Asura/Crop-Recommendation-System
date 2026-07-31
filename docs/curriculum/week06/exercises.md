@@ -1,5 +1,7 @@
 # Week 6 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 6 — Margin-based and Tree-based Models](README.md) › **§6.3 Exercises**
+
 Work through these in order. Beginner exercises check that you can reproduce what
 the notes covered; intermediate exercises make you apply it somewhere new;
 challenge exercises deliberately go slightly beyond the notes.
@@ -249,3 +251,13 @@ you would add to `src/models/classical_models.py` for it, with the docstring it
 would need to match the module's style and the argument validation the other
 factories perform. (Do not commit it; which models the project actually adopts is
 a later week's decision.)
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§6.2 Learning notes](learning_notes.md) | [Chapter 6 — Margin-based and Tree-based Models](README.md) · 🗺 [Roadmap](../README.md) | [§6.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

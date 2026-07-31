@@ -1,5 +1,7 @@
 # Week 3 — Data Preparation
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 3 — Data Preparation](README.md) › **§3.1 Syllabus**
+
 ## Title
 
 **Turning raw data into model-ready data, correctly**
@@ -153,3 +155,13 @@ a direction that looks like success.
 
 No change to `requirements.txt`: `scikit-learn==1.6.1` was pinned in Week 1 for
 exactly this week.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 3 — Data Preparation](README.md) | [Chapter 3 — Data Preparation](README.md) · 🗺 [Roadmap](../README.md) | [§3.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

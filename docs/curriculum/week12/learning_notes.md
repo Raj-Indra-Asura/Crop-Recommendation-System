@@ -1,5 +1,7 @@
 # Week 12 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part V — Review (Week 12)](../README.md#part-v--review-week-12) › [Chapter 12 — Final Review and Portfolio Polish](README.md) › **§12.2 Learning notes**
+
 Eleven weeks built something. This week decides whether it is *finished*, and
 finished turns out to be a claim somebody else gets to test.
 
@@ -518,3 +520,13 @@ starts at Week 1 again, faster.
   §1.3.
 * Aurélien Géron, *Hands-On Machine Learning*, Chapter 2's "Launch, Monitor and
   Maintain Your System" — the same lifecycle, from the practitioner's side.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§12.1 Syllabus](syllabus.md) | [Chapter 12 — Final Review and Portfolio Polish](README.md) · 🗺 [Roadmap](../README.md) | [§12.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->

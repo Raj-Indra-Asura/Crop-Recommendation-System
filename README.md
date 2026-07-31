@@ -35,6 +35,7 @@ once.
 [Limitations and ethics](#limitations-and-ethics) ·
 [What production would add](#what-production-would-add) ·
 [Repository layout](#repository-layout) · [The course](#the-course-12-weeks) ·
+[Course roadmap](docs/curriculum/README.md) ·
 [Dataset](#dataset)
 
 ---
@@ -323,7 +324,8 @@ of it.
 
 | Path | Contents |
 | --- | --- |
-| `docs/curriculum/weekXX/` | The course: `syllabus`, `learning_notes`, `exercises`, `validation` per week |
+| `docs/curriculum/README.md` | The roadmap: every document of the course in the exact order to read it |
+| `docs/curriculum/weekXX/` | One chapter: `README` (cover), `syllabus`, `learning_notes`, `exercises`, `validation` |
 | `docs/ml_concepts.md` | Every concept in the course, in teaching order, by week |
 | `docs/glossary.md` | The same terms, alphabetically |
 | `docs/architecture.md` | Raw CSV -> trained artifact -> served prediction, and the layering rule |
@@ -338,7 +340,7 @@ of it.
 | `.github/workflows/` | Continuous integration — lint and tests on every push and PR (Week 11) |
 | `notebooks/` | Exploratory analysis, importing from `src/` |
 | `models/` | Trained artifacts — generated on demand, never committed |
-| `tests/` | 405 automated tests, one file per capability |
+| `tests/` | 409 automated tests, one file per capability — including the course's link and reading-order checks |
 
 Logic lives in `src/` and is imported by the notebooks, so notebooks and tests
 exercise the same code. If `data/raw/Crop_recommendation.csv` is ever missing,
@@ -355,6 +357,13 @@ CI-checked, documented service — one running example throughout. Each week has
 syllabus, ~600 lines of learning notes, exercises, and a validation document
 with real pasted output.
 
+It is written to be read like a book, in one order: chapter by chapter, section
+by section, file by file. That order — and the point at which each source file
+and notebook should be read — is
+[**the roadmap**](docs/curriculum/README.md). Every page in the course carries a
+breadcrumb and a previous / next footer, so once you start you never have to
+come back here to find your place.
+
 | Week | Status | What it added |
 | --- | --- | --- |
 | 01 — Framing the problem, environment, loading & validating data | ✅ Complete | Dataset contract enforced by `validate_dataset()`; 20 tests passing. [Docs](docs/curriculum/week01/) |
@@ -370,7 +379,8 @@ with real pasted output.
 | 11 — Containerisation & CI | ✅ Complete | `deployment/Dockerfile` builds a `python:3.11-slim` image that serves the Week 10 API with uvicorn on port 8000 — trimmed `deployment/requirements.txt` (7 pins), dependencies installed before source for the layer cache, the model trained during the build (**99.55%**, unchanged), a non-root user and a `HEALTHCHECK` on `/health`; `.github/workflows/ci.yml` runs `ruff` and `pytest` on every push and PR to `main`; commands in [`docs/deployment_guide.md`](docs/deployment_guide.md), 404 tests passing. [Docs](docs/curriculum/week11/) |
 | 12 — Final review & portfolio polish | ✅ Complete | Student Review across all twelve weeks' notes (0 broken links, 0 stale references, 0 contradictory numbers, 22 forward references resolved); this README rewritten around problem → approach → results → limits; limitations and ethics stated plainly; model versioning and monitoring explained and honestly *not* built; `docs/` consolidated; verified from a simulated fresh install, 404 passed / 1 skipped. [Docs](docs/curriculum/week12/) · [Capstone reflection](docs/curriculum/week12/capstone_reflection.md) |
 
-**Start here:** [Week 1](docs/curriculum/week01/syllabus.md) ·
+**Start here:** [The roadmap](docs/curriculum/README.md), then
+[Chapter 1](docs/curriculum/week01/README.md) ·
 **Looking for a concept?** [`docs/ml_concepts.md`](docs/ml_concepts.md) (by
 week) or [`docs/glossary.md`](docs/glossary.md) (alphabetical) — every entry
 names the week that teaches it.

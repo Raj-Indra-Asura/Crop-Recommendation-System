@@ -1,5 +1,7 @@
 # Week 2 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 2 — Exploratory Data Analysis](README.md) › **§2.2 Learning notes**
+
 > How to read these notes: every new idea is introduced with four questions —
 > *what is it, why do we need it, where is it used, how does it actually work* —
 > followed by the mistakes people commonly make with it.
@@ -641,3 +643,13 @@ skewness · histogram · bin · distribution · multimodality · class balance �
 class imbalance · correlation · Pearson correlation · multicollinearity ·
 boxplot · whisker · outlier · 1.5 IQR rule · feature scale · class separation ·
 eta-squared · data leakage.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§2.1 Syllabus](syllabus.md) | [Chapter 2 — Exploratory Data Analysis](README.md) · 🗺 [Roadmap](../README.md) | [§2.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->

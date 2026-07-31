@@ -1,5 +1,7 @@
 # Deployment Guide
 
+> 🗺 [Roadmap](curriculum/README.md) › **Appendix D — Deployment guide**
+
 How to build, run and check the Crop Recommendation API as a container.
 Written in Week 11; the API itself is Week 10's
 ([`docs/architecture.md`](architecture.md) draws the request flow).
@@ -236,3 +238,13 @@ Week 12 checks that claim two ways:
 
 If a command in this guide stops matching what it prints, the guide is the thing
 that is wrong.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Appendix C — Architecture](architecture.md) | 🗺 [Roadmap](curriculum/README.md) | _End of the book_ |
+
+<!-- nav:end -->

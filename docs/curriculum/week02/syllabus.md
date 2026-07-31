@@ -1,5 +1,7 @@
 # Week 2 — Exploratory Data Analysis
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 2 — Exploratory Data Analysis](README.md) › **§2.1 Syllabus**
+
 ## Title
 
 **Looking before leaping: understanding the data statistically and visually**
@@ -134,3 +136,13 @@ split that makes it possible.
 
 No change to `requirements.txt`: `matplotlib` and `seaborn` were already pinned
 in Week 1 for exactly this purpose.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 2 — Exploratory Data Analysis](README.md) | [Chapter 2 — Exploratory Data Analysis](README.md) · 🗺 [Roadmap](../README.md) | [§2.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

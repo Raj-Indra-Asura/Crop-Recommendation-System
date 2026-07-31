@@ -1,5 +1,7 @@
 # Week 2 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 2 — Exploratory Data Analysis](README.md) › **§2.3 Exercises**
+
 Work through these in order. Beginner exercises check that you can reproduce
 what the notes covered; intermediate exercises make you apply it somewhere new;
 challenge exercises deliberately go slightly beyond the notes.
@@ -151,3 +153,13 @@ Without reading `src/utils/eda.py`, implement `count_outliers_iqr` yourself from
 the definition in `learning_notes.md` §5, then compare your output to the
 library version on the real dataset. If they differ, work out which is right
 before looking at the source.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§2.2 Learning notes](learning_notes.md) | [Chapter 2 — Exploratory Data Analysis](README.md) · 🗺 [Roadmap](../README.md) | [§2.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

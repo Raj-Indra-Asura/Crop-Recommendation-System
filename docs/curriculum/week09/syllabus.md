@@ -1,5 +1,7 @@
 # Week 9 — Productionizing the Model
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 9 — Productionizing the Model](README.md) › **§9.1 Syllabus**
+
 ## Title
 
 **From notebook to pipeline: one fitted object, one saved artifact, one
@@ -158,3 +160,13 @@ this week.
 * This week's four curriculum documents.
 * Updated `requirements.txt` (`joblib==1.5.3`), `docs/ml_concepts.md` and the
   README progress table.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 9 — Productionizing the Model](README.md) | [Chapter 9 — Productionizing the Model](README.md) · 🗺 [Roadmap](../README.md) | [§9.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

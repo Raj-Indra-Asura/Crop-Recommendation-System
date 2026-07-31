@@ -1,5 +1,7 @@
 # Week 5 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 5 — Classification Models](README.md) › **§5.2 Learning notes**
+
 **Three classical classifiers, one training loop, and a comparison that is
 allowed to mean something.**
 
@@ -628,3 +630,13 @@ drift away from the numbers.
 * No statement about which features drive a prediction — **Week 7**.
 * No precision, recall, F1 or confusion matrix — **Week 8**.
 * No test-set score. `data/processed/test.csv` remains unopened.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§5.1 Syllabus](syllabus.md) | [Chapter 5 — Classification Models](README.md) · 🗺 [Roadmap](../README.md) | [§5.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->
