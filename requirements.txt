@@ -21,3 +21,10 @@ scikit-learn==1.6.1
 jupyter==1.1.1
 pytest==8.3.4
 ruff==0.8.4
+
+# --- Week 7: gradient boosting (optional) ---
+# XGBoost is the only optional package in this file. `get_gradient_boosting()`
+# uses it when it is importable and falls back to scikit-learn's
+# GradientBoostingClassifier when it is not, so the week is never blocked on
+# this install - see docs/curriculum/week07/learning_notes.md.
+xgboost==2.1.3
