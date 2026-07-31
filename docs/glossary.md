@@ -5,7 +5,12 @@ teaching order and fuller treatment, see
 [`docs/ml_concepts.md`](ml_concepts.md) and the weekly learning notes.
 
 Terms are added as they are introduced. The marker on each entry gives the week
-it was introduced — *(W1)* Week 1, *(W2)* Week 2, and so on.
+it was introduced — *(W1)* Week 1, *(W2)* Week 2, and so on, through *(W12)*.
+
+With Week 12 the course is finished, so this file is complete: every term used
+anywhere in the repository should be defined here. If you find one that is not,
+that is a defect — see the Week 12
+[exercises](curriculum/week12/exercises.md).
 
 ---
 
@@ -101,6 +106,11 @@ can read nothing outside it, which is why the build runs from the repository
 root with `-f deployment/Dockerfile`. `.dockerignore` controls what the context
 contains.
 
+**Canary release** *(W12)* — Sending a small share of real traffic to a new
+model or version, watching it, and widening only if it behaves. It limits the
+blast radius of a bad model to the fraction of users who saw it. Not built here;
+named in Week 12 as a thing a real deployment would need.
+
 **CI / CD** *(W11)* — Continuous **integration**: every change automatically
 built and tested on a clean machine. Continuous **delivery**: every passing
 change automatically packaged for release. Continuous **deployment**: that
@@ -134,6 +144,12 @@ columns to the transformers applied to them, as `(name, transformer, columns)`
 triples, with `remainder` deciding whether unnamed columns are dropped or passed
 through. Built here by `build_preprocessor()` in
 `src/preprocessing/preprocessor.py`.
+
+**Concept drift** *(W12)* — The relationship between inputs and label changes:
+`P(y|X)` moves. A drought-tolerant cultivar makes the rainfall a rice field
+needs different, and every label collected before the change is now partly
+wrong. Invisible to input statistics — only outcomes reveal it. Contrast
+**data drift**.
 
 **Conditional independence assumption** *(W5)* — Naive Bayes' "naive" step:
 that within a class, each feature is independent of the others, so their joint
@@ -170,6 +186,12 @@ fold, in fold order — report its mean *and* its standard deviation.
 becomes sparse and distances between points concentrate, so "nearest" stops
 implying "similar". The reason KNN degrades on wide datasets; with seven
 features this project is unaffected.
+
+**Data drift (covariate shift)** *(W12)* — The inputs change while the
+relationship does not: `P(X)` moves, `P(y|X)` does not. A new region with
+heavier rainfall starts using the service. Detectable from requests alone, which
+is why it is the first thing a real system monitors — and why it needs request
+logging to exist first.
 
 **Data leakage** *(W2)* — Training a model with information it would not have
 at prediction time, so its measured performance flatters it and production
@@ -240,6 +262,13 @@ local artifacts) from being copied into an image anyone can extract.
 **`DummyClassifier`** *(W4)* — scikit-learn's baseline estimator. `fit` looks
 only at `y`; `predict` answers from the recorded label distribution using a
 chosen strategy (`most_frequent`, `prior`, `stratified`, `uniform`, `constant`).
+
+**Documentation kinds** *(W12)* — Three documents for three readers: **task**
+("how do I do X?" — the quickstart, the deployment guide, each week's
+`validation.md`), **explanation** ("why is it like this?" — the learning notes,
+`architecture.md`) and **reference** ("what does this mean?" — this file,
+`ml_concepts.md`, `/docs`). Mixing them produces documents that are
+simultaneously too long and useless.
 
 **Ensemble** *(W7)* — Several models combined into one prediction. It helps only
 when the members are individually better than chance *and* wrong on different
@@ -368,6 +397,13 @@ rows. Cost is the product of the list lengths times the number of folds — 24
 candidates and 120 fits for this project's forest grid. Wrapped by
 `tune_model(..., search="grid")`.
 
+**Ground-truth lag** *(W12)* — The delay between making a prediction and
+learning whether it was right. Here it is a growing season, and the feedback is
+also *partial* (you learn only about the crop that was planted), *biased* (only
+about people who took the advice) and *noisy* (weather and pests, not just the
+recommendation). It is why accuracy monitoring is an annual audit rather than a
+dashboard.
+
 **Health endpoint** *(W10)* — A cheap `GET` that reports whether the service can
 actually serve — here, whether a model is loaded — rather than merely whether a
 process is alive. It takes no dependencies, because it is asked precisely when
@@ -429,6 +465,12 @@ positions.
 needs inner products, it can fit a flat boundary in that higher-dimensional
 space without computing a single coordinate there.
 
+**Known limitations** *(W12)* — The written statement of what a system does not
+know and must not be used for, placed where a reader passes it rather than in a
+footnote. For this project: one dataset of unknown provenance, no region, no
+season, no soil type, no market, no cost of error — and therefore not agronomic
+advice. A limitation a reader must hunt for has not been disclosed.
+
 **Label** *(W1)* — The target value attached to an instance. Here, the crop
 name; also the literal name of the target column.
 
@@ -485,6 +527,28 @@ it. Unaffected by extreme values.
 **ML lifecycle** *(W1)* — The loop a project travels: frame the problem, get
 the data, explore, prepare, model, evaluate and improve, productionize, deploy,
 monitor — and back to framing.
+
+**Model card** *(W12)* — A short, human-readable document describing a model's
+intended use, training data, evaluation, performance, ethical considerations and
+caveats. Week 12's notes §4 is this project's, informally; Exercise 5 asks you to
+write the formal version.
+
+**Model registry** *(W12)* — A service storing model artifacts against their
+metadata (version, data hash, code commit, library versions, metrics), marking
+one as `production`, keeping the previous ones, and refusing to overwrite. It is
+what makes **rollback** a pointer change instead of a retrain. Not built here.
+
+**Model versioning** *(W12)* — Giving an artifact an identity, so a prediction
+can be attributed to a specific model. The minimum useful record is a version
+string, the training data hash, the code commit, the library versions, the
+hyperparameters and seed, and the metrics measured at training time. This
+project has none of it: one filename, overwritten by the next run.
+
+**Monitoring (service vs model)** *(W12)* — **Service** monitoring asks *is the
+process healthy?* — request rate, error rate, latency, memory; `GET /health` is
+its smallest form. **Model** monitoring asks *are the answers still good?*, and
+is harder, because a model that has silently become wrong returns 200 OK at high
+confidence just as fast as one that is right.
 
 **Multiclass classification** *(W1)* — Classification with more than two
 possible categories. Contrast with binary classification, which has exactly
@@ -580,6 +644,17 @@ naive Bayes' are systematically overconfident.
 splitting or transformation. Written to `data/processed/`; never written back
 over the raw data.
 
+**Production-ready** *(W12)* — Reproducible, installable, documented, bounded
+(its limitations and failure surface are written down) and independently
+verifiable. A green test suite establishes one of those five. The other four are
+documentation and process properties that no test can assert.
+
+**Provenance (data)** *(W12)* — Where a dataset came from and how it was
+collected. This project's is **unpublished**: exactly 100 rows per crop and
+near-perfect class separation suggest simulation, augmentation or compilation
+from agronomic tables rather than field measurement. Unknown provenance is
+itself a finding, and it bounds every claim the model can support.
+
 **Pydantic** *(W10)* — The validation library behind FastAPI. A Pydantic model
 declares each field's type and constraints (`ge`, `le`, required,
 `extra="forbid"`), and rejects anything that does not fit before a single line of
@@ -619,6 +694,12 @@ penalty on large weights. Small `C` shrinks the weights and simplifies the
 model; large `C` lets it fit the training data closely. Left at 1.0 throughout;
 an SVM's `C` (W6) plays the same role for the soft margin.
 
+**Repository audit (student review)** *(W12)* — Reading your own project as a
+fixed persona from a fixed starting point — "a competent Python developer with
+no ML background, given only the URL, with fifteen minutes" — and recording
+every stumble as *"stopped at X because Y"*. Each entry is a defect with a fix
+attached.
+
 **Reproducibility** *(W1)* — The property that the same code and data yield the
 same results for any person at any time. The reason this project commits its
 dataset and pins its dependency versions.
@@ -626,6 +707,16 @@ dataset and pins its dependency versions.
 **REST** *(W10)* — A style for web APIs rather than a standard: resources have
 paths, HTTP methods are used for what they mean, and every request carries
 everything needed to answer it, so any replica can serve any request.
+
+**Retraining trigger** *(W12)* — What makes a model be refitted: a **schedule**
+(simple, retrains when nothing changed), **measured performance** (correct, and
+needs ground truth you may not have) or **detected drift** (fast, may fire on a
+shift that does not hurt accuracy). Whatever the trigger, the new model is
+evaluated against the current one before it replaces it.
+
+**Rollback** *(W12)* — Returning to the previous known-good model without
+retraining. It requires that the previous model still exists and can be named,
+which is the practical argument for **model versioning** and a **registry**.
 
 **Sanity check (smoke test)** *(W4)* — A cheap end-to-end run whose only job is
 to prove the plumbing works. Fitting a baseline is the cheapest one available:
@@ -642,6 +733,17 @@ a learned threshold: decision trees and their ensembles. Scale-*sensitive*
 models — KNN, SVM, logistic regression, neural networks, PCA — combine feature
 values across columns and therefore need scaling.
 
+**Semantic versioning (models)** *(W12)* — `MAJOR.MINOR.PATCH` reinterpreted for
+a model: *patch* = retrained on more of the same data; *minor* = new features or
+hyperparameters, same interface; *major* = the interface or label set changed and
+every caller must be updated. Adding a 23rd crop is a major change: it alters
+what every previous response meant.
+
+**Shadow deployment** *(W12)* — Running a candidate model alongside the live one
+on real requests, recording its answers and returning none of them. It measures a
+new model on production traffic at zero risk to callers, and is the step before a
+**canary release**.
+
 **SHAP (SHapley Additive exPlanations)** *(W8)* — A library and method that
 attributes one prediction across the features, with signed, additive values.
 `TreeExplainer` is fast and exact for tree ensembles; `KernelExplainer` is slow
@@ -655,6 +757,12 @@ marginal contribution to the payout across every order in which the players
 could join. Applied to a prediction, it is the unique attribution satisfying a
 short list of fairness axioms, and it is what makes SHAP values add up to the
 model's output.
+
+**Simulated fresh install** *(W12)* — Creating a brand-new virtual environment
+inside the working copy, installing only what `requirements.txt` declares, and
+running the whole test suite. It is the closest an author can get to a
+stranger's clone; a real `git clone` into an empty directory (Week 12's
+validation, Step 10) additionally proves everything needed is committed.
 
 **Skewness** *(W2)* — How lopsided a distribution is. Positive means a long
 right tail, negative a long left tail, zero symmetric.
