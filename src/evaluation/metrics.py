@@ -10,6 +10,12 @@ two responsibilities:
   cross-validation, so the number reported is a mean over several splits with a
   spread attached, rather than one lucky split.
 
+Week 8 adds :func:`confusion_frame` and extends :func:`evaluate_model` with
+macro/weighted F1 and a labelled confusion matrix, alongside two new modules:
+:mod:`src.evaluation.tuning` (hyperparameter search) and
+:mod:`src.evaluation.explainability` (permutation importance and
+single-prediction explanations).
+
 It is written to be **extended, not replaced**: Week 5 compares real
 classifiers through the same helpers, Week 6 tunes them, and Week 8 adds
 precision, recall, F1 and the confusion matrix as first-class outputs. The
@@ -22,8 +28,16 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 
 from src.data.split import DEFAULT_RANDOM_STATE
@@ -88,6 +102,14 @@ def evaluate_model(model: BaseEstimator, X: Any, y: Any) -> dict[str, Any]:
         * ``"accuracy"`` — :func:`~sklearn.metrics.accuracy_score` as a float;
         * ``"report"`` — :func:`~sklearn.metrics.classification_report` as a
           printable string;
+        * ``"report_dict"`` — the same report as nested dictionaries, for
+          plotting or asserting on;
+        * ``"macro_f1"`` / ``"weighted_f1"`` — F1 averaged over classes with
+          equal weight, and weighted by class support (Week 8);
+        * ``"macro_precision"`` / ``"macro_recall"`` — the two halves of macro F1;
+        * ``"confusion_matrix"`` — a labelled :class:`~pandas.DataFrame` from
+          :func:`confusion_frame` (Week 8);
+        * ``"labels"`` — the class order used by that matrix;
         * ``"n_samples"`` — how many rows the score was computed on, because an
           accuracy without a sample size is not a claim anyone can check.
 
@@ -101,11 +123,57 @@ def evaluate_model(model: BaseEstimator, X: Any, y: Any) -> dict[str, Any]:
         raise ValueError(f"`X` has {len(X)} rows but `y` has {len(y)} labels; they must match.")
 
     predictions = model.predict(X)
+    labels = sorted(set(np.asarray(y).tolist()) | set(np.asarray(predictions).tolist()))
     return {
         "accuracy": float(accuracy_score(y, predictions)),
         "report": classification_report(y, predictions, zero_division=0),
+        "report_dict": classification_report(y, predictions, zero_division=0, output_dict=True),
+        "macro_f1": float(f1_score(y, predictions, average="macro", zero_division=0)),
+        "weighted_f1": float(f1_score(y, predictions, average="weighted", zero_division=0)),
+        "macro_precision": float(precision_score(y, predictions, average="macro", zero_division=0)),
+        "macro_recall": float(recall_score(y, predictions, average="macro", zero_division=0)),
+        "confusion_matrix": confusion_frame(y, predictions, labels=labels),
+        "labels": labels,
         "n_samples": int(len(y)),
     }
+
+
+def confusion_frame(y_true: Any, y_pred: Any, labels: list[Any] | None = None) -> pd.DataFrame:
+    """Build a labelled confusion matrix: true classes down, predicted across.
+
+    Cell ``(i, j)`` counts the examples whose true class is ``i`` and whose
+    predicted class is ``j``. The diagonal is therefore the correct answers, and
+    every off-diagonal cell is one specific mistake — not "the model got 2%
+    wrong" but "three fields of muskmelon were sent watermelon's advice".
+
+    With 22 classes the raw NumPy array from scikit-learn is unreadable, so this
+    wrapper attaches the class names to both axes.
+
+    Args:
+        y_true: The true labels.
+        y_pred: The predicted labels, of the same length.
+        labels: Row/column order. Defaults to the sorted union of both inputs,
+            so a class that is never predicted still gets a row of zeros.
+
+    Returns:
+        A :class:`~pandas.DataFrame` of counts, indexed by true class with
+        predicted classes as columns.
+
+    Raises:
+        ValueError: If the two inputs have different lengths.
+    """
+    if len(y_true) != len(y_pred):
+        raise ValueError(
+            f"`y_true` has {len(y_true)} labels but `y_pred` has {len(y_pred)}; they must match."
+        )
+    if labels is None:
+        labels = sorted(set(np.asarray(y_true).tolist()) | set(np.asarray(y_pred).tolist()))
+    matrix = confusion_matrix(y_true, y_pred, labels=labels)
+    return pd.DataFrame(
+        matrix,
+        index=pd.Index(labels, name="true"),
+        columns=pd.Index(labels, name="predicted"),
+    )
 
 
 def cross_validated_accuracy(
