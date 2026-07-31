@@ -275,6 +275,38 @@ naive bayes   : (22, 7) means and (22, 7) variances = 308 numbers
 
 KNN, by contrast, stores all 1,760 training rows.
 
+### Why `max_iter` is 1,000
+
+```bash
+python - <<'PY'
+import pandas as pd
+from sklearn.pipeline import Pipeline
+
+from src.data import FEATURE_COLUMNS, TARGET_COLUMN
+from src.models import get_logistic_regression
+from src.preprocessing import build_preprocessor
+
+train = pd.read_csv("data/processed/train.csv")
+X, y = train[list(FEATURE_COLUMNS)], train[TARGET_COLUMN]
+
+scaled = Pipeline([("preprocess", build_preprocessor()), ("model", get_logistic_regression())])
+print("iterations, standardised:", scaled.fit(X, y).named_steps["model"].n_iter_[0])
+print("iterations, raw         :", get_logistic_regression().fit(X, y).n_iter_[0], "(the cap)")
+PY
+```
+
+Actual output:
+
+```
+iterations, standardised: 52
+iterations, raw         : 1000 (the cap)
+```
+
+The 1,000 is headroom, not a necessity: behind the preprocessor `lbfgs`
+converges in 52 iterations, comfortably inside scikit-learn's own default of
+100. On raw features it never converges and stops at whatever cap it is given —
+which is what the `ConvergenceWarning` below reports.
+
 ### Scaling changes KNN's answers and not naive Bayes'
 
 ```bash
@@ -387,7 +419,7 @@ Actual output:
 
 ```
 [NbConvertApp] Converting notebook notebooks/05_classification_models.ipynb to notebook
-[NbConvertApp] Writing 42297 bytes to notebooks/05_classification_models.nbconvert.ipynb
+[NbConvertApp] Writing 44940 bytes to notebooks/05_classification_models.nbconvert.ipynb
 ```
 
 It must exit 0 with no traceback; the run takes about seven seconds. The command
