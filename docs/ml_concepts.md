@@ -279,3 +279,43 @@ Taught in [`docs/curriculum/week09/learning_notes.md`](curriculum/week09/learnin
 | **Entry point (`python -m`)** | A module runnable as a script with the repository root importable, so the same code serves the shell, the tests and the API. | §7 |
 | **Validation at the boundary** | Missing, unexpected or non-numeric features are rejected before the model sees them, because Week 10 will pass in whatever a stranger sent. | §7.2 |
 | **Runner-up probability at the point of use** | `predict_proba` shows the Week 8 `rice -> jute` ambiguity (0.7253 / 0.2747) where an operational routing rule can act on it. | §7.2 |
+
+---
+
+## Week 10 — Serving the model over HTTP
+
+Taught in [`docs/curriculum/week10/learning_notes.md`](curriculum/week10/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **API** | The set of things one program promises another it can do, plus the exact way to ask — `predict()` was already one. | §1.1 |
+| **Web API** | The same promise reachable over a network, so the caller shares no language, library or machine — paid for in latency, parsing and untrusted input. | §1.2 |
+| **Client / server** | The server runs and waits; the client speaks first. The server never initiates, and "up" is not "answering correctly". | §1.3 |
+| **Request/response cycle** | Exactly one request (method, path, headers, body) and one response (status code, headers, body) per interaction. | §2.1 |
+| **HTTP method** | The verb: `GET` reads and carries no body, `POST` sends one — which is why `/predict` is a `POST`. | §2.2 |
+| **Status code classes** | 2xx worked, 3xx look elsewhere, 4xx the client was wrong, 5xx the server was wrong. | §2.3 |
+| **JSON as the wire format** | Text every language can parse; it has no tuples, no `NaN` and no NumPy types, so values must be converted on the way out. | §2.4 |
+| **REST** | A style, not a standard: resources have paths, methods are used uniformly, and every request is self-contained. | §3 |
+| **Statelessness** | The server remembers nothing about a caller between requests, which is what allows any replica to answer any request. | §3 |
+| **FastAPI** | The framework that reads a type hint and generates the validation, parsing and documentation from it. | §4.1 |
+| **Pydantic model** | A class whose fields declare types and constraints; the contract *is* the enforcement, so the two cannot drift. | §4.2 |
+| **Field constraints (`ge`/`le`, `...`)** | Inclusive bounds and "required with no default", checked before any handler code runs. | §4.2 |
+| **`extra="forbid"`** | Unknown keys are an error, so a client's typo is reported rather than silently dropped. | §4.2 |
+| **OpenAPI / `/docs`** | A machine-readable description of the API, generated from the same models, rendered as an interactive page that cannot go stale. | §4.3 |
+| **Framework vs server (ASGI)** | FastAPI builds the application object; uvicorn is the process that listens on a port and calls it. | §4.4 |
+| **Streamlit** | A Python script rendered as a web page — a demo tool, deliberately not a production frontend. | §5.1 |
+| **Demo UI vs production frontend** | Re-runs the whole script per interaction, keeps session state in server memory, has no auth and little layout control. | §5.2 |
+| **In-process call vs network call** | The UI calls `predict()` directly, so it runs without the API and Week 12's image contains only the API. | §5.3 |
+| **Validation at the HTTP boundary** | The library check protects programmers with exceptions; the schema check answers strangers with status codes. Keep both. | §6.1 |
+| **422 Unprocessable Entity** | Valid JSON that does not satisfy the contract — the client's problem, named per field, before any handler runs. | §6.2 |
+| **500 Internal Server Error** | The request was fine and the server failed; log the traceback, return only that it happened. | §6.3 |
+| **Not leaking internals** | A traceback in a response body hands a stranger your paths, versions and structure. | §6.3 |
+| **503 Service Unavailable** | Up but not ready — a correct request that is worth retrying, unlike a 500. | §6.4 |
+| **Out-of-distribution input** | In-range values in a combination the training data never contained; the model answers anyway, at 99.99997% confidence. | §6.5 |
+| **Separation of concerns** | `api/` and `app/` both depend on `src/pipelines/`, on nothing of each other's, and `src/` on neither. | §7 |
+| **Fat controller** | Business logic living inside a request handler, where nothing but an HTTP request can reach it. | §7 |
+| **Lifespan / load once at start-up** | The model is loaded before the first request, so the cost is paid once and two requests cannot race on the file. | §8.1 |
+| **Dependency injection (`Depends`)** | The endpoint declares what it needs; the tests override it with a model trained into `tmp_path`. | §8.2 |
+| **Health endpoint** | A cheap, dependency-free answer to "can this process actually serve?", polled by containers and load balancers. | §8.3 |
+| **`TestClient`** | Drives the app in-process — full request/response semantics, no port, milliseconds. | §9 |
+| **Testing the contract, not the prediction** | Assert the label is *a* known crop and the response has the right shape; `== "jute"` breaks on every retrain. | §9 |
