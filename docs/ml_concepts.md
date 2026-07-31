@@ -218,6 +218,34 @@ Taught in [`docs/curriculum/week07/learning_notes.md`](curriculum/week07/learnin
 
 ---
 
-## Week 8 onwards
+## Week 8 — Evaluation & Explainability
 
-Not yet written.
+Taught in [`docs/curriculum/week08/learning_notes.md`](curriculum/week08/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **Confusion matrix** | One row per true class, one column per predicted class; cell `(i, j)` counts "really `i`, called `j`", the diagonal is correct. | §2 |
+| **Reading direction** | Rows answer "what happened to the real rice fields?" (recall); columns answer "when it said jute, what were they?" (precision). | §2 |
+| **Precision** | TP / (TP + FP) — how often a prediction of a class is right; damaged by false alarms. | §3 |
+| **Recall** | TP / (TP + FN) — how much of a class the model finds; damaged by misses. | §3 |
+| **F1** | Harmonic mean of precision and recall, so 1.0 with 0.0 scores 0.0 rather than 0.5. | §3 |
+| **Macro average** | Mean of the per-class scores with equal weight per class — the one that notices failure on a rare class. | §4 |
+| **Weighted average** | Mean weighted by support; identical to macro here only because every crop has exactly 20 test rows. | §4 |
+| **Hyperparameter search** | Trying candidate settings and keeping the best, because nothing in `fit` chooses `max_depth` or `var_smoothing`. | §5 |
+| **Inner cross-validation** | The 5 stratified folds *inside* the search, so candidates are ranked on held-out rows and the test set is never consulted. | §5 |
+| **`GridSearchCV`** | Every combination; cost is the product of the list lengths (24 candidates, 120 fits here). | §5 |
+| **`RandomizedSearchCV`** | `n_iter` random draws; cost is chosen, and 20 draws from a 300-candidate space matched the exhaustive result. | §5 |
+| **Optimism of the winner** | The maximum of many noisy scores is partly noise: 0.9943 "best of 24" is not an estimate of the model's accuracy. | §5 |
+| **A gain inside the noise** | Tuning bought +0.0017 against a ±0.0060 fold spread — the search's own answer is "the default was fine". | §5 |
+| **A hyperparameter that does nothing** | Twelve `var_smoothing` values over five orders of magnitude give one identical CV score; the floor never binds on this data. | §5 |
+| **Final model selection** | Accuracy, then error pattern, interpretability, training and serving cost, and tuning risk — Gaussian naive Bayes over a tuned forest at the same 0.9955. | §6 |
+| **Error analysis** | The 2 wrong rows out of 440: `rice -> jute` (only rainfall separates them, 237 vs 176 mm) and `blackgram -> maize` (N and P). | §7 |
+| **Concentrated vs scattered errors** | 462 possible confusion cells, all mistakes in one or two: genuine class overlap, not a broken model. | §7 |
+| **Permutation importance** | Shuffle one column of held-out data and measure the score lost; no refitting, units of accuracy, works on any fitted model. | §8 |
+| **Why it beats MDI** | Held-out rather than training data, actionable units, and available for models with no `feature_importances_` — including the chosen one. | §8 |
+| **Correlation trap** | Correlated columns cover for each other: `P` alone costs 0.179, `K` alone 0.433, the pair together 0.565. | §8 |
+| **SHAP / Shapley value** | A feature's average marginal contribution over every revelation order — the per-row, signed, additive attribution. | §9 |
+| **Additivity** | Base value + contributions = this row's model output; a complete account of one prediction, not a ranking. | §9 |
+| **`TreeExplainer` vs `KernelExplainer`** | Fast and exact for tree ensembles vs slow and sampled for anything with `predict_proba`. | §9 |
+| **Local explanation** | An explanation of *one* prediction, naming the deciding measurement and the runner-up class with its probability. | §11 |
+| **The documented fallback** | Without `shap`: per-sample permutation plus the raw `predict_proba` breakdown — fixed in advance, and the `"method"` key always records which ran. | §10 |

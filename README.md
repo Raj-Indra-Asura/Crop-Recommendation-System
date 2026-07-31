@@ -35,14 +35,15 @@ ruff check .
 pytest
 
 # 5. Open this week's notebook
-jupyter notebook notebooks/06_model_selection.ipynb
+jupyter notebook notebooks/07_model_explainability.ipynb
 ```
 
 Step 5 starts a local Jupyter server and opens the notebook in your browser;
 stop it with `Ctrl-C` in the terminal when you are done. Earlier weeks are
 `notebooks/01_problem_definition.ipynb`, `notebooks/02_EDA.ipynb`,
-`notebooks/03_data_preparation.ipynb`, `notebooks/04_baseline_models.ipynb` and
-`notebooks/05_classification_models.ipynb`.
+`notebooks/03_data_preparation.ipynb`, `notebooks/04_baseline_models.ipynb`,
+`notebooks/05_classification_models.ipynb` and
+`notebooks/06_model_selection.ipynb`.
 
 Load the data from Python:
 
@@ -85,6 +86,17 @@ in the table — including the decision tree they are built from — but neither
 beats Gaussian naive Bayes, and the 0.23-point gap sits inside the fold spread,
 so the honest headline is a tie at the top rather than a win.
 
+Week 8 stops adding models and finally opens `data/processed/test.csv`. A grid
+search over the forest gains 0.17 points against a fold spread of 0.60 — nothing
+— and naive Bayes' only hyperparameter turns out to change nothing at all across
+five orders of magnitude. Both finalists score **99.55%** on the 440 held-out
+rows, so the decision is made on error pattern, interpretability and cost, and
+the shipped model is **Gaussian naive Bayes**. The interesting content is the two
+wrong rows: `rice -> jute`, where only rainfall separates the crops (237 mm vs
+176 mm, and the field measured 186.75 mm), and `blackgram -> maize`.
+`notebooks/07_model_explainability.ipynb` then explains a single prediction end
+to end with permutation importance and SHAP.
+
 If `data/raw/Crop_recommendation.csv` is ever missing, `load_data()` fails with
 a message naming the file and where to obtain it. Restore the committed file —
 never substitute randomly generated data, or every later week's results are
@@ -124,7 +136,7 @@ Filled in one row per week as the course proceeds.
 | 05 — Classification models | ✅ Complete | Logistic regression, KNN and Gaussian naive Bayes compared on identical folds; best so far **99.49%** (naive Bayes) against the 4.55% baseline; helpers in `src/models/classical_models.py`, 169 tests passing. [Docs](docs/curriculum/week05/) |
 | 06 — Margin-based & tree-based models | ✅ Complete | SVM and decision trees added to the same comparison; overfitting shown directly with a tree-depth sweep (100% train vs 98.52% validation) and decision boundaries drawn on two features; helpers in `src/models/classical_models.py` and `src/utils/visualization.py`, 231 tests passing. [Docs](docs/curriculum/week06/) |
 | 07 — Ensemble models | ✅ Complete | Random forest (**99.26%**) and gradient boosting (**99.09%**, XGBoost with an automatic `GradientBoostingClassifier` fallback) added to the same comparison; bagging vs boosting shown mechanically and `feature_importances_` plotted with its limitations; helpers in `src/models/ensemble_models.py`, 292 tests passing. [Docs](docs/curriculum/week07/) |
-| 08 — Model evaluation & explainability | ⬜ Not started | Test-set scores, confusion matrices, permutation importance and SHAP |
+| 08 — Model evaluation & explainability | ✅ Complete | Held-out test set opened once — **99.55%** for both finalists; grid and randomised search, confusion matrices and error analysis of the 2 wrong rows, permutation importance with its correlation trap, and SHAP (optional `shap==0.46.0`, with a documented fallback) explaining one prediction; helpers in `src/evaluation/tuning.py` and `src/evaluation/explainability.py`, 345 tests passing. [Docs](docs/curriculum/week08/) |
 | 09 — Testing & packaging | ⬜ Not started | |
 | 10 — Serving an API | ⬜ Not started | |
 | 11 — Streamlit application | ⬜ Not started | |
@@ -220,6 +232,22 @@ Filled in one row per week as the course proceeds.
 | `docs/ml_concepts.md` has an entry per new concept | ✅ |
 | `validation.md` commands actually run, real output pasted | ✅ |
 | `notebooks/06_model_selection.ipynb` Part 1 committed with executed output | ✅ |
+
+### Week 8 Definition of Done
+
+| Requirement | Status |
+| --- | --- |
+| `docs/curriculum/week08/{syllabus,learning_notes,exercises,validation}.md` exist | ✅ |
+| New code has docstrings and passes lint (`ruff check .`) | ✅ |
+| New behaviour has tests and `pytest` passes | ✅ 345 passed, 1 skipped (292 + 22 + 32) |
+| `requirements.txt` updated, every dependency pinned | ✅ `shap==0.46.0` added as an **optional** pin; the week runs without it |
+| README progress table updated | ✅ |
+| `docs/ml_concepts.md` has an entry per new concept | ✅ |
+| `validation.md` commands actually run, real output pasted | ✅ |
+| `notebooks/06_model_selection.ipynb` Part 2 committed with executed output | ✅ |
+| `notebooks/07_model_explainability.ipynb` committed with executed output | ✅ |
+| Test set opened once, after the model decisions | ✅ notebook 06 §12 |
+| Explainer backend recorded in writing | ✅ SHAP used; fallback implemented, tested and demonstrated |
 
 ---
 
