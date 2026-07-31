@@ -1,5 +1,7 @@
 # Week 6 — Margin-based and Tree-based Models
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 6 — Margin-based and Tree-based Models](README.md) › **§6.1 Syllabus**
+
 ## Title
 
 **Two more ways to draw a boundary, and the first honest look at overfitting**
@@ -191,3 +193,13 @@ score is a better model or merely a better memory, and every later week's
   table.
 
 No change to `requirements.txt`.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 6 — Margin-based and Tree-based Models](README.md) | [Chapter 6 — Margin-based and Tree-based Models](README.md) · 🗺 [Roadmap](../README.md) | [§6.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

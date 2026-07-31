@@ -1,5 +1,7 @@
 # Week 4 — Baseline Models
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 4 — Baseline Models](README.md) › **§4.1 Syllabus**
+
 ## Title
 
 **Establishing what "good" means, before building anything real**
@@ -150,3 +152,13 @@ choosing the metric its favourite model happens to win.
   table.
 
 No change to `requirements.txt`.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 4 — Baseline Models](README.md) | [Chapter 4 — Baseline Models](README.md) · 🗺 [Roadmap](../README.md) | [§4.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

@@ -1,5 +1,7 @@
 # Week 1 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 1 — Framing the Problem and Meeting the Data](README.md) › **§1.2 Learning notes**
+
 > How to read these notes: every new idea is introduced with four questions —
 > *what is it, why do we need it, where is it used, how does it actually work*
 > — followed by the mistakes people commonly make with it. Code blocks are
@@ -657,3 +659,13 @@ test set · generalisation · overfitting · underfitting · training · inferen
 ML lifecycle · batch learning · dataframe · virtual environment · pinned
 dependency · dataset contract · expected label set · fail-fast validation ·
 linting.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§1.1 Syllabus](syllabus.md) | [Chapter 1 — Framing the Problem and Meeting the Data](README.md) · 🗺 [Roadmap](../README.md) | [§1.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->

@@ -1,5 +1,7 @@
 # Week 10 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 10 — Serving the Model Over HTTP](README.md) › **§10.3 Exercises**
+
 Work through these after reading [`learning_notes.md`](learning_notes.md) and
 running the commands in [`validation.md`](validation.md). Nothing here needs a
 new dependency beyond this week's five pins, and nothing needs a notebook.
@@ -284,3 +286,13 @@ Answer without looking anything up:
    API does?
 6. What, precisely, is still missing before this could serve a real user? Name
    five things, and say which week fixes each.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§10.2 Learning notes](learning_notes.md) | [Chapter 10 — Serving the Model Over HTTP](README.md) · 🗺 [Roadmap](../README.md) | [§10.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

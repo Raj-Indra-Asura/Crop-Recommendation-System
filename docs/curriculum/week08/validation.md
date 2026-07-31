@@ -1,5 +1,7 @@
 # Week 8 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part III — Evaluation and Explanation (Week 8)](../README.md#part-iii--evaluation-and-explanation-week-8) › [Chapter 8 — Model Evaluation & Explainability](README.md) › **§8.4 Validation**
+
 Run these in order from the repository root. Each step lists the exact command
 and the output captured from a real run on 2026-07-31 (Python 3.12.3, the pinned
 `requirements.txt`, plus the optional `shap==0.46.0`).
@@ -601,3 +603,13 @@ any causal claim whatsoever.
 | Backend recorded | `python -c "from src.evaluation import EXPLAINER_BACKEND; print(EXPLAINER_BACKEND)"` | `shap` (or `permutation`) |
 | Docs exist | `ls docs/curriculum/week08/` | four markdown files |
 | Test set opened once | inspection | scored only in notebook 06 §12+ |
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§8.3 Exercises](exercises.md) | [Chapter 8 — Model Evaluation & Explainability](README.md) · 🗺 [Roadmap](../README.md) | [Chapter 9 — Productionizing the Model](../week09/README.md) ▶ |
+
+<!-- nav:end -->

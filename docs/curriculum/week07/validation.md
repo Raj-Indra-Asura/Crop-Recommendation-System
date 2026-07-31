@@ -1,5 +1,7 @@
 # Week 7 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 7 — Ensembles](README.md) › **§7.4 Validation**
+
 Run these commands in order from the repository root, with the virtual
 environment from Week 1 activated. Each block shows the command and the **real
 output captured from an actual run** on this repository, so you can compare
@@ -639,3 +641,13 @@ reporting rather than a problem to fix.
 different column set, a subset of rows, or with a different seed moves the
 numbers; a duplicated or highly correlated column moves them a lot. Fit on all
 1,760 rows and the seven `FEATURE_COLUMNS` to reproduce this table.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§7.3 Exercises](exercises.md) | [Chapter 7 — Ensembles](README.md) · 🗺 [Roadmap](../README.md) | [Chapter 8 — Model Evaluation & Explainability](../week08/README.md) ▶ |
+
+<!-- nav:end -->

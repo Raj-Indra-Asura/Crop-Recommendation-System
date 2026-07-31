@@ -1,5 +1,7 @@
 # Week 4 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 4 — Baseline Models](README.md) › **§4.4 Validation**
+
 Run these commands in order from the repository root, with the virtual
 environment from Week 1 activated. Each block shows the command and the **real
 output captured from an actual run** on this repository, so you can compare
@@ -498,3 +500,13 @@ re-fitted inside each fold on that fold's training rows only — Week 3's
 **`E501 Line too long` from `ruff` pointing at a notebook cell**
 `ruff` lints notebook code cells as well as `.py` files. Wrap the line; do not
 loosen the rule.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§4.3 Exercises](exercises.md) | [Chapter 4 — Baseline Models](README.md) · 🗺 [Roadmap](../README.md) | [Chapter 5 — Classification Models](../week05/README.md) ▶ |
+
+<!-- nav:end -->

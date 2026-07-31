@@ -1,5 +1,7 @@
 # Week 10 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 10 — Serving the Model Over HTTP](README.md) › **§10.2 Learning notes**
+
 Nine weeks produced a function. This week produces a *service*: something that
 is running, listening, and answering questions asked by programs that were not
 written by us.
@@ -650,3 +652,13 @@ branch, `/health` in both states, 405 on `GET /predict`, and that
 | Why `Depends`? | It is the seam that lets tests inject a temporary model |
 | Why `/health`? | "Port open" is not "model loaded" |
 | Why `TestClient`? | Full HTTP semantics, in-process, no port, milliseconds |
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§10.1 Syllabus](syllabus.md) | [Chapter 10 — Serving the Model Over HTTP](README.md) · 🗺 [Roadmap](../README.md) | [§10.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->

@@ -1,5 +1,7 @@
 # Architecture
 
+> 🗺 [Roadmap](curriculum/README.md) › **Appendix C — Architecture**
+
 How a measurement becomes a recommendation, and which file is responsible for
 each step. Written in Week 10, when the project first had more than one way in;
 completed in Week 12 with the training path and the production gap.
@@ -217,3 +219,13 @@ doing:
 The rule this table follows is the same one the repository has followed since
 Week 1: name the boundary precisely, and do not describe a capability that does
 not exist.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Appendix B — Glossary](glossary.md) | 🗺 [Roadmap](curriculum/README.md) | [Appendix D — Deployment guide](deployment_guide.md) ▶ |
+
+<!-- nav:end -->

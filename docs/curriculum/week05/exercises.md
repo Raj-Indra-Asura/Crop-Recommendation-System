@@ -1,5 +1,7 @@
 # Week 5 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 5 — Classification Models](README.md) › **§5.3 Exercises**
+
 Work through these in order. Beginner exercises check that you can reproduce
 what the notes covered; intermediate exercises make you apply it somewhere new;
 challenge exercises deliberately go slightly beyond the notes.
@@ -213,3 +215,13 @@ write the factory function you would add to
 `src/models/classical_models.py` for it, with the docstring it would need to
 match the module's style. (Do not commit it; a later week decides which models the
 project actually adopts.)
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§5.2 Learning notes](learning_notes.md) | [Chapter 5 — Classification Models](README.md) · 🗺 [Roadmap](../README.md) | [§5.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

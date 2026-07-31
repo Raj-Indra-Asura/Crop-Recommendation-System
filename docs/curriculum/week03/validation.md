@@ -1,5 +1,7 @@
 # Week 3 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 3 — Data Preparation](README.md) › **§3.4 Validation**
+
 Run these commands in order from the repository root, with the virtual
 environment from Week 1 activated. Each block shows the command and the **real
 output captured from an actual run** on this repository, so you can compare
@@ -491,3 +493,13 @@ loosen the rule.
 Undo it. Choosing the seed with the best downstream score is overfitting the test
 set by hand — learning notes §4. If results move a lot between seeds, the answer
 is cross-validation (Week 6), not a luckier number.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§3.3 Exercises](exercises.md) | [Chapter 3 — Data Preparation](README.md) · 🗺 [Roadmap](../README.md) | [Chapter 4 — Baseline Models](../week04/README.md) ▶ |
+
+<!-- nav:end -->

@@ -1,5 +1,7 @@
 # Week 1 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 1 — Framing the Problem and Meeting the Data](README.md) › **§1.4 Validation**
+
 Run these commands in order from the repository root. Each block shows the
 command and the **real output captured from an actual run** on this
 repository, so you can compare against what you see.
@@ -348,3 +350,13 @@ contract.
 **Permission or activation errors on Windows PowerShell**
 `venv\Scripts\activate` may be blocked by execution policy. Run
 `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned` first.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§1.3 Exercises](exercises.md) | [Chapter 1 — Framing the Problem and Meeting the Data](README.md) · 🗺 [Roadmap](../README.md) | [Chapter 2 — Exploratory Data Analysis](../week02/README.md) ▶ |
+
+<!-- nav:end -->

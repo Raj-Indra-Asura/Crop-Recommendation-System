@@ -1,5 +1,7 @@
 # ML Concepts
 
+> 🗺 [Roadmap](curriculum/README.md) › **Appendix A — Concepts by chapter**
+
 A running index of every machine learning concept taught in this course, in the
 order it is introduced. Each entry gives a one-line definition and points at
 the week that teaches it properly.
@@ -411,3 +413,13 @@ Taught in [`docs/curriculum/week12/learning_notes.md`](curriculum/week12/learnin
 | **Rollback** | Returning to the previous known-good model without retraining — which requires that it still exists and can be named. | §5.1, §5.6 |
 | **Naming an absence** | Saying precisely what you did not build, and what building it would take, is the honest form of a capability claim. | §5, §6 |
 | **Withdrawing a promise in writing** | A forward reference that later weeks cannot honour is corrected out loud, not quietly dropped. | §6 |
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§12.5 Capstone reflection](curriculum/week12/capstone_reflection.md) | 🗺 [Roadmap](curriculum/README.md) | [Appendix B — Glossary](glossary.md) ▶ |
+
+<!-- nav:end -->

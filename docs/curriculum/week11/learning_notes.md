@@ -1,5 +1,7 @@
 # Week 11 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 11 — Containerization and Continuous Integration](README.md) › **§11.2 Learning notes**
+
 Ten weeks produced a service that runs *here*. This week it runs *anywhere*,
 and the repository starts checking itself.
 
@@ -600,3 +602,13 @@ executable, and it goes wherever the image goes.
   of this repository work?".
 * **CD** is named, not implemented. The container is portable, not public, and
   the repository is not finished — Week 12 is.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§11.1 Syllabus](syllabus.md) | [Chapter 11 — Containerization and Continuous Integration](README.md) · 🗺 [Roadmap](../README.md) | [§11.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->

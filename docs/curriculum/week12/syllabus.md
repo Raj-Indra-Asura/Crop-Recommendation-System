@@ -1,5 +1,7 @@
 # Week 12 — Final Review and Portfolio Polish
 
+> 🗺 [Roadmap](../README.md) › [Part V — Review (Week 12)](../README.md#part-v--review-week-12) › [Chapter 12 — Final Review and Portfolio Polish](README.md) › **§12.1 Syllabus**
+
 ## Title
 
 **Finished is a claim you have to defend: auditing a repository, writing the
@@ -189,3 +191,13 @@ will actually look.
   answering the project's example row.
 * `pytest` green across the **whole** `tests/` directory, from a fresh virtual
   environment: 404 passed, 1 skipped.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 12 — Final Review and Portfolio Polish](README.md) | [Chapter 12 — Final Review and Portfolio Polish](README.md) · 🗺 [Roadmap](../README.md) | [§12.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

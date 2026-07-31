@@ -1,5 +1,7 @@
 # Week 4 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 4 — Baseline Models](README.md) › **§4.3 Exercises**
+
 Work through these in order. Beginner exercises check that you can reproduce
 what the notes covered; intermediate exercises make you apply it somewhere new;
 challenge exercises deliberately go slightly beyond the notes.
@@ -206,3 +208,13 @@ tuning and estimating performance with the *same* cross-validation loop produces
 an optimistic number, what nested cross-validation does about it, and what it
 costs. Then say which of the two loops this project's Week 8 test set is playing
 the role of.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§4.2 Learning notes](learning_notes.md) | [Chapter 4 — Baseline Models](README.md) · 🗺 [Roadmap](../README.md) | [§4.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

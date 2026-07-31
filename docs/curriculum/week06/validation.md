@@ -1,5 +1,7 @@
 # Week 6 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 6 — Margin-based and Tree-based Models](README.md) › **§6.4 Validation**
+
 Run these commands in order from the repository root, with the virtual
 environment from Week 1 activated. Each block shows the command and the **real
 output captured from an actual run** on this repository, so you can compare
@@ -582,3 +584,13 @@ the very effect the plot exists to show.
 **Scores that differ from this document by more than a rounding error**
 Check, in order: the seed (42), the fold count (5), whether the preprocessor was
 included, and whether `data/processed/train.csv` still has 1,760 rows.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§6.3 Exercises](exercises.md) | [Chapter 6 — Margin-based and Tree-based Models](README.md) · 🗺 [Roadmap](../README.md) | [Chapter 7 — Ensembles](../week07/README.md) ▶ |
+
+<!-- nav:end -->

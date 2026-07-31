@@ -1,5 +1,7 @@
 # Week 4 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 4 — Baseline Models](README.md) › **§4.2 Learning notes**
+
 **Baselines and cross-validation: deciding what "good" means before there is
 anything good to measure.**
 
@@ -697,3 +699,13 @@ break in Week 8.
 * No precision/recall analysis beyond the glimpse in §5 — **Week 8**.
 * No test-set number at all. `data/processed/test.csv` has still never been
   opened.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§4.1 Syllabus](syllabus.md) | [Chapter 4 — Baseline Models](README.md) · 🗺 [Roadmap](../README.md) | [§4.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->

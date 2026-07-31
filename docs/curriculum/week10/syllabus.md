@@ -1,5 +1,7 @@
 # Week 10 — Serving the Model Over HTTP
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 10 — Serving the Model Over HTTP](README.md) › **§10.1 Syllabus**
+
 ## Title
 
 **From `predict()` to `POST /predict`: an API, a demo UI, and the difference
@@ -161,3 +163,13 @@ software-engineering problem that happens to have a model inside it.
 * This week's four curriculum documents.
 * Updated `requirements.txt` (five new pins), `docs/ml_concepts.md` and the
   README progress table.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 10 — Serving the Model Over HTTP](README.md) | [Chapter 10 — Serving the Model Over HTTP](README.md) · 🗺 [Roadmap](../README.md) | [§10.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

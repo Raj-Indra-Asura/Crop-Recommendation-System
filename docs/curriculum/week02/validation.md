@@ -1,5 +1,7 @@
 # Week 2 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 2 — Exploratory Data Analysis](README.md) › **§2.4 Validation**
+
 Run these commands in order from the repository root, with the virtual
 environment from Week 1 activated. Each block shows the command and the **real
 output captured from an actual run** on this repository, so you can compare
@@ -410,3 +412,13 @@ have caught this first — run `pytest tests/test_data_loader.py` to confirm.
 Undo it. Section 5 of `learning_notes.md` explains why: the flagged rows are
 whole crop populations, and any removal decision belongs after Week 3's split,
 using training data only.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§2.3 Exercises](exercises.md) | [Chapter 2 — Exploratory Data Analysis](README.md) · 🗺 [Roadmap](../README.md) | [Chapter 3 — Data Preparation](../week03/README.md) ▶ |
+
+<!-- nav:end -->

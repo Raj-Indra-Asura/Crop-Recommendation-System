@@ -1,5 +1,7 @@
 # Week 7 — Ensembles
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 7 — Ensembles](README.md) › **§7.1 Syllabus**
+
 ## Title
 
 **Many weak models beat one strong one — bagging, boosting, and the first look
@@ -209,3 +211,13 @@ trustworthy answer.
 * Updated `requirements.txt` (optional `xgboost==2.1.3`),
   `src/models/__init__.py`, `docs/ml_concepts.md`, `docs/glossary.md` and the
   README progress table.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 7 — Ensembles](README.md) | [Chapter 7 — Ensembles](README.md) · 🗺 [Roadmap](../README.md) | [§7.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

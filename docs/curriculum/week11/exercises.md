@@ -1,5 +1,7 @@
 # Week 11 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 11 — Containerization and Continuous Integration](README.md) › **§11.3 Exercises**
+
 Work through these after reading [`learning_notes.md`](learning_notes.md) and
 running the commands in [`validation.md`](validation.md). Nothing here adds a
 Python dependency; most of it needs Docker, and the last three need only a text
@@ -249,3 +251,13 @@ Answer in your own words, in no more than a paragraph each:
 **Expected for (4):** the final review — README, documentation, an honest
 account of capabilities and limits — and it is **Week 12**. Nothing this week
 entitles anyone to call the repository done.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§11.2 Learning notes](learning_notes.md) | [Chapter 11 — Containerization and Continuous Integration](README.md) · 🗺 [Roadmap](../README.md) | [§11.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

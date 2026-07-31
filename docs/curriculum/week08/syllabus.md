@@ -1,5 +1,7 @@
 # Week 8 — Model Evaluation & Explainability
 
+> 🗺 [Roadmap](../README.md) › [Part III — Evaluation and Explanation (Week 8)](../README.md#part-iii--evaluation-and-explanation-week-8) › [Chapter 8 — Model Evaluation & Explainability](README.md) › **§8.1 Syllabus**
+
 ## Title
 
 **Past accuracy: confusion matrices, honest hyperparameter search, and
@@ -201,3 +203,13 @@ rule, and it exists only because the model was made to say *why*.
 * Updated `requirements.txt` (optional `shap==0.46.0`),
   `src/evaluation/__init__.py`, `docs/ml_concepts.md`, `docs/glossary.md` and the
   README progress table.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Chapter 8 — Model Evaluation & Explainability](README.md) | [Chapter 8 — Model Evaluation & Explainability](README.md) · 🗺 [Roadmap](../README.md) | [§8.2 Learning notes](learning_notes.md) ▶ |
+
+<!-- nav:end -->

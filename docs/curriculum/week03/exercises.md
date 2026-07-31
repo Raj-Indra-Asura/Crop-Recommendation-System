@@ -1,5 +1,7 @@
 # Week 3 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 3 — Data Preparation](README.md) › **§3.3 Exercises**
+
 Work through these in order. Beginner exercises check that you can reproduce
 what the notes covered; intermediate exercises make you apply it somewhere new;
 challenge exercises deliberately go slightly beyond the notes.
@@ -176,3 +178,13 @@ in prose, no code — every transformation that request must pass through, in
 order, and every artifact the server must have loaded to perform them. Where in
 that list would a mistake produce training/serving skew, and how would you
 detect it in production if it happened silently?
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§3.2 Learning notes](learning_notes.md) | [Chapter 3 — Data Preparation](README.md) · 🗺 [Roadmap](../README.md) | [§3.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

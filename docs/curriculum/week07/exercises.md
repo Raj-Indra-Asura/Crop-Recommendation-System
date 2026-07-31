@@ -1,5 +1,7 @@
 # Week 7 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 7 — Ensembles](README.md) › **§7.3 Exercises**
+
 Work through these in order. Beginner exercises check that you can reproduce what
 the notes covered; intermediate exercises make you apply it somewhere new;
 challenge exercises deliberately go slightly beyond the notes.
@@ -225,3 +227,13 @@ protocol. Does the ensemble advantage become clearer than it was on the crop
 data? If it does, explain why messier data gives variance reduction and
 sequential error-correction more room to help. If it does not, inspect your data
 generation choices before changing model settings.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§7.2 Learning notes](learning_notes.md) | [Chapter 7 — Ensembles](README.md) · 🗺 [Roadmap](../README.md) | [§7.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

@@ -1,5 +1,7 @@
 # Week 8 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part III — Evaluation and Explanation (Week 8)](../README.md#part-iii--evaluation-and-explanation-week-8) › [Chapter 8 — Model Evaluation & Explainability](README.md) › **§8.2 Learning notes**
+
 Everything this week is about the same shift: **stop asking "how accurate is
 it?" and start asking "where is it wrong, why did it say that, and which model
 do we ship?"**
@@ -646,3 +648,13 @@ printed by a cell you can re-run.
 | Its trap? | Correlated columns: `P` 0.179, `K` 0.433, the pair 0.565. |
 | What does SHAP add? | Per-row, signed, additive attributions — direction as well as magnitude. |
 | SHAP or the fallback, here? | **SHAP** (`shap==0.46.0`, installed cleanly); the fallback is implemented, tested and demonstrated. |
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§8.1 Syllabus](syllabus.md) | [Chapter 8 — Model Evaluation & Explainability](README.md) · 🗺 [Roadmap](../README.md) | [§8.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->

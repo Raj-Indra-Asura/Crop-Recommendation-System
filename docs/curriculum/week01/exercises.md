@@ -1,5 +1,7 @@
 # Week 1 — Exercises
 
+> 🗺 [Roadmap](../README.md) › [Part I — Foundations (Weeks 1-3)](../README.md#part-i--foundations-weeks-1-3) › [Chapter 1 — Framing the Problem and Meeting the Data](README.md) › **§1.3 Exercises**
+
 Work through these in order. Beginner exercises check that you can reproduce
 what the notes covered; intermediate exercises make you apply it somewhere new;
 challenge exercises deliberately go slightly beyond the notes.
@@ -118,3 +120,13 @@ crop. Real agricultural measurements are never like this. What does that imply
 about how the file was produced, and what does it imply about the confidence
 you should place in a model trained on it? Note your hypothesis — Week 2's
 exploration will give you evidence to test it against.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§1.2 Learning notes](learning_notes.md) | [Chapter 1 — Framing the Problem and Meeting the Data](README.md) · 🗺 [Roadmap](../README.md) | [§1.4 Validation](validation.md) ▶ |
+
+<!-- nav:end -->

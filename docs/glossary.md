@@ -1,5 +1,7 @@
 # Glossary
 
+> 🗺 [Roadmap](curriculum/README.md) › **Appendix B — Glossary**
+
 Alphabetical quick reference for terms used across the project. For the
 teaching order and fuller treatment, see
 [`docs/ml_concepts.md`](ml_concepts.md) and the weekly learning notes.
@@ -903,3 +905,13 @@ dependency of this project: `get_gradient_boosting()` falls back to
 `GRADIENT_BOOSTING_BACKEND` records which one is in use. Its own classifier
 needs integer labels, so this project wraps it in a small label-encoding
 adapter.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [Appendix A — Concepts by chapter](ml_concepts.md) | 🗺 [Roadmap](curriculum/README.md) | [Appendix C — Architecture](architecture.md) ▶ |
+
+<!-- nav:end -->

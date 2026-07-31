@@ -1,5 +1,7 @@
 # Week 9 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 9 — Productionizing the Model](README.md) › **§9.2 Learning notes**
+
 **Productionizing the model: pipelines, artifacts and reproducibility**
 
 Everything in this course so far has produced *findings*. This week produces
@@ -446,3 +448,13 @@ The honest list, in the order the industry usually hits it:
   trains on demand so a clean clone works.
 * `python -m src.pipelines.training_pipeline` produces the model;
   `predict({...})` consumes it. Week 10 puts HTTP in front of the second one.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§9.1 Syllabus](syllabus.md) | [Chapter 9 — Productionizing the Model](README.md) · 🗺 [Roadmap](../README.md) | [§9.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->

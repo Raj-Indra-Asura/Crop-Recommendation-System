@@ -1,5 +1,7 @@
 # Week 9 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 9 — Productionizing the Model](README.md) › **§9.4 Validation**
+
 Run these in order from the repository root. Each step lists the exact command
 and the output captured from a real run on 2026-07-31 (Python 3.12.3, the pinned
 `requirements.txt`).
@@ -380,3 +382,13 @@ the optional package is installed.
 * That the artifact loads under a **different** scikit-learn. It was written and
   read by 1.6.1 here; that is the pinned version, and the pin is the reason the
   question does not arise.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§9.3 Exercises](exercises.md) | [Chapter 9 — Productionizing the Model](README.md) · 🗺 [Roadmap](../README.md) | [Chapter 10 — Serving the Model Over HTTP](../week10/README.md) ▶ |
+
+<!-- nav:end -->

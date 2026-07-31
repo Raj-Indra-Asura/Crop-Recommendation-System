@@ -1,5 +1,7 @@
 # Week 11 — Validation
 
+> 🗺 [Roadmap](../README.md) › [Part IV — Production (Weeks 9-11)](../README.md#part-iv--production-weeks-9-11) › [Chapter 11 — Containerization and Continuous Integration](README.md) › **§11.4 Validation**
+
 Run these in order from the repository root. Each step lists the exact command
 and the output captured from a real run on 2026-07-31 (Python 3.12.3 on the
 host, `python:3.11-slim` inside the image, Docker 28.0.4, the pinned
@@ -445,3 +447,13 @@ Optional, once it is green: add the badge to the README, replacing `OWNER` and
 | `docker run` + `curl /health` verified | ✅ **agent-verified** (Steps 5-7) and **to be human-verified on your own machine** (Step 8) |
 | `ci.yml` observed green in the Actions tab | ⬜ **human-verified only** — Step 9, after this branch is pushed and the PR is open |
 | Repository declared finished | ❌ **not this week.** Final review is Week 12 |
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§11.3 Exercises](exercises.md) | [Chapter 11 — Containerization and Continuous Integration](README.md) · 🗺 [Roadmap](../README.md) | [Chapter 12 — Final Review and Portfolio Polish](../week12/README.md) ▶ |
+
+<!-- nav:end -->

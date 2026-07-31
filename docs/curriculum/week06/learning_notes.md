@@ -1,5 +1,7 @@
 # Week 6 — Learning Notes
 
+> 🗺 [Roadmap](../README.md) › [Part II — Modelling (Weeks 4-7)](../README.md#part-ii--modelling-weeks-4-7) › [Chapter 6 — Margin-based and Tree-based Models](README.md) › **§6.2 Learning notes**
+
 **Two more algorithms, and the moment model complexity stops being a virtue.**
 
 Week 5 put three classifiers on top of the Week 4 floor and read the result
@@ -665,3 +667,13 @@ numbers cannot drift apart silently.
   starts from the tree's readable rules.
 * **No precision, recall, F1 or confusion matrix** — **Week 8**.
 * **No test-set score.** `data/processed/test.csv` remains unopened.
+
+<!-- nav:start -->
+
+---
+
+| ◀ Previous | ▲ Up | Next ▶ |
+| --- | --- | --- |
+| ◀ [§6.1 Syllabus](syllabus.md) | [Chapter 6 — Margin-based and Tree-based Models](README.md) · 🗺 [Roadmap](../README.md) | [§6.3 Exercises](exercises.md) ▶ |
+
+<!-- nav:end -->
