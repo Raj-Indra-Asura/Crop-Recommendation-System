@@ -1,4 +1,4 @@
-"""The first three real classifiers this project trains (Week 5).
+"""The classifiers this project trains and compares (Weeks 5-6).
 
 Week 4 fixed the floor: a :class:`~sklearn.dummy.DummyClassifier` scores 4.55%
 (1/22) under 5-fold stratified cross-validation. This module supplies the first
@@ -6,8 +6,10 @@ estimators that are allowed to look at ``N``, ``P``, ``K``, temperature,
 humidity, pH and rainfall, so the floor finally has something standing on top of
 it.
 
-Three algorithms, chosen because they fail in different ways
-------------------------------------------------------------
+Five algorithms, chosen because they fail in different ways
+-----------------------------------------------------------
+Week 5 added the first three; Week 6 added the last two.
+
 **Logistic regression** — a *linear* model. It learns one weight per feature per
 class, adds them up, and turns the 22 resulting scores into probabilities with
 the softmax function; the class with the largest score wins. The boundary
@@ -31,8 +33,23 @@ three to fit by a wide margin, and a strong baseline-above-the-baseline even
 when the assumption is violated, as it is here (Week 2 measured a 0.74
 correlation between ``P`` and ``K``).
 
-The pattern all three share
----------------------------
+**Support vector machine** — a *margin-based* model. It places the boundary
+where the gap to the closest training rows of either class is as wide as
+possible, so only those closest rows (the **support vectors**) decide where it
+sits. With a non-linear kernel it can bend that boundary without ever computing
+coordinates in the higher-dimensional space the bend lives in. Like KNN it works
+in inner products of the features, so it needs the Week 3 scaler in front of it.
+
+**Decision tree** — a *rule-based* model. It repeatedly asks a single
+"``feature <= threshold``?" question, choosing at each step the split that
+leaves the two sides as pure as possible, until it runs out of questions worth
+asking. It is the most readable model in the project and the most eager to
+overfit: grown without a depth limit it will carve the training data down to
+leaves of one row each and score a perfect, worthless 100% on it. ``max_depth``
+is the dial that trades that variance back for bias, and Week 6 plots the trade.
+
+The pattern all five share
+--------------------------
 Every factory returns an **unfitted** estimator with the same scikit-learn API:
 
 .. code-block:: python
@@ -41,7 +58,7 @@ Every factory returns an **unfitted** estimator with the same scikit-learn API:
     predictions = model.predict(X_test)   # answer for rows it has not seen
 
 That is *the* training loop, and it does not change again for the rest of the
-course — Weeks 6, 7 and 8 reuse it for tuned models, ensembles and the final
+course — Weeks 7 and 8 reuse it for tuned models, ensembles and the final
 evaluation. Returning the estimators unfitted is what lets them be dropped
 into a :class:`~sklearn.pipeline.Pipeline` behind
 :func:`src.preprocessing.preprocessor.build_preprocessor` and re-fitted inside
@@ -49,8 +66,10 @@ every cross-validation fold, which is the only way to scale features without
 leaking a validation fold's statistics into training.
 
 Hyperparameters are given sensible, explicit defaults here and are *not* tuned:
-searching for better ones is Week 6's subject, and doing it by hand now would
-mean choosing settings by peeking at scores.
+searching for better ones systematically is Week 7's subject, and doing it by
+hand now would mean choosing settings by peeking at scores. The Week 6 sweep
+over ``max_depth`` is a demonstration of a curve, not a search — nothing from it
+is adopted as a default.
 """
 
 from __future__ import annotations
@@ -61,12 +80,14 @@ from sklearn.base import BaseEstimator
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
 from src.data.split import DEFAULT_RANDOM_STATE
 
 #: Default inverse regularisation strength for logistic regression. Smaller
 #: values shrink the learned weights harder; 1.0 is scikit-learn's own default
-#: and is kept until Week 6 tunes it.
+#: and is kept until Week 7 tunes it.
 DEFAULT_LOGISTIC_C: float = 1.0
 
 #: Default iteration budget for logistic regression's solver. scikit-learn ships
@@ -89,6 +110,43 @@ KNN_WEIGHT_OPTIONS: tuple[str, ...] = ("uniform", "distance")
 #: Variance floor added to every feature variance by Gaussian naive Bayes, so a
 #: feature that is constant within a class cannot produce a division by zero.
 DEFAULT_VAR_SMOOTHING: float = 1e-9
+
+#: Default kernel for the support vector machine: the radial basis function,
+#: which allows a curved boundary. ``"linear"`` keeps the boundary flat.
+DEFAULT_SVM_KERNEL: str = "rbf"
+
+#: Kernels :func:`get_svm` accepts.
+SVM_KERNEL_OPTIONS: tuple[str, ...] = ("linear", "rbf", "poly", "sigmoid")
+
+#: Default regularisation strength for the SVM. As in logistic regression it is
+#: an *inverse* penalty: small ``C`` accepts more margin violations for a wider,
+#: smoother margin; large ``C`` insists on classifying the training rows and
+#: narrows it.
+DEFAULT_SVM_C: float = 1.0
+
+#: Default kernel coefficient. ``"scale"`` sets it to
+#: ``1 / (n_features * X.var())``, which adapts to the data; ``"auto"`` uses
+#: ``1 / n_features``; a float sets it directly.
+DEFAULT_SVM_GAMMA: str | float = "scale"
+
+#: Default depth limit for the decision tree: ``None`` means "grow until the
+#: leaves are pure", which is the setting that overfits, and is kept as the
+#: default so that the Week 6 sweep starts from an honest worst case.
+DEFAULT_TREE_MAX_DEPTH: int | None = None
+
+#: Default split criterion for the decision tree. Gini impurity and entropy
+#: measure the same thing — how mixed a node's labels are — and almost always
+#: choose the same splits; Gini is marginally cheaper because it needs no
+#: logarithm.
+DEFAULT_TREE_CRITERION: str = "gini"
+
+#: Split criteria :func:`get_decision_tree` accepts.
+TREE_CRITERION_OPTIONS: tuple[str, ...] = ("gini", "entropy", "log_loss")
+
+#: Default minimum number of training rows a leaf must hold. 1 permits
+#: single-row leaves, the purest form of memorisation; raising it is the other
+#: common way (besides ``max_depth``) to stop a tree overfitting.
+DEFAULT_TREE_MIN_SAMPLES_LEAF: int = 1
 
 
 def get_logistic_regression(
@@ -244,11 +302,189 @@ def get_naive_bayes(var_smoothing: float = DEFAULT_VAR_SMOOTHING) -> GaussianNB:
     return GaussianNB(var_smoothing=var_smoothing)
 
 
-#: The Week 5 models, in the order the notebook reports them, mapped to their
-#: zero-argument factories. Later weeks add entries rather than rewriting the
-#: comparison loop that consumes this mapping.
+def get_svm(
+    kernel: str = DEFAULT_SVM_KERNEL,
+    C: float = DEFAULT_SVM_C,
+    gamma: str | float = DEFAULT_SVM_GAMMA,
+    probability: bool = False,
+    random_state: int = DEFAULT_RANDOM_STATE,
+) -> SVC:
+    """Build an unfitted support vector machine classifier.
+
+    Every model so far has drawn *a* boundary between two classes; an SVM asks
+    which of the many boundaries that separate them is best, and answers: the
+    one as far as possible from both. The width of the empty corridor either
+    side of the boundary is the **margin**, and training maximises it. Only the
+    training rows sitting on the edge of that corridor — the **support
+    vectors** — take part in the answer; move a row far from the boundary
+    anywhere else on its own side and the model does not change. That is what
+    makes an SVM comparatively robust on small datasets: it fits the boundary
+    from a handful of the hardest cases rather than from every row.
+
+    Real data is rarely perfectly separable, so scikit-learn's SVM maximises a
+    **soft** margin: rows are allowed to sit inside the corridor, or on the
+    wrong side of it, at a price set by ``C``. Small ``C`` buys a wider, smoother
+    margin by tolerating more violations (more bias, less variance); large ``C``
+    insists on getting the training rows right and lets the margin narrow around
+    them (less bias, more variance).
+
+    The **kernel** is what lets the boundary curve. A kernel is a function
+    measuring the similarity of two rows, and it equals the inner product those
+    rows *would have* in some higher-dimensional space — so the SVM can fit a
+    flat boundary in that space, which folds back into a curved boundary in the
+    original seven features, without ever computing a coordinate there. That
+    shortcut is the **kernel trick**. ``"linear"`` is plain similarity and keeps
+    the boundary flat; ``"rbf"`` measures similarity as a bump that decays with
+    distance, letting each region of feature space be enclosed.
+
+    ``gamma`` sets how quickly that bump decays and therefore how wiggly an RBF
+    boundary may be: large ``gamma`` means influence dies off immediately and the
+    model can encircle individual points (overfitting), small ``gamma`` means
+    every row influences distant regions and the boundary flattens out
+    (underfitting).
+
+    Because both ``C`` and ``gamma`` are expressed in terms of distances between
+    rows, this model must sit behind
+    :func:`src.preprocessing.preprocessor.build_preprocessor`; on raw features a
+    single wide-ranging column would define the kernel by itself.
+
+    ``probability=False`` is the default because scikit-learn implements
+    ``predict_proba`` for an SVM by fitting an extra internal cross-validated
+    calibration (Platt scaling), which multiplies the training cost and can
+    disagree with ``predict``. Ask for it only when probabilities are needed.
+
+    Args:
+        kernel: One of :data:`SVM_KERNEL_OPTIONS`. Defaults to
+            :data:`DEFAULT_SVM_KERNEL` (``"rbf"``).
+        C: Inverse regularisation strength; must be strictly positive. Defaults
+            to :data:`DEFAULT_SVM_C`.
+        gamma: Kernel coefficient — ``"scale"``, ``"auto"``, or a positive
+            float. Ignored by the linear kernel. Defaults to
+            :data:`DEFAULT_SVM_GAMMA`.
+        probability: Whether to fit the extra calibration that enables
+            ``predict_proba``. Defaults to ``False``.
+        random_state: Seed used by that calibration (and by the solver's
+            shuffling). Defaults to the project-wide
+            :data:`src.data.split.DEFAULT_RANDOM_STATE`.
+
+    Returns:
+        An unfitted :class:`~sklearn.svm.SVC`.
+
+    Raises:
+        ValueError: If ``kernel`` is not in :data:`SVM_KERNEL_OPTIONS`, ``C`` is
+            not positive, or ``gamma`` is a non-positive number or an unknown
+            string.
+    """
+    if kernel not in SVM_KERNEL_OPTIONS:
+        raise ValueError(
+            f"Unsupported SVM kernel {kernel!r}. Choose one of: {', '.join(SVM_KERNEL_OPTIONS)}."
+        )
+    if C <= 0:
+        raise ValueError(f"`C` must be strictly positive, got {C}.")
+    if isinstance(gamma, str):
+        if gamma not in ("scale", "auto"):
+            raise ValueError(f"`gamma` as a string must be 'scale' or 'auto', got {gamma!r}.")
+    elif gamma <= 0:
+        raise ValueError(f"`gamma` as a number must be strictly positive, got {gamma}.")
+    return SVC(
+        kernel=kernel,
+        C=C,
+        gamma=gamma,
+        probability=probability,
+        random_state=random_state,
+    )
+
+
+def get_decision_tree(
+    max_depth: int | None = DEFAULT_TREE_MAX_DEPTH,
+    criterion: str = DEFAULT_TREE_CRITERION,
+    min_samples_leaf: int = DEFAULT_TREE_MIN_SAMPLES_LEAF,
+    random_state: int = DEFAULT_RANDOM_STATE,
+) -> DecisionTreeClassifier:
+    """Build an unfitted decision tree classifier.
+
+    A decision tree is a chain of yes/no questions of one shape only:
+    ``feature <= threshold``. Fitting is a greedy search — at each node the
+    algorithm tries every feature and every candidate threshold, scores each
+    split by how **pure** the two resulting groups are, and keeps the best one;
+    then it repeats inside each group. Purity is measured by ``criterion``:
+    *Gini impurity* is the chance of mislabelling a random row in the node if
+    you guessed labels at the node's own class frequencies, and *entropy* is the
+    number of bits needed to encode its labels. Both are 0 when a node holds a
+    single class and largest when its classes are evenly mixed; in practice they
+    pick almost the same splits.
+
+    Nothing in that procedure knows when to stop, which is the point of this
+    model in the curriculum. Left alone (``max_depth=None``) a tree keeps
+    splitting until every leaf is pure — in the limit, one leaf per training row
+    — and scores a perfect 100% on the data it was fitted on while having
+    learned some of its noise. That is **overfitting**, made visible: fit trees
+    at several depths, plot training accuracy and validation accuracy together,
+    and the two curves rise together, then separate.
+
+    ``max_depth`` is the most direct control over that:
+
+    * a very shallow tree can only ask one or two questions, so it cannot
+      express the answer at all — **high bias**, and equally poor on training and
+      validation data;
+    * a very deep tree can express anything, including the accidents of this
+      particular sample — **high variance**, so the training score is perfect and
+      the validation score is not;
+    * the useful depths lie between, and picking one systematically is Week 7.
+
+    Two properties make trees the odd model out here. They are **invariant to
+    feature scaling**: a split at ``rainfall <= 110`` picks the same rows however
+    the column is centred or divided, so the Week 3 preprocessor is kept in
+    front only so that every model in the comparison receives identical inputs.
+    And they are **readable**: the fitted model is a set of rules you can print,
+    which is why Week 7 returns to them for explainability.
+
+    Args:
+        max_depth: Maximum number of questions on any path from root to leaf, or
+            ``None`` for unlimited. Must be at least 1 if given. Defaults to
+            :data:`DEFAULT_TREE_MAX_DEPTH` (``None``).
+        criterion: Split quality measure; one of
+            :data:`TREE_CRITERION_OPTIONS`. Defaults to
+            :data:`DEFAULT_TREE_CRITERION` (``"gini"``).
+        min_samples_leaf: Minimum training rows in any leaf; must be at least 1.
+            Defaults to :data:`DEFAULT_TREE_MIN_SAMPLES_LEAF`.
+        random_state: Seed, so that ties between equally good splits are broken
+            reproducibly. Defaults to the project-wide
+            :data:`src.data.split.DEFAULT_RANDOM_STATE`.
+
+    Returns:
+        An unfitted :class:`~sklearn.tree.DecisionTreeClassifier`.
+
+    Raises:
+        ValueError: If ``max_depth`` is less than 1, ``criterion`` is not in
+            :data:`TREE_CRITERION_OPTIONS`, or ``min_samples_leaf`` is less
+            than 1.
+    """
+    if max_depth is not None and max_depth < 1:
+        raise ValueError(f"`max_depth` must be at least 1 or None, got {max_depth}.")
+    if criterion not in TREE_CRITERION_OPTIONS:
+        raise ValueError(
+            f"Unsupported tree criterion {criterion!r}. "
+            f"Choose one of: {', '.join(TREE_CRITERION_OPTIONS)}."
+        )
+    if min_samples_leaf < 1:
+        raise ValueError(f"`min_samples_leaf` must be at least 1, got {min_samples_leaf}.")
+    return DecisionTreeClassifier(
+        max_depth=max_depth,
+        criterion=criterion,
+        min_samples_leaf=min_samples_leaf,
+        random_state=random_state,
+    )
+
+
+#: The models, in the order the notebook reports them, mapped to their
+#: zero-argument factories: the three from Week 5, then the two from Week 6.
+#: Later weeks add entries rather than rewriting the comparison loop that
+#: consumes this mapping.
 CLASSICAL_MODEL_FACTORIES: dict[str, Callable[[], BaseEstimator]] = {
     "logistic_regression": get_logistic_regression,
     "knn": get_knn,
     "naive_bayes": get_naive_bayes,
+    "svm": get_svm,
+    "decision_tree": get_decision_tree,
 }

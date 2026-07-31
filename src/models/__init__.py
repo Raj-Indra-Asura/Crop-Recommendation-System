@@ -9,6 +9,11 @@ classifiers — :func:`get_logistic_regression`, :func:`get_knn` and
 :func:`get_naive_bayes` — all returned unfitted, so the same
 ``fit``/``predict`` loop and the same cross-validation folds apply to every one
 of them.
+
+Week 6 extends the same module with :func:`get_svm` — a margin-based model whose
+kernel decides whether its boundary is flat or curved — and
+:func:`get_decision_tree`, the rule-based model whose ``max_depth`` makes the
+bias-variance tradeoff visible.
 """
 
 from src.models.baseline import (
@@ -22,11 +27,21 @@ from src.models.classical_models import (
     DEFAULT_KNN_WEIGHTS,
     DEFAULT_LOGISTIC_C,
     DEFAULT_LOGISTIC_MAX_ITER,
+    DEFAULT_SVM_C,
+    DEFAULT_SVM_GAMMA,
+    DEFAULT_SVM_KERNEL,
+    DEFAULT_TREE_CRITERION,
+    DEFAULT_TREE_MAX_DEPTH,
+    DEFAULT_TREE_MIN_SAMPLES_LEAF,
     DEFAULT_VAR_SMOOTHING,
     KNN_WEIGHT_OPTIONS,
+    SVM_KERNEL_OPTIONS,
+    TREE_CRITERION_OPTIONS,
+    get_decision_tree,
     get_knn,
     get_logistic_regression,
     get_naive_bayes,
+    get_svm,
 )
 
 __all__ = [
@@ -37,10 +52,20 @@ __all__ = [
     "DEFAULT_K_NEIGHBORS",
     "DEFAULT_LOGISTIC_C",
     "DEFAULT_LOGISTIC_MAX_ITER",
+    "DEFAULT_SVM_C",
+    "DEFAULT_SVM_GAMMA",
+    "DEFAULT_SVM_KERNEL",
+    "DEFAULT_TREE_CRITERION",
+    "DEFAULT_TREE_MAX_DEPTH",
+    "DEFAULT_TREE_MIN_SAMPLES_LEAF",
     "DEFAULT_VAR_SMOOTHING",
     "KNN_WEIGHT_OPTIONS",
+    "SVM_KERNEL_OPTIONS",
+    "TREE_CRITERION_OPTIONS",
     "get_baseline_model",
+    "get_decision_tree",
     "get_knn",
     "get_logistic_regression",
     "get_naive_bayes",
+    "get_svm",
 ]

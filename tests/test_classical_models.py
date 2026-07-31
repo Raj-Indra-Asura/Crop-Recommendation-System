@@ -1,19 +1,29 @@
-"""Tests for Week 5's three classical classifiers.
+"""Tests for the classical classifiers of Weeks 5 and 6.
 
-The properties checked here are the ones the week is graded on:
+Week 5 contributed logistic regression, KNN and Gaussian naive Bayes; Week 6
+adds the support vector machine and the decision tree, plus the decision
+boundary plot that illustrates them.
+
+The properties checked here are the ones those weeks are graded on:
 
 1. **The factories return unfitted, correctly configured estimators.** Each
    defaults to the settings the notebook and the docs quote, rejects nonsense
    arguments, and comes back unfitted so cross-validation can re-fit it per
    fold.
-2. **All three share one training loop.** ``fit(X_train, y_train)`` then
-   ``predict(X_test)`` works identically for logistic regression, KNN and naive
-   Bayes, inside a pipeline as well as on their own.
+2. **All five share one training loop.** ``fit(X_train, y_train)`` then
+   ``predict(X_test)`` works identically for every model, inside a pipeline as
+   well as on their own.
 3. **Each model behaves the way its algorithm says it should.** KNN with
    ``k = 1`` memorises its training data and is sensitive to feature scaling;
    naive Bayes is not; KNN degrades when meaningless features are added, which
-   is the curse of dimensionality in miniature.
-4. **All three beat the Week 4 baseline**, on synthetic data and on the real
+   is the curse of dimensionality in miniature; an SVM depends only on its
+   support vectors and needs a non-linear kernel for a non-linear problem; a
+   decision tree memorises when it is deep and underfits when it is shallow,
+   and is unmoved by feature scaling.
+4. **The bias-variance story is real, not rhetorical.** The gap between training
+   and cross-validated accuracy grows with tree depth, which is the claim the
+   Week 6 notebook plots.
+5. **All five beat the Week 4 baseline**, on synthetic data and on the real
    1,760 training rows, measured on the same cross-validation folds.
 
 Most tests run on a small synthetic frame so they pass with or without the CSV;
@@ -22,6 +32,7 @@ those needing the real dataset are marked with ``requires_raw_dataset``.
 
 from __future__ import annotations
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pytest
@@ -31,6 +42,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
 from src.data import (
     DEFAULT_RANDOM_STATE,
@@ -47,14 +60,25 @@ from src.models import (
     DEFAULT_KNN_WEIGHTS,
     DEFAULT_LOGISTIC_C,
     DEFAULT_LOGISTIC_MAX_ITER,
+    DEFAULT_SVM_C,
+    DEFAULT_SVM_GAMMA,
+    DEFAULT_SVM_KERNEL,
+    DEFAULT_TREE_CRITERION,
+    DEFAULT_TREE_MAX_DEPTH,
+    DEFAULT_TREE_MIN_SAMPLES_LEAF,
     DEFAULT_VAR_SMOOTHING,
     KNN_WEIGHT_OPTIONS,
+    SVM_KERNEL_OPTIONS,
+    TREE_CRITERION_OPTIONS,
     get_baseline_model,
+    get_decision_tree,
     get_knn,
     get_logistic_regression,
     get_naive_bayes,
+    get_svm,
 )
 from src.preprocessing import build_preprocessor
+from src.utils.visualization import plot_decision_boundary
 from tests.conftest import requires_raw_dataset
 
 #: Accuracy a constant guess earns on the 22 balanced crops (Week 4's floor).
@@ -87,6 +111,30 @@ def separable_frame() -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
+@pytest.fixture
+def circular_frame() -> pd.DataFrame:
+    """Build a two-class frame that no straight line can separate.
+
+    One class sits in a blob at the origin, the other in a ring around it. A
+    linear model has nowhere to put its boundary; an RBF kernel encloses the
+    inner blob without difficulty. This is the fixture that makes "what a kernel
+    buys you" a measurement rather than a claim.
+    """
+    rng = np.random.default_rng(seed=1)
+    inner = rng.normal(0.0, 0.6, (120, 2))
+    angles = rng.uniform(0.0, 2 * np.pi, 120)
+    radii = rng.normal(5.0, 0.4, 120)
+    outer = np.column_stack([radii * np.cos(angles), radii * np.sin(angles)])
+    points = np.vstack([inner, outer])
+    return pd.DataFrame(
+        {
+            "first": points[:, 0],
+            "second": points[:, 1],
+            TARGET_COLUMN: ["inner"] * len(inner) + ["outer"] * len(outer),
+        }
+    )
+
+
 def features_and_labels(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     """Split a fixture frame into its feature columns and its label column."""
     feature_names = [name for name in frame.columns if name != TARGET_COLUMN]
@@ -98,7 +146,18 @@ def model_pipeline(model) -> Pipeline:
     return Pipeline([("preprocess", build_preprocessor(["first", "second"])), ("model", model)])
 
 
-ALL_FACTORIES = [get_logistic_regression, get_knn, get_naive_bayes]
+ALL_FACTORIES = [
+    get_logistic_regression,
+    get_knn,
+    get_naive_bayes,
+    get_svm,
+    get_decision_tree,
+]
+
+#: The models that report ``predict_proba`` with this project's defaults — every
+#: one except the SVM, which needs ``probability=True`` and the extra
+#: calibration that comes with it.
+PROBABILISTIC_FACTORIES = [get_logistic_regression, get_knn, get_naive_bayes, get_decision_tree]
 
 
 # --------------------------------------------------------------------------
@@ -189,8 +248,107 @@ def test_naive_bayes_rejects_negative_smoothing():
         get_naive_bayes(var_smoothing=-1e-9)
 
 
-def test_factory_registry_lists_the_three_week_five_models():
-    assert list(CLASSICAL_MODEL_FACTORIES) == ["logistic_regression", "knn", "naive_bayes"]
+def test_get_svm_returns_an_svc():
+    assert isinstance(get_svm(), SVC)
+
+
+def test_get_decision_tree_returns_a_decision_tree_classifier():
+    assert isinstance(get_decision_tree(), DecisionTreeClassifier)
+
+
+def test_svm_defaults():
+    model = get_svm()
+
+    assert model.kernel == DEFAULT_SVM_KERNEL == "rbf"
+    assert model.C == DEFAULT_SVM_C == 1.0
+    assert model.gamma == DEFAULT_SVM_GAMMA == "scale"
+    assert model.probability is False
+    assert model.random_state == DEFAULT_RANDOM_STATE
+
+
+def test_decision_tree_defaults():
+    model = get_decision_tree()
+
+    assert model.max_depth is DEFAULT_TREE_MAX_DEPTH is None
+    assert model.criterion == DEFAULT_TREE_CRITERION == "gini"
+    assert model.min_samples_leaf == DEFAULT_TREE_MIN_SAMPLES_LEAF == 1
+    assert model.random_state == DEFAULT_RANDOM_STATE
+
+
+def test_week_six_factories_pass_their_arguments_through():
+    assert get_svm(kernel="linear", C=10.0).kernel == "linear"
+    assert get_svm(kernel="linear", C=10.0).C == 10.0
+    assert get_svm(gamma=0.5).gamma == 0.5
+    assert get_svm(probability=True).probability is True
+    assert get_decision_tree(max_depth=3).max_depth == 3
+    assert get_decision_tree(criterion="entropy").criterion == "entropy"
+    assert get_decision_tree(min_samples_leaf=7).min_samples_leaf == 7
+
+
+@pytest.mark.parametrize("bad_kernel", ["gaussian", "RBF", ""])
+def test_svm_rejects_an_unsupported_kernel(bad_kernel):
+    with pytest.raises(ValueError, match="Unsupported SVM kernel"):
+        get_svm(kernel=bad_kernel)
+
+
+@pytest.mark.parametrize("bad_c", [0.0, -1.0])
+def test_svm_rejects_non_positive_c(bad_c):
+    with pytest.raises(ValueError, match="strictly positive"):
+        get_svm(C=bad_c)
+
+
+@pytest.mark.parametrize("bad_gamma", [0.0, -0.1])
+def test_svm_rejects_non_positive_gamma(bad_gamma):
+    with pytest.raises(ValueError, match="strictly positive"):
+        get_svm(gamma=bad_gamma)
+
+
+def test_svm_rejects_an_unknown_gamma_keyword():
+    with pytest.raises(ValueError, match="'scale' or 'auto'"):
+        get_svm(gamma="automatic")
+
+
+@pytest.mark.parametrize("kernel", SVM_KERNEL_OPTIONS)
+def test_svm_accepts_every_supported_kernel(kernel, separable_frame):
+    X, y = features_and_labels(separable_frame)
+    model = get_svm(kernel=kernel).fit(X, y)
+
+    assert len(model.predict(X)) == len(y)
+
+
+@pytest.mark.parametrize("criterion", TREE_CRITERION_OPTIONS)
+def test_decision_tree_accepts_every_supported_criterion(criterion, separable_frame):
+    X, y = features_and_labels(separable_frame)
+    model = get_decision_tree(criterion=criterion).fit(X, y)
+
+    assert len(model.predict(X)) == len(y)
+
+
+@pytest.mark.parametrize("bad_depth", [0, -1])
+def test_decision_tree_rejects_a_non_positive_depth(bad_depth):
+    with pytest.raises(ValueError, match="at least 1 or None"):
+        get_decision_tree(max_depth=bad_depth)
+
+
+def test_decision_tree_rejects_an_unsupported_criterion():
+    with pytest.raises(ValueError, match="Unsupported tree criterion"):
+        get_decision_tree(criterion="variance")
+
+
+@pytest.mark.parametrize("bad_leaf", [0, -3])
+def test_decision_tree_rejects_an_empty_leaf(bad_leaf):
+    with pytest.raises(ValueError, match="at least 1"):
+        get_decision_tree(min_samples_leaf=bad_leaf)
+
+
+def test_factory_registry_lists_every_model_so_far():
+    assert list(CLASSICAL_MODEL_FACTORIES) == [
+        "logistic_regression",
+        "knn",
+        "naive_bayes",
+        "svm",
+        "decision_tree",
+    ]
     assert [factory() for factory in CLASSICAL_MODEL_FACTORIES.values()]
 
 
@@ -336,17 +494,225 @@ def test_logistic_regression_learns_one_weight_per_feature_per_class(separable_f
     assert model.intercept_.shape == (y.nunique(),)
 
 
-def test_probabilities_sum_to_one_for_every_model(separable_frame):
+def test_probabilities_sum_to_one_where_they_are_reported(separable_frame):
     X, y = features_and_labels(separable_frame)
 
-    for factory in ALL_FACTORIES:
+    for factory in PROBABILISTIC_FACTORIES:
         probabilities = factory().fit(X, y).predict_proba(X)
         assert probabilities.shape == (len(X), y.nunique())
         assert np.allclose(probabilities.sum(axis=1), 1.0)
 
 
+def test_the_svm_depends_only_on_its_support_vectors(separable_frame):
+    """Rows far from the boundary can be deleted without moving it."""
+    X, y = features_and_labels(separable_frame)
+    model = get_svm(kernel="linear").fit(X, y)
+
+    support = np.zeros(len(X), dtype=bool)
+    support[model.support_] = True
+    on_support_only = get_svm(kernel="linear").fit(X[support], y[support])
+
+    assert support.sum() < len(X)
+    assert np.array_equal(model.predict(X), on_support_only.predict(X))
+
+
+def test_an_rbf_kernel_solves_a_problem_a_linear_one_cannot(circular_frame):
+    """One class enclosed by another: no straight line separates them."""
+    X, y = features_and_labels(circular_frame)
+
+    linear = cross_validated_accuracy(model_pipeline(get_svm(kernel="linear")), X, y)["mean"]
+    rbf = cross_validated_accuracy(model_pipeline(get_svm(kernel="rbf")), X, y)["mean"]
+
+    assert linear < 0.7
+    assert rbf > 0.95
+
+
+def test_a_larger_svm_c_fits_the_training_data_harder(separable_frame):
+    """Small C buys a wider margin by tolerating violations; large C does not."""
+    X, y = features_and_labels(separable_frame)
+
+    loose = get_svm(C=0.001).fit(X, y)
+    tight = get_svm(C=100.0).fit(X, y)
+
+    assert evaluate_model(tight, X, y)["accuracy"] >= evaluate_model(loose, X, y)["accuracy"]
+    assert tight.n_support_.sum() < loose.n_support_.sum()
+
+
+def test_an_unlimited_decision_tree_memorises_its_training_data(separable_frame):
+    """The overfitting end of the dial: pure leaves, perfect training accuracy."""
+    X, y = features_and_labels(separable_frame)
+    model = get_decision_tree().fit(X, y)
+
+    assert evaluate_model(model, X, y)["accuracy"] == pytest.approx(1.0)
+
+
+def test_a_stump_underfits(separable_frame):
+    """The other end: one question cannot separate four classes."""
+    X, y = features_and_labels(separable_frame)
+    model = get_decision_tree(max_depth=1).fit(X, y)
+
+    assert model.get_depth() == 1
+    assert evaluate_model(model, X, y)["accuracy"] < 0.6
+
+
+def test_tree_depth_controls_the_train_validation_gap(separable_frame):
+    """The bias-variance tradeoff, as the Week 6 notebook plots it.
+
+    A stump is equally bad on both curves (bias); an unlimited tree is perfect
+    on the training rows and worse on held-out ones (variance).
+    """
+    X, y = features_and_labels(separable_frame)
+
+    def gap(max_depth: int | None) -> float:
+        train_accuracy = evaluate_model(
+            get_decision_tree(max_depth=max_depth).fit(X, y), X, y
+        )["accuracy"]
+        validated = cross_validated_accuracy(get_decision_tree(max_depth=max_depth), X, y)["mean"]
+        return train_accuracy - validated
+
+    assert gap(1) < 0.02
+    assert gap(None) > gap(1)
+
+
+def test_a_deeper_tree_is_never_less_accurate_on_its_training_data(separable_frame):
+    """Training accuracy is monotone in depth, which is why it cannot be trusted."""
+    X, y = features_and_labels(separable_frame)
+
+    accuracies = [
+        evaluate_model(get_decision_tree(max_depth=depth).fit(X, y), X, y)["accuracy"]
+        for depth in (1, 2, 3, 5, 10)
+    ]
+
+    assert accuracies == sorted(accuracies)
+
+
+def test_max_depth_is_respected(separable_frame):
+    X, y = features_and_labels(separable_frame)
+
+    assert get_decision_tree(max_depth=3).fit(X, y).get_depth() <= 3
+    assert get_decision_tree().fit(X, y).get_depth() > 3
+
+
+def test_a_bigger_minimum_leaf_size_makes_a_smaller_tree(separable_frame):
+    X, y = features_and_labels(separable_frame)
+
+    detailed = get_decision_tree().fit(X, y).get_n_leaves()
+    restrained = get_decision_tree(min_samples_leaf=20).fit(X, y).get_n_leaves()
+
+    assert restrained < detailed
+
+
+def test_the_decision_tree_is_insensitive_to_feature_scaling(separable_frame):
+    """A threshold split picks the same rows however the column is rescaled."""
+    X, y = features_and_labels(separable_frame)
+    standardised = pd.DataFrame(StandardScaler().fit_transform(X), columns=X.columns)
+
+    on_raw = get_decision_tree().fit(X, y).predict(X)
+    on_standardised = get_decision_tree().fit(standardised, y).predict(standardised)
+
+    assert np.array_equal(on_raw, on_standardised)
+
+
+def test_gini_and_entropy_agree_on_this_data(separable_frame):
+    """The two purity measures differ in formula far more than in practice."""
+    X, y = features_and_labels(separable_frame)
+
+    gini = cross_validated_accuracy(get_decision_tree(criterion="gini"), X, y)["mean"]
+    entropy = cross_validated_accuracy(get_decision_tree(criterion="entropy"), X, y)["mean"]
+
+    assert gini == pytest.approx(entropy, abs=0.05)
+
+
 # --------------------------------------------------------------------------
-# The comparison: all three against the Week 4 baseline, on the same folds
+# The decision boundary plot (illustration only, never a reported score)
+# --------------------------------------------------------------------------
+
+
+def test_plot_decision_boundary_returns_axes_labelled_with_the_two_features(separable_frame):
+    X, y = features_and_labels(separable_frame)
+    model = get_decision_tree(max_depth=3).fit(X, y)
+
+    ax = plot_decision_boundary(model, X, y, resolution=30)
+
+    assert ax.get_xlabel() == "first"
+    assert ax.get_ylabel() == "second"
+    assert "first" in ax.get_title() and "second" in ax.get_title()
+    plt.close(ax.figure)
+
+
+def test_plot_decision_boundary_draws_on_the_axes_it_is_given(separable_frame):
+    X, y = features_and_labels(separable_frame)
+    model = get_svm().fit(X, y)
+    figure, ax = plt.subplots()
+
+    returned = plot_decision_boundary(model, X, y, resolution=30, title="custom")
+
+    assert plot_decision_boundary(model, X, y, ax=ax, resolution=30) is ax
+    assert returned is not ax
+    assert returned.get_title() == "custom"
+    plt.close(figure)
+    plt.close(returned.figure)
+
+
+def test_plot_decision_boundary_accepts_a_plain_array(separable_frame):
+    X, y = features_and_labels(separable_frame)
+    model = get_decision_tree(max_depth=3).fit(X.to_numpy(), y.to_numpy())
+
+    ax = plot_decision_boundary(model, X.to_numpy(), y.to_numpy(), resolution=20)
+
+    assert len(ax.collections) > 0
+    plt.close(ax.figure)
+
+
+def test_plot_decision_boundary_does_not_fit_or_mutate_anything(separable_frame):
+    X, y = features_and_labels(separable_frame)
+    model = get_decision_tree(max_depth=3).fit(X, y)
+    before = X.copy()
+
+    ax = plot_decision_boundary(model, X, y, resolution=20)
+
+    assert X.equals(before)
+    assert model.get_depth() == 3
+    plt.close(ax.figure)
+
+
+def test_plot_decision_boundary_needs_a_fitted_model(separable_frame):
+    X, y = features_and_labels(separable_frame)
+
+    with pytest.raises(NotFittedError):
+        plot_decision_boundary(get_decision_tree(), X, y, resolution=10)
+
+
+def test_plot_decision_boundary_rejects_anything_but_two_features(separable_frame):
+    X, y = features_and_labels(separable_frame)
+    three = X.assign(third=0.0)
+
+    with pytest.raises(ValueError, match="exactly two columns"):
+        plot_decision_boundary(get_decision_tree().fit(three, y), three, y, resolution=10)
+
+
+def test_plot_decision_boundary_rejects_mismatched_labels(separable_frame):
+    X, y = features_and_labels(separable_frame)
+    model = get_decision_tree(max_depth=3).fit(X, y)
+
+    with pytest.raises(ValueError, match="rows but `y` has"):
+        plot_decision_boundary(model, X, y[:-1], resolution=10)
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "message"),
+    [({"resolution": 1}, "at least 2"), ({"padding": -0.1}, "must not be negative")],
+)
+def test_plot_decision_boundary_rejects_nonsense_settings(kwargs, message, separable_frame):
+    X, y = features_and_labels(separable_frame)
+    model = get_decision_tree(max_depth=3).fit(X, y)
+
+    with pytest.raises(ValueError, match=message):
+        plot_decision_boundary(model, X, y, **kwargs)
+
+
+# --------------------------------------------------------------------------
+# The comparison: every model against the Week 4 baseline, on the same folds
 # --------------------------------------------------------------------------
 
 
@@ -373,7 +739,7 @@ def test_comparing_models_uses_identical_folds(separable_frame):
 
 
 # --------------------------------------------------------------------------
-# The real dataset: the Week 5 result the notebook reports
+# The real dataset: the results the notebook reports
 # --------------------------------------------------------------------------
 
 
@@ -394,8 +760,12 @@ def test_every_model_beats_the_real_baseline_by_a_wide_margin(name):
 
 
 @requires_raw_dataset
-def test_naive_bayes_is_the_best_of_the_three_this_week():
-    """The Week 5 headline: the simplest model wins, at ~99.5%."""
+def test_naive_bayes_is_still_the_best_model_so_far():
+    """The Week 6 headline.
+
+    The SVM and the tree both improve on Week 5's runners-up, and Gaussian naive
+    Bayes still leads at ~99.5%.
+    """
     crops = load_data()
     train, _ = stratified_split(crops)
     X, y = train[list(FEATURE_COLUMNS)], train[TARGET_COLUMN]
@@ -409,6 +779,34 @@ def test_naive_bayes_is_the_best_of_the_three_this_week():
 
     assert max(means, key=means.get) == "naive_bayes"
     assert means["naive_bayes"] == pytest.approx(0.995, abs=0.01)
+    assert means["svm"] == pytest.approx(0.979, abs=0.01)
+    assert means["decision_tree"] == pytest.approx(0.985, abs=0.01)
+    # Both Week 6 models land above Week 5's runners-up and below the leader.
+    assert means["svm"] > means["knn"]
+    assert means["decision_tree"] > means["logistic_regression"]
+
+
+@requires_raw_dataset
+def test_the_tree_overfits_the_real_training_data_when_it_is_unlimited():
+    """The plot the notebook draws, as an assertion: depth widens the gap."""
+    crops = load_data()
+    train, _ = stratified_split(crops)
+    X, y = train[list(FEATURE_COLUMNS)], train[TARGET_COLUMN]
+
+    shallow = _real_pipeline(get_decision_tree(max_depth=3))
+    deep = _real_pipeline(get_decision_tree())
+
+    shallow_gap = (
+        evaluate_model(shallow.fit(X, y), X, y)["accuracy"]
+        - cross_validated_accuracy(_real_pipeline(get_decision_tree(max_depth=3)), X, y)["mean"]
+    )
+    deep_gap = (
+        evaluate_model(deep.fit(X, y), X, y)["accuracy"]
+        - cross_validated_accuracy(_real_pipeline(get_decision_tree()), X, y)["mean"]
+    )
+
+    assert evaluate_model(deep, X, y)["accuracy"] == pytest.approx(1.0)
+    assert deep_gap > shallow_gap
 
 
 @requires_raw_dataset
