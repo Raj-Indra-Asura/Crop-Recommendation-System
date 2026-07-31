@@ -529,7 +529,8 @@ estimators and present the same `fit`/`transform`/`predict` interface as a singl
 one.
 
 **`ColumnTransformer` composes across columns.** It maps *sets of columns* to
-*transformers*, so different columns can be prepared differently in one object:
+*transformers*, so different columns can be prepared differently in one object.
+Its `remainder` setting controls unnamed columns; `"drop"` removes them:
 
 ```python
 ColumnTransformer(
@@ -578,9 +579,9 @@ before Week 6 needs it.
 transformation *and* the model. Week 9 saves that one object; Week 10's API loads
 it and calls `predict` on a raw request. Nothing at serving time has to remember
 "and also subtract 50.548 from N first" — the arithmetic travels with the model.
-**Training/serving skew** — a model served with preparation that differs even
-slightly from training — is one of the most common production ML failures, and
-this is the standard defence against it.
+**Training/serving skew** happens when a model is served with preparation that
+differs, even slightly, from the preparation used in training. It is one of the
+most common production ML failures, and this is the standard defence against it.
 
 **They make hyperparameter search cover preparation too.** Week 6 can search
 `preprocess__numeric__with_mean` alongside the model's own parameters, using the
