@@ -41,6 +41,12 @@ combining them by voting or averaging. It attacks *variance*: the members stay
 individually overfit, but their independent mistakes largely cancel. A random
 forest is bagging plus feature randomness.
 
+**Base image** *(W11)* — The image a Dockerfile starts `FROM`. This project
+uses `python:3.11-slim`: a real glibc userland, which the
+numpy/pandas/scikit-learn wheels need, without the compilers and documentation
+of the full image. `alpine` is smaller and uses musl, for which many scientific
+wheels do not exist.
+
 **Base value** *(W8)* — In a SHAP explanation, the model's average output over
 the background data: the number the contributions are added to. Base value plus
 the seven feature contributions reproduces this row's prediction exactly, which
@@ -83,6 +89,24 @@ saw 1,114 of the 1,760 rows.
 interquartile range, a line at the median, whiskers reaching 1.5 IQR beyond the
 box, and every point past the whiskers drawn individually.
 
+**Build cache (layers)** *(W11)* — Each Dockerfile instruction produces a
+filesystem layer that Docker reuses if the instruction and its inputs are
+unchanged. The first changed layer invalidates every layer below it, which is
+why dependencies are copied and installed before the source: a code edit then
+rebuilds in seconds instead of reinstalling the stack.
+
+**Build context** *(W11)* — The directory sent to the Docker daemon before the
+first instruction runs, named by the final argument of `docker build`. `COPY`
+can read nothing outside it, which is why the build runs from the repository
+root with `-f deployment/Dockerfile`. `.dockerignore` controls what the context
+contains.
+
+**CI / CD** *(W11)* — Continuous **integration**: every change automatically
+built and tested on a clean machine. Continuous **delivery**: every passing
+change automatically packaged for release. Continuous **deployment**: that
+release shipped without a human pressing anything. This project implements CI
+only.
+
 **Class balance** *(W2)* — How many rows each class has. This dataset is
 perfectly balanced: 22 crops with exactly 100 rows each. Balance decides whether
 accuracy is a fair summary metric.
@@ -121,6 +145,11 @@ column per predicted class; cell `(i, j)` counts the examples that really were
 `i` and were called `j`. The diagonal is the correct answers, every off-diagonal
 cell is a named mistake. Read rows for recall, columns for precision. Available
 from `confusion_frame()` and from `evaluate_model()`'s `"confusion_matrix"` key.
+
+**Container** *(W11)* — A process started from an image, with its own
+filesystem, network and users, sharing the host's kernel. Lighter than a
+virtual machine, stronger than a virtual environment: it ships the interpreter
+and the OS userland, which pinned Python packages never could.
 
 **Correlation** *(W2)* — How strongly two numeric features move together, on a
 scale from -1 to +1.
@@ -198,6 +227,16 @@ like. Logistic regression and KNN are discriminative.
 **Distribution** *(W2)* — The pattern of which values a feature takes, and how
 often.
 
+**Dockerfile** *(W11)* — The recipe for an image, read top to bottom: `FROM` a
+base image, `ENV`/`WORKDIR` for the environment, `COPY`/`RUN` to install
+dependencies and add source, `EXPOSE` and `HEALTHCHECK` as declarations, and
+`CMD` as the command a container runs.
+
+**`.dockerignore`** *(W11)* — The list of paths excluded from the build
+context. It makes builds faster, keeps the layer cache stable, and — most
+importantly — stops files that were never meant to ship (`.git/`, credentials,
+local artifacts) from being copied into an image anyone can extract.
+
 **`DummyClassifier`** *(W4)* — scikit-learn's baseline estimator. `fit` looks
 only at `y`; `predict` answers from the recorded label distribution using a
 chosen strategy (`most_frequent`, `prior`, `stratified`, `uniform`, `constant`).
@@ -230,6 +269,12 @@ must match against it and fail loudly if it differs.
 examines a dataset's statistics and shapes in order to understand it, before any
 preparation or modelling. The last stage in which it is safe to look at every
 row.
+
+**`EXPOSE` vs `-p`** *(W11)* — `EXPOSE 8000` documents the port the
+containerised process listens on and opens nothing. `docker run -p 8000:8000`
+is what publishes it to the host. Inside the container the server must bind
+`0.0.0.0`, because a process on `127.0.0.1` there is reachable only from
+inside.
 
 **F1 score** *(W8)* — The harmonic mean of precision and recall,
 `2 · P · R / (P + R)`. The harmonic mean is used because it punishes imbalance:
@@ -307,6 +352,11 @@ chance of mislabelling a random row in a node if you guessed at the node's own
 class frequencies. Cheaper than entropy because it needs no logarithm, and it
 almost always chooses the same splits.
 
+**GitHub Actions** *(W11)* — GitHub's CI service. A **workflow** (a YAML file
+under `.github/workflows/`) declares **triggers** (`push`, `pull_request`), one
+or more **jobs**, each on a fresh **runner** (`ubuntu-latest`), each made of
+**steps** that either `run:` a command or `uses:` a packaged action.
+
 **Gradient boosting** *(W7)* — Boosting in which each round fits a small tree to
 the errors the running sum still makes, scaled by a `learning_rate`. Strong on
 tabular data; supplied here by XGBoost when it is installed and by scikit-learn's
@@ -322,6 +372,11 @@ candidates and 120 fits for this project's forest grid. Wrapped by
 actually serve — here, whether a model is loaded — rather than merely whether a
 process is alive. It takes no dependencies, because it is asked precisely when
 something is broken.
+
+**`HEALTHCHECK`** *(W11)* — A command Docker runs inside a container on a
+schedule to decide whether it is `healthy`. Ours calls Week 10's `/health`,
+which is where a cheap, dependency-free endpoint stops being a courtesy and
+starts being an interface an orchestrator acts on.
 
 **Histogram** *(W2)* — A plot of a distribution: the feature's range is split
 into equal-width bins and each bar counts the rows falling inside one.
@@ -340,6 +395,11 @@ best, with cross-validation *inside* the loop so candidates are ranked on
 held-out folds and the test set is never consulted. The winner's score is
 optimistic — the maximum of many noisy numbers is partly noise — so it is not an
 estimate of the model's accuracy.
+
+**Image (container)** *(W11)* — A built, immutable, content-hashed artifact
+containing a filesystem and the metadata to start a process from it. One image,
+many containers; a container's writable layer dies with the container, so fixes
+belong in the Dockerfile, not in a running container.
 
 **Inference** *(W1)* — Using a trained model to predict the label of a new,
 unlabelled instance. Happens per request, in milliseconds. Contrast with
@@ -686,6 +746,12 @@ in Week 5 because nothing after it changes.
 differs, even slightly, from how it was prepared at training time. A common cause
 of production failures; the standard defence is shipping the fitted `Pipeline`
 rather than reimplementing preparation on the server.
+
+**Trimmed deployment requirements** *(W11)* — `deployment/requirements.txt`:
+the packages one *serving* process reaches by import — seven here — rather than
+everything a developer needs. Versions must be identical to the root file's
+pins, not merely compatible, or the image serves a model loaded by a different
+library than the one that built it.
 
 **Unsupervised learning** *(W1)* — Learning patterns or structure from data
 where no correct answers are supplied.

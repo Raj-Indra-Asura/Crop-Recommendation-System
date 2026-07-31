@@ -319,3 +319,36 @@ Taught in [`docs/curriculum/week10/learning_notes.md`](curriculum/week10/learnin
 | **Health endpoint** | A cheap, dependency-free answer to "can this process actually serve?", polled by containers and load balancers. | §8.3 |
 | **`TestClient`** | Drives the app in-process — full request/response semantics, no port, milliseconds. | §9 |
 | **Testing the contract, not the prediction** | Assert the label is *a* known crop and the response has the right shape; `== "jute"` breaks on every retrain. | §9 |
+
+---
+
+## Week 11 — Containerisation and continuous integration
+
+Taught in [`docs/curriculum/week11/learning_notes.md`](curriculum/week11/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **Environment consistency** | Pinned Python packages fix only half the environment; the interpreter, the libc and the OS userland are the half that breaks on someone else's machine. | §1.1 |
+| **Container** | The program shipped together with its userland, libraries and start command, sharing the host kernel. | §1.2 |
+| **Container vs virtualenv vs VM** | A virtualenv isolates packages, a container isolates the filesystem and process space, a VM isolates the kernel too — MBs, hundreds of MBs, GBs. | §1.2 |
+| **Image vs container** | An image is a built, immutable, hashed artifact; a container is a process started from one, with a writable layer that dies with it. | §1.3 |
+| **Base image** | The image yours starts `FROM`; `-slim` keeps glibc and drops the build tools, `alpine` swaps in musl and breaks scientific wheels. | §2.1 |
+| **`WORKDIR` / `ENV`** | The working directory for every later instruction, and the interpreter settings (`PYTHONUNBUFFERED`, `PYTHONPATH`) a containerised process needs. | §2.2-2.3 |
+| **`COPY` / `RUN`** | `COPY` brings files in from the build context; `RUN` executes a command at build time and keeps the resulting filesystem. | §2.4 |
+| **Baking the artifact in** | Training during the build makes start-up a file read; the price is that retraining means rebuilding the image. | §2.5 |
+| **Non-root container user** | The default user is root; a network-facing process should not be, and `/app` stays read-only to it. | §2.6 |
+| **`EXPOSE` vs `-p`** | `EXPOSE` documents the port the process listens on; only `docker run -p` makes it reachable from the host. | §2.7 |
+| **`HEALTHCHECK`** | Docker polling Week 10's `/health` from inside the container, so `docker ps` can say `healthy` rather than merely `up`. | §2.8 |
+| **Exec form vs shell form** | The JSON-array `CMD` makes the server PID 1 and lets `docker stop`'s SIGTERM reach it; the string form hides it behind a shell. | §2.9 |
+| **Binding to `0.0.0.0`** | Inside a container, `127.0.0.1` is reachable only from inside it, so a published port would forward to nothing. | §2.9 |
+| **`CMD` vs `ENTRYPOINT`** | Arguments after the image name replace a `CMD` and are appended to an `ENTRYPOINT`. | §2.10 |
+| **Layers and the build cache** | Each instruction is a cached filesystem diff; the first instruction whose inputs changed invalidates it and everything below. | §3.1 |
+| **Layer ordering** | Least-frequently-changed first — dependencies before source — or every commit reinstalls the whole stack. | §3.2 |
+| **Build context** | The directory uploaded to the daemon before any instruction runs; `COPY` can read nothing outside it. | §3.3 |
+| **`.dockerignore`** | Keeps paths out of that upload — a speed question, a cache-stability question and, for secrets, a safety question. | §3.3 |
+| **Trimmed deployment requirements** | The serving file lists what the server's imports actually reach; smaller image, smaller attack surface, and an honest statement of need. | §4 |
+| **Version parity across requirements files** | Deployment pins must be identical, not merely compatible, to the development pins — an artifact loaded by a different scikit-learn is a silent bug. | §4.3 |
+| **Continuous integration (CI)** | Every change automatically built and tested on a clean machine, so "does a fresh clone work?" is answered by a robot rather than by hope. | §5.1-5.2 |
+| **Continuous delivery / deployment** | Automatically packaging every passing change into a release artifact, and (for deployment) shipping it — named this week, not implemented. | §5.1 |
+| **Workflow, trigger, job, runner, step** | A YAML file; the event that starts it; a unit of work on its own fresh VM; the machine type; one command or reusable action, failing at the first non-zero exit. | §5.3 |
+| **Status check** | The workflow's result attached to a commit or pull request, which a branch rule can require to be green before merging. | §5.5 |

@@ -1,0 +1,72 @@
+# Continuous integration for the Crop Recommendation System (Week 11).
+#
+# What this file is: a description of work GitHub runs on its own machines. It
+# is not a script anybody runs locally - the equivalent local commands are
+# `ruff check .` and `pytest`, and this workflow exists so that nobody has to
+# remember to run them.
+name: CI
+
+# --- Triggers: when the work happens ---
+# push to main   - the branch that must never be broken
+# pull_request   - every proposed change, checked BEFORE it reaches main
+# workflow_dispatch - a manual "run it now" button in the Actions tab
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Read-only credentials: this workflow inspects code, it never writes to the
+# repository. A token with no permissions it does not need cannot misuse them.
+permissions:
+  contents: read
+
+# A second push to the same branch cancels the first run still in flight -
+# results for superseded commits are noise, and the queue is shared.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # One job = one fresh virtual machine. Nothing from your laptop is present:
+  # no venv, no cached artifact, no uncommitted file. That is the point - if the
+  # suite passes here, it passes on a clean clone.
+  test:
+    name: Lint and tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      # Steps run in order, in the same working directory, and the job fails at
+      # the first command that returns a non-zero exit code.
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          # Reuses the pip download cache across runs, keyed on the file below,
+          # so an unchanged dependency list is not re-downloaded every time.
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      # The ROOT requirements.txt, not deployment/requirements.txt: CI runs the
+      # tests, and the tests need pytest, httpx, streamlit and the rest of the
+      # development environment. The trimmed file is for the image only.
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint
+        run: ruff check .
+
+      # The model artifact is git-ignored, so the runner has none; the tests
+      # train what they need into a temporary directory (Week 9).
+      - name: Run tests
+        run: pytest

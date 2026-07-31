@@ -1,0 +1,44 @@
+# What `docker build` must NOT send to the daemon (Week 11).
+#
+# Everything in this file is excluded from the *build context* - the copy of the
+# repository the CLI uploads to the Docker daemon before the first instruction
+# runs. Excluding a path here makes the build faster, the image smaller and the
+# layer cache stabler: a file that never enters the context can never invalidate
+# a COPY, and can never leak into a published image.
+
+# --- Version control and environments ---
+.git/
+.gitignore
+.github/
+venv/
+.venv/
+env/
+
+# --- Python noise ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# --- Development-only parts of the repository ---
+# The server imports none of these; see deployment/Dockerfile for what it does
+# copy. Listed even though the Dockerfile COPYs selectively, because the context
+# is uploaded before any COPY runs.
+notebooks/
+tests/
+app/
+docs/
+README.md
+pyproject.toml
+requirements.txt
+
+# --- Derived data and artifacts ---
+# data/processed/ is rebuilt from data/raw/ by the training step in the image;
+# models/*.joblib is trained during the build, so a stale local one must not be
+# copied in on top of it.
+data/processed/
+models/
+
+# --- OS noise ---
+.DS_Store

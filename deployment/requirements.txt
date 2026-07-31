@@ -1,0 +1,34 @@
+# Crop Recommendation System - *serving* dependencies (Week 11)
+# Target interpreter: Python 3.11 (the base image is python:3.11-slim)
+#
+# This file is NOT the root requirements.txt. The root file is the *development*
+# environment: notebooks, plots, linting, tests, tuning, explainability, the
+# Streamlit demo. This file is what one process needs to answer
+# `POST /predict` and `GET /health`, and nothing else.
+#
+# The rule for adding a line here: follow the imports of `api/main.py` down
+# through `src/pipelines/predict_pipeline.py` and `src/config.py`. If a package
+# is not reached by that walk, it does not belong in the image.
+#
+# Every version below is identical to the pin in the root requirements.txt. The
+# two files must never disagree about a version - an image that serves a model
+# built by a different scikit-learn is a bug waiting for production.
+
+# Serving stack: the framework, its validator, and the ASGI server that listens.
+fastapi==0.115.6
+pydantic==2.10.4
+uvicorn==0.34.0
+
+# Model stack: `src/pipelines/predict_pipeline.py` unpickles a scikit-learn
+# Pipeline with joblib and feeds it a pandas DataFrame built on numpy.
+numpy==2.2.1
+pandas==2.2.3
+scikit-learn==1.6.1
+joblib==1.5.3
+
+# Deliberately absent, and why:
+#   jupyter, matplotlib, seaborn - a server draws nothing and opens no notebook
+#   pytest, ruff                 - tests and lint run in CI, not in the image
+#   streamlit                    - the demo UI is a separate process (Week 10 5.3)
+#   httpx                        - only `fastapi.testclient` needs it
+#   xgboost, shap                - the shipped model is Gaussian naive Bayes
