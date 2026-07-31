@@ -21,6 +21,12 @@ techniques within it; deep learning is one family within machine learning.
 on one feature, so its regions are rectangles with horizontal and vertical
 edges. A diagonal boundary can only be approximated by a staircase.
 
+**Bagging (bootstrap aggregating)** *(W7)* — Fitting many copies of the same
+kind of model in parallel, each on its own bootstrap sample of the rows, and
+combining them by voting or averaging. It attacks *variance*: the members stay
+individually overfit, but their independent mistakes largely cancel. A random
+forest is bagging plus feature randomness.
+
 **Baseline model** *(W4)* — A deliberately unintelligent model, fitted and
 scored exactly like a real candidate but ignoring the features entirely. Its
 score is the floor: a model that fails to beat it has learned nothing from the
@@ -43,6 +49,16 @@ plots it with tree depth.
 
 **Bin** *(W2)* — One slice of a histogram's range. Too few bins hide structure
 (separate peaks merge); too many turn every bar into noise.
+
+**Boosting** *(W7)* — Fitting weak models one after another, each trained on
+what the chain so far still gets wrong, and adding them up. It attacks *bias*
+rather than variance, is sequential by construction, and can eventually overfit
+if the chain runs too long.
+
+**Bootstrap sample** *(W7)* — A draw of `n` rows *with replacement* from a
+training set of `n` rows, so some rows appear several times and others not at
+all. About 63% of the rows are distinct; here the first tree of a default forest
+saw 1,114 of the 1,760 rows.
 
 **Boxplot** *(W2)* — A plot summarising a distribution as a box spanning the
 interquartile range, a line at the median, whiskers reaching 1.5 IQR beyond the
@@ -137,6 +153,11 @@ possible. Readable, scale-invariant, and the model in this project most eager to
 overfit: grown without limit it reaches depth 17, 38 leaves and a perfect,
 worthless 100% training accuracy.
 
+**Decorrelation** *(W7)* — Deliberately making ensemble members disagree —
+through bootstrap samples and `max_features` — because averaging cancels only
+the part of the error the members do not share. Identical members average to
+exactly one member.
+
 **Deep learning** *(W1)* — Machine learning using many-layered neural networks.
 Not used in this project: with 2,200 rows and seven numeric features, classical
 algorithms are both stronger and easier to explain.
@@ -155,6 +176,10 @@ often.
 **`DummyClassifier`** *(W4)* — scikit-learn's baseline estimator. `fit` looks
 only at `y`; `predict` answers from the recorded label distribution using a
 chosen strategy (`most_frequent`, `prior`, `stratified`, `uniform`, `constant`).
+
+**Ensemble** *(W7)* — Several models combined into one prediction. It helps only
+when the members are individually better than chance *and* wrong on different
+rows; a hundred identical copies of a model are still that model.
 
 **Entropy (split criterion)** *(W6)* — A measure of node impurity: the number
 of bits needed to encode the node's labels. Zero for a single class, largest
@@ -182,6 +207,19 @@ plausible-looking but wrong result later.
 
 **Feature** *(W1)* — One input variable used to make a prediction. This project
 has seven: `N`, `P`, `K`, `temperature`, `humidity`, `ph`, `rainfall`.
+
+**Feature importance (mean decrease in impurity)** *(W7)* — The
+`feature_importances_` attribute of a fitted forest or booster: how much
+impurity each column removed across all splits, normalised to sum to 1. Here
+`rainfall` 0.2302 leads and `ph` 0.0506 trails. It describes *this fitted model
+on its training data*, is biased towards columns with many candidate thresholds,
+and splits credit between correlated columns — which is why Week 8 replaces it
+with permutation importance and SHAP.
+
+**Feature randomness** *(W7)* — A random forest's second source of diversity:
+each split may only consider a random subset of columns, set by `max_features`.
+The default `"sqrt"` offers 2 of these 7 features per split, so the 100 trees
+open on six different features where a single tree always opens on `rainfall`.
 
 **Feature scale** *(W2)* — The range of values a feature takes. In this dataset
 `K` spans 200 units while `ph` spans about 6, which is why Week 3 must rescale
@@ -226,6 +264,11 @@ chance of mislabelling a random row in a node if you guessed at the node's own
 class frequencies. Cheaper than entropy because it needs no logarithm, and it
 almost always chooses the same splits.
 
+**Gradient boosting** *(W7)* — Boosting in which each round fits a small tree to
+the errors the running sum still makes, scaled by a `learning_rate`. Strong on
+tabular data; supplied here by XGBoost when it is installed and by scikit-learn's
+`GradientBoostingClassifier` otherwise.
+
 **Histogram** *(W2)* — A plot of a distribution: the feature's range is split
 into equal-width bins and each bar counts the rows falling inside one.
 
@@ -264,6 +307,11 @@ not quantities.
 **Lazy learning** *(W5)* — Learning that does almost nothing at `fit` time and
 defers the work to `predict`. KNN is the standard example: its "model" is the
 training set itself.
+
+**`learning_rate` (shrinkage)** *(W7)* — The fraction of each boosting round's
+correction that is actually applied. It is not independent of `n_estimators`:
+smaller steps need more rounds to reach the same fit, so the two are one dial
+with two handles.
 
 **Linting** *(W1)* — Automatic inspection of source code for style violations
 and likely errors. Performed here by `ruff`.
@@ -325,6 +373,11 @@ this dataset, whose seven features are all numeric.
 class or not" models and taking the most confident. The alternative to a single
 multinomial/softmax fit, which is what scikit-learn uses here.
 
+**Out-of-bag (OOB) rows** *(W7)* — The roughly 37% of the training rows a given
+bootstrap sample misses (646 of 1,760 for the first tree here). Because each
+member never saw them, they act as free held-out data for that member, which is
+what an OOB score averages over.
+
 **Outlier** *(W2)* — A value beyond a boxplot's whiskers under the 1.5 IQR rule.
 The output of an arithmetic rule, **not** a verdict that the value is wrong: it
 may be a data error, a legitimate rare case, or — as in this dataset — ordinary
@@ -364,6 +417,11 @@ over the raw data.
 
 **Quartile** *(W2)* — The 25th, 50th and 75th percentiles, which cut a column
 into four equal-sized parts.
+
+**Random forest** *(W7)* — Bagging plus feature randomness over unpruned
+decision trees, combined by majority vote. On this dataset it scores 0.9926
+against the single tree's 0.9852, while each member still memorises its own
+training rows perfectly.
 
 **`random_state` (seed)** *(W3)* — The fixed number that makes a shuffle
 deterministic, so a split — and everything computed from it — is reproducible.
@@ -492,3 +550,16 @@ humans read, because it is in the original units.
 **Virtual environment** *(W1)* — An isolated, per-project Python package
 directory created with `venv`, preventing dependency conflicts between
 projects. Stored in `venv/` (or `.venv/`) and never committed.
+
+**Weak learner** *(W7)* — A model only slightly better than chance, used
+deliberately as a boosting member. A depth-1 stump gets 61.93% of the training
+rows right on its own; sixty of them in a chain reach 98.81%. Strength comes
+from the sequence, not the link.
+
+**XGBoost** *(W7)* — An optional third-party gradient-boosting library, faster
+than scikit-learn's implementation on this data. It is *not* a required
+dependency of this project: `get_gradient_boosting()` falls back to
+`GradientBoostingClassifier` when the import fails, and
+`GRADIENT_BOOSTING_BACKEND` records which one is in use. Its own classifier
+needs integer labels, so this project wraps it in a small label-encoding
+adapter.

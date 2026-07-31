@@ -14,6 +14,11 @@ Week 6 extends the same module with :func:`get_svm` — a margin-based model who
 kernel decides whether its boundary is flat or curved — and
 :func:`get_decision_tree`, the rule-based model whose ``max_depth`` makes the
 bias-variance tradeoff visible.
+
+Week 7 adds :mod:`src.models.ensemble_models`, which stops improving one model
+and starts combining many: :func:`get_random_forest` bags decorrelated trees to
+cancel the variance Week 6 plotted, and :func:`get_gradient_boosting` chains
+weak trees that each correct the previous ones' mistakes.
 """
 
 from src.models.baseline import (
@@ -43,11 +48,31 @@ from src.models.classical_models import (
     get_naive_bayes,
     get_svm,
 )
+from src.models.ensemble_models import (
+    DEFAULT_BOOSTING_LEARNING_RATE,
+    DEFAULT_BOOSTING_MAX_DEPTH,
+    DEFAULT_BOOSTING_N_ESTIMATORS,
+    DEFAULT_FOREST_MAX_DEPTH,
+    DEFAULT_FOREST_MAX_FEATURES,
+    DEFAULT_FOREST_N_ESTIMATORS,
+    ENSEMBLE_MODEL_FACTORIES,
+    FOREST_MAX_FEATURES_OPTIONS,
+    GRADIENT_BOOSTING_BACKEND,
+    XGBOOST_AVAILABLE,
+    get_gradient_boosting,
+    get_random_forest,
+)
 
 __all__ = [
     "BASELINE_STRATEGIES",
     "CLASSICAL_MODEL_FACTORIES",
     "DEFAULT_BASELINE_STRATEGY",
+    "DEFAULT_BOOSTING_LEARNING_RATE",
+    "DEFAULT_BOOSTING_MAX_DEPTH",
+    "DEFAULT_BOOSTING_N_ESTIMATORS",
+    "DEFAULT_FOREST_MAX_DEPTH",
+    "DEFAULT_FOREST_MAX_FEATURES",
+    "DEFAULT_FOREST_N_ESTIMATORS",
     "DEFAULT_KNN_WEIGHTS",
     "DEFAULT_K_NEIGHBORS",
     "DEFAULT_LOGISTIC_C",
@@ -59,13 +84,19 @@ __all__ = [
     "DEFAULT_TREE_MAX_DEPTH",
     "DEFAULT_TREE_MIN_SAMPLES_LEAF",
     "DEFAULT_VAR_SMOOTHING",
+    "ENSEMBLE_MODEL_FACTORIES",
+    "FOREST_MAX_FEATURES_OPTIONS",
+    "GRADIENT_BOOSTING_BACKEND",
     "KNN_WEIGHT_OPTIONS",
     "SVM_KERNEL_OPTIONS",
     "TREE_CRITERION_OPTIONS",
+    "XGBOOST_AVAILABLE",
     "get_baseline_model",
     "get_decision_tree",
+    "get_gradient_boosting",
     "get_knn",
     "get_logistic_regression",
     "get_naive_bayes",
+    "get_random_forest",
     "get_svm",
 ]

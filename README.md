@@ -35,13 +35,14 @@ ruff check .
 pytest
 
 # 5. Open this week's notebook
-jupyter notebook notebooks/05_classification_models.ipynb
+jupyter notebook notebooks/06_model_selection.ipynb
 ```
 
 Step 5 starts a local Jupyter server and opens the notebook in your browser;
 stop it with `Ctrl-C` in the terminal when you are done. Earlier weeks are
 `notebooks/01_problem_definition.ipynb`, `notebooks/02_EDA.ipynb`,
-`notebooks/03_data_preparation.ipynb` and `notebooks/04_baseline_models.ipynb`.
+`notebooks/03_data_preparation.ipynb`, `notebooks/04_baseline_models.ipynb` and
+`notebooks/05_classification_models.ipynb`.
 
 Load the data from Python:
 
@@ -76,6 +77,13 @@ linear) and a decision tree (**98.52%**), so naive Bayes still leads. Its real
 lesson is the tree-depth sweep: an unlimited tree reaches depth 17 and a perfect
 100% on the rows it was fitted on while validation accuracy stops at 98.52% —
 overfitting made visible rather than merely defined.
+
+Week 7 puts ensembles beside them: a random forest at **99.26%** and gradient
+boosting at **99.09%** (XGBoost; 98.69% with the scikit-learn fallback, which is
+used automatically when `xgboost` is not installed). Both beat every single model
+in the table — including the decision tree they are built from — but neither
+beats Gaussian naive Bayes, and the 0.23-point gap sits inside the fold spread,
+so the honest headline is a tie at the top rather than a win.
 
 If `data/raw/Crop_recommendation.csv` is ever missing, `load_data()` fails with
 a message naming the file and where to obtain it. Restore the committed file —
@@ -115,8 +123,8 @@ Filled in one row per week as the course proceeds.
 | 04 — Baseline models | ✅ Complete | `DummyClassifier` baseline at **4.55%** (1/22) under 5-fold stratified CV; helpers in `src/models/baseline.py` and `src/evaluation/metrics.py`, 112 tests passing. [Docs](docs/curriculum/week04/) |
 | 05 — Classification models | ✅ Complete | Logistic regression, KNN and Gaussian naive Bayes compared on identical folds; best so far **99.49%** (naive Bayes) against the 4.55% baseline; helpers in `src/models/classical_models.py`, 169 tests passing. [Docs](docs/curriculum/week05/) |
 | 06 — Margin-based & tree-based models | ✅ Complete | SVM and decision trees added to the same comparison; overfitting shown directly with a tree-depth sweep (100% train vs 98.52% validation) and decision boundaries drawn on two features; helpers in `src/models/classical_models.py` and `src/utils/visualization.py`, 231 tests passing. [Docs](docs/curriculum/week06/) |
-| 07 — Model explainability | ⬜ Not started | |
-| 08 — Pipelines | ⬜ Not started | |
+| 07 — Ensemble models | ✅ Complete | Random forest (**99.26%**) and gradient boosting (**99.09%**, XGBoost with an automatic `GradientBoostingClassifier` fallback) added to the same comparison; bagging vs boosting shown mechanically and `feature_importances_` plotted with its limitations; helpers in `src/models/ensemble_models.py`, 292 tests passing. [Docs](docs/curriculum/week07/) |
+| 08 — Model evaluation & explainability | ⬜ Not started | Test-set scores, confusion matrices, permutation importance and SHAP |
 | 09 — Testing & packaging | ⬜ Not started | |
 | 10 — Serving an API | ⬜ Not started | |
 | 11 — Streamlit application | ⬜ Not started | |
@@ -199,6 +207,19 @@ Filled in one row per week as the course proceeds.
 | `docs/ml_concepts.md` has an entry per new concept | ✅ |
 | `validation.md` commands actually run, real output pasted | ✅ |
 | `notebooks/05_classification_models.ipynb` Part 2 committed with executed output | ✅ |
+
+### Week 7 Definition of Done
+
+| Requirement | Status |
+| --- | --- |
+| `docs/curriculum/week07/{syllabus,learning_notes,exercises,validation}.md` exist | ✅ |
+| New code has docstrings and passes lint (`ruff check .`) | ✅ |
+| New behaviour has tests and `pytest` passes | ✅ 292 passed (20 + 22 + 32 + 38 + 119 + 61) |
+| `requirements.txt` updated, every dependency pinned | ✅ `xgboost==2.1.3` added as an **optional** pin; the week runs without it |
+| README progress table updated | ✅ |
+| `docs/ml_concepts.md` has an entry per new concept | ✅ |
+| `validation.md` commands actually run, real output pasted | ✅ |
+| `notebooks/06_model_selection.ipynb` Part 1 committed with executed output | ✅ |
 
 ---
 
