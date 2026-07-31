@@ -9,6 +9,8 @@ __pycache__/
 .venv/
 venv/
 env/
+# Week 12's validation creates this one in place, to simulate a fresh install.
+fresh-venv/
 
 # --- Jupyter ---
 .ipynb_checkpoints/

@@ -184,7 +184,22 @@ The interactive documentation is published too: open
 * **Not observed.** Nothing records which model answered, or what it was asked.
   Monitoring and drift detection remain out of reach.
 
-Those limits are the honest end of Week 11. Week 12 is the final review.
+Those limits are the honest end of Week 11, and Week 12's review did not remove
+any of them — it named them and costed them instead. See
+[README → What production would add](../README.md#what-production-would-add)
+for the ordered list (request logging, model versioning, drift detection,
+authentication, a registry and a host), and
+[Week 12's learning notes §5](curriculum/week12/learning_notes.md) for why each
+one is needed and what it would take.
+
+Two Week 11 promises are also formally withdrawn there: this project never gets
+a public address, a domain or TLS. Running it stays a local operation.
+
+> **Reminder before you show this to anyone.** The model behind this container
+> is a demonstration trained on a single public dataset of unknown provenance.
+> It is **not agronomic advice** and must not be presented as authoritative for
+> a real planting decision. See [README → Limitations and
+> ethics](../README.md#limitations-and-ethics).
 
 ---
 
@@ -200,3 +215,24 @@ pull request means the suite failed there; open the run in the repository's
 The workflow does not build the image and does not deploy anything. It answers
 one question — *does this commit still pass on a machine that is not yours?* —
 and that is the question a portfolio reviewer asks first.
+
+---
+
+## Verifying this guide from scratch
+
+This guide is written to be run by someone who has never seen the repository.
+Week 12 checks that claim two ways:
+
+* **Agent-run, in place** — a brand-new virtual environment inside the working
+  copy, `pip install -r requirements.txt`, `ruff check .`, `pytest`, then the
+  full Docker build/run/`/health`/`/predict` sequence above. Every command and
+  its real output is recorded in
+  [`docs/curriculum/week12/validation.md`](curriculum/week12/validation.md)
+  Steps 2-5.
+* **Human-run, after merge** — a true `git clone` into an empty directory,
+  followed by the same commands. That is the only check that proves everything
+  needed was actually committed; it is Step 10 of the same file, with a table
+  of what each command should print.
+
+If a command in this guide stops matching what it prints, the guide is the thing
+that is wrong.

@@ -1,7 +1,59 @@
 # Architecture
 
 How a measurement becomes a recommendation, and which file is responsible for
-each step. Written in Week 10, when the project first had more than one way in.
+each step. Written in Week 10, when the project first had more than one way in;
+completed in Week 12 with the training path and the production gap.
+
+---
+
+## The whole system, in one picture
+
+Two paths run through this repository. The **training path** runs offline,
+occasionally, and produces an artifact. The **serving path** runs per request
+and consumes it. They meet at exactly one file.
+
+```
+  TRAINING (offline, occasional)                SERVING (online, per request)
+  ──────────────────────────────                ─────────────────────────────
+
+  data/raw/Crop_recommendation.csv                 HTTP client        Streamlit
+  2,200 rows · committed · read-only               curl/Postman       app/
+          │                                        browser/app        streamlit_app
+          │ src/data/data_loader.py  (W1)               │                  │
+          │ validates columns, dtypes,                  │ JSON/HTTP        │
+          │ row count, label set                        v                  │
+          v                                    ┌──────────────────┐        │
+  src/data/split.py         (W3)               │ api/main.py      │        │
+  stratified 80/20 → 1,760 / 440               │ api/schemas.py   │        │
+  data/processed/{train,test}.csv              │ POST /predict    │        │
+          │                                    │ GET  /health     │        │
+          v                                    └────────┬─────────┘        │
+  src/preprocessing/preprocessor.py (W3)                │                  │
+  ColumnTransformer, fitted on TRAIN only               └─────────┬────────┘
+          │                                                       │
+          v                                                       v
+  src/models/classical_models.py  (W5)          src/pipelines/predict_pipeline.py (W9)
+  GaussianNB(var_smoothing=1e-9)                predict() / predict_proba()
+  chosen in W8 over 12 alternatives             load_pipeline() — trains on demand
+          │                                                       │
+          v                                                       │
+  src/pipelines/training_pipeline.py (W9)                         │
+  Pipeline([preprocess, model]).fit()                             │
+  accuracy 0.9955 · macro F1 0.9954                               │
+          │                                                       │
+          └──────────►  models/crop_model.joblib  ◄───────────────┘
+                        git-ignored · rebuilt from data + code + pins
+                                        │
+                                        v
+                             "jute", p = 0.7253
+```
+
+`src/config.py` (W9) is off the diagram on purpose: it is inert. It holds the
+paths, `RANDOM_STATE = 42` and the chosen hyperparameters, and every box above
+reads from it rather than hard-coding its own.
+
+The whole training path is also run **inside** `deployment/Dockerfile` (W11), at
+build time, so a started container reads a file rather than fitting a model.
 
 ---
 
@@ -56,6 +108,23 @@ imports neither.
 
 The model is loaded **once**, in the FastAPI lifespan handler, not per request.
 Streamlit does the same with `@st.cache_resource`.
+
+### Step by step, for one `python -m src.pipelines.training_pipeline`
+
+| # | Where | What happens | Failure mode |
+| --- | --- | --- | --- |
+| 1 | `data/raw/Crop_recommendation.csv` | 2,200 committed rows, never written to | — |
+| 2 | `src/data/data_loader.py` | `load_data()` reads it and calls `validate_dataset()`: columns, dtypes, row count, label set, no nulls | Raises, naming the file and what is wrong |
+| 3 | `src/data/split.py` | `stratified_split()` — 80/20 with `RANDOM_STATE`, class proportions preserved: 1,760 train, 440 test (20 per crop) | Raises if a class is too small to stratify |
+| 4 | `src/preprocessing/preprocessor.py` | Builds the `ColumnTransformer`; it is **not** fitted here — the `Pipeline` fits it on the training fold only | Leakage, if ever fitted before step 3 |
+| 5 | `src/models/classical_models.py` | `get_naive_bayes()` — the model and hyperparameters named by `FINAL_MODEL_NAME` / `FINAL_MODEL_PARAMS` in `src/config.py` | `KeyError` on an unknown model name |
+| 6 | `src/pipelines/training_pipeline.py` | `train_pipeline()` fits `Pipeline([preprocess, model])` on the training rows, scores it on the held-out rows, prints accuracy and F1 | — |
+| 7 | `models/crop_model.joblib` | `joblib.dump` of the whole fitted `Pipeline` — preprocessing included | Directory created if absent |
+
+Steps 1-7 also run inside the image build (Week 11), which is why a container
+starts by reading a file. Nothing in the serving path ever fits anything: if the
+artifact is missing, `load_pipeline()` re-runs this whole path once, and then
+serves.
 
 ---
 
@@ -129,3 +198,22 @@ server on 8000.
 * **No model versioning.** One filename, overwritten by the next training run;
   the response says nothing about which model answered.
 * **No batch endpoint.** One row per request.
+
+Week 12 reviewed that list rather than shortening it. Each item is a deliberate
+scope boundary, and
+[`docs/curriculum/week12/learning_notes.md`](curriculum/week12/learning_notes.md)
+§5 says what building each one would involve, in the order it would be worth
+doing:
+
+| Missing | What it would take | Why it is not here |
+| --- | --- | --- |
+| Request logging | One structured JSON line per prediction, to a file or a log service | Everything below needs it; it is the first thing to add, and also a privacy decision |
+| Model version in the response | `MODEL_VERSION` in `src/config.py`, embedded in the artifact, returned by `/predict` and `/health` | Ten lines, and the difference between "the model was wrong" and "*which* model was wrong" |
+| Authentication, rate limiting | An API key check and a per-caller budget in `api/main.py` | Meaningless while the service is bound to localhost |
+| A public address | Registry push, a host, DNS, a certificate, and the ongoing duty of operating it | A course of its own; Week 10's notes promised it to Week 12 and Week 12 withdraws the promise rather than faking it |
+| Drift monitoring | Weekly comparison of request feature statistics against Week 2's training statistics | Needs stored requests, which needs logging |
+| A model registry | Artifacts stored against data hash, commit, metrics; one marked `production`; rollback as a pointer change | Needs more than one model worth naming |
+
+The rule this table follows is the same one the repository has followed since
+Week 1: name the boundary precisely, and do not describe a capability that does
+not exist.

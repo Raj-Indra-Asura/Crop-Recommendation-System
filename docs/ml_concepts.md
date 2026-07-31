@@ -5,7 +5,29 @@ order it is introduced. Each entry gives a one-line definition and points at
 the week that teaches it properly.
 
 This file is updated **every week**, as concepts are introduced — not
-consolidated at the end.
+consolidated at the end. Week 12 completes it rather than rewriting it: the
+twelve sections below *are* the consolidated glossary of the course, and the
+fact that nothing needed backfilling at the end is the point.
+
+**How to use it.** This file is ordered by *teaching order* — read down it to
+follow the course, or search it to find the week that owns a concept.
+[`docs/glossary.md`](glossary.md) holds the same terms alphabetically, with
+fuller definitions, for when you know the word and want the meaning.
+
+| Week | Section | Theme |
+| --- | --- | --- |
+| 1 | [Framing the problem and meeting the data](#week-1--framing-the-problem-and-meeting-the-data) | What ML is, what this problem is, and the dataset contract |
+| 2 | [Exploratory data analysis](#week-2--exploratory-data-analysis) | Statistics, distributions, correlation, outliers, leakage |
+| 3 | [Data preparation](#week-3--data-preparation) | Encoding, the stratified split, train-fitted preprocessing |
+| 4 | [Baseline models and evaluation](#week-4--baseline-models-and-evaluation) | The floor to beat, and cross-validation |
+| 5 | [Classification models](#week-5--classification-models) | Linear, distance-based and probabilistic families |
+| 6 | [Margin-based and tree-based models](#week-6--margin-based-and-tree-based-models) | SVMs, trees, and overfitting made visible |
+| 7 | [Ensembles](#week-7--ensembles) | Bagging, boosting, feature importance |
+| 8 | [Evaluation & explainability](#week-8--evaluation--explainability) | Tuning, the test set, confusion matrices, SHAP |
+| 9 | [Productionizing the model](#week-9--productionizing-the-model) | Config, pipeline, artifact, entry points |
+| 10 | [Serving the model over HTTP](#week-10--serving-the-model-over-http) | FastAPI, schemas, status codes, a demo UI |
+| 11 | [Containerisation and CI](#week-11--containerisation-and-continuous-integration) | Images, layers, GitHub Actions |
+| 12 | [Final review and portfolio polish](#week-12--final-review-and-portfolio-polish) | Production-readiness, limitations, versioning, monitoring |
 
 ---
 
@@ -352,3 +374,40 @@ Taught in [`docs/curriculum/week11/learning_notes.md`](curriculum/week11/learnin
 | **Continuous delivery / deployment** | Automatically packaging every passing change into a release artifact, and (for deployment) shipping it — named this week, not implemented. | §5.1 |
 | **Workflow, trigger, job, runner, step** | A YAML file; the event that starts it; a unit of work on its own fresh VM; the machine type; one command or reusable action, failing at the first non-zero exit. | §5.3 |
 | **Status check** | The workflow's result attached to a commit or pull request, which a branch rule can require to be green before merging. | §5.5 |
+
+---
+
+## Week 12 — Final review and portfolio polish
+
+Taught in [`docs/curriculum/week12/learning_notes.md`](curriculum/week12/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **Production-ready** | Reproducible, installable, documented, bounded and independently verifiable — a green test suite is one of five conditions, not the whole of it. | §1.1-1.2 |
+| **Documentation kinds (task / explanation / reference)** | Three different documents for three different readers; a task document that explains, or an explanation that lists flags, is broken. | §1.3 |
+| **Reproducibility, strong form** | Not "it runs again for me" but "it produces the same numbers on a machine that has never seen it" — committed data, pinned versions, one seed, a derived artifact. | §1.4 |
+| **Simulated fresh install** | A brand-new virtual environment inside the working copy: the closest an author can get to a stranger's clone, and the check CI performs on every push. | §1.4, validation §2 |
+| **Repository audit / student review** | Reading your own project as a fixed persona with a fixed starting point, and recording every stumble as *"stopped at X because Y"*. | §2.1 |
+| **Defect classes in documentation** | Broken links, stale code references, contradictory numbers, undefined jargon, unanswered forward references, placeholders — each mechanically checkable. | §2.2 |
+| **README structure** | Problem, approach, results, how to run, what not to trust — in that order, because a reader who fails at question one never reaches question four. | §3.1 |
+| **Showing command output** | Pasting what a command prints makes the reader's run self-checking and makes the claim auditable. | §3.2 |
+| **Results table as evidence** | Listing the models that lost, with the protocol and the fold spread, is what shows the winner was chosen rather than found first. | §3.3 |
+| **Known limitations** | What the data does not contain — region, season, soil, provenance, cost of error — stated where the reader passes it, not in a footnote. | §4.1-4.2 |
+| **What an accuracy number is not** | A score on held-out rows of the same dataset is not evidence about a different sensor, country or year. | §4.3 |
+| **Not-advice disclaimer** | A demonstration model must say plainly that it is not agronomic advice, and name what it does not know. | §4.4 |
+| **Confidence is not certainty** | A normalised score across 22 classes, pushed toward the extremes by independent likelihoods, and least trustworthy exactly where it is highest — off-distribution. | §4.5 |
+| **Presentation as the ethical failure mode** | The model is harmless; the caption claiming authority for it is not. | §4.6 |
+| **Model versioning** | An artifact needs an identity: version string, data hash, code commit, library versions, hyperparameters, seed, metrics at training time. | §5.1 |
+| **Model registry** | A store of artifacts against that metadata, with one marked `production`, the previous kept, and rollback as a pointer change. | §5.1 |
+| **Semantic versioning for models** | Patch = retrained on more of the same; minor = new features or hyperparameters; major = the interface or label set changed. | §5.1 |
+| **Model card** | The human-readable half of versioning: intended use, training data, performance, ethical considerations, caveats. | §5.1 |
+| **Service monitoring vs model monitoring** | *Is the process healthy?* (rate, errors, latency) versus *are the answers still good?* — a silently wrong model returns 200 OK just as fast. | §5.2 |
+| **Data drift (covariate shift)** | The inputs move, the relationship does not; detectable from requests alone, which is why it is monitored first. | §5.3 |
+| **Concept drift** | The relationship itself moves, so past labels are now partly wrong; invisible to every input statistic, and needs outcomes. | §5.3 |
+| **Ground-truth lag** | The label arrives a growing season later, partial (only the crop that was planted), biased (only those who took the advice) and noisy. | §5.4 |
+| **Retraining trigger** | Scheduled, performance-based or drift-based — and always with the new model evaluated against the current one before it replaces it. | §5.5 |
+| **Shadow deployment** | A candidate model answers every request in parallel with the live one; its answers are recorded, never returned. | §5.6 |
+| **Canary release** | The candidate serves a small share of real traffic, so a bad model has a small blast radius. | §5.6 |
+| **Rollback** | Returning to the previous known-good model without retraining — which requires that it still exists and can be named. | §5.1, §5.6 |
+| **Naming an absence** | Saying precisely what you did not build, and what building it would take, is the honest form of a capability claim. | §5, §6 |
+| **Withdrawing a promise in writing** | A forward reference that later weeks cannot honour is corrected out loud, not quietly dropped. | §6 |
