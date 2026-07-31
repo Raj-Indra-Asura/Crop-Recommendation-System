@@ -41,7 +41,8 @@ go wrong if these codes were fed to a *regressor*, and one saying why a
 **B4 — Split it.**
 Call `stratified_split(crops)`. How many rows in each half? How many rows does
 each crop contribute to the test set? Confirm the two halves together contain
-every original row exactly once.
+every original row exactly once. **Hint:** the helper resets both indexes, so
+compare the combined row count and crop counts rather than the index values.
 
 **B5 — Prove the split is stratified.**
 Use `class_proportions()` from `src.data` on both halves and subtract one from
@@ -115,14 +116,19 @@ random — and extend a *copy* of `build_preprocessor()` so that the numeric
 columns are standardised and `season` is one-hot encoded, in one
 `ColumnTransformer`. Print `get_feature_names_out()`. How many output columns
 are there, and why is one-hot encoding correct here where label encoding would
-not be?
+not be? Start with `from sklearn.preprocessing import OneHotEncoder`; its
+`OneHotEncoder()` instance replaces the `StandardScaler()` for the `season`
+entry in the transformer's list.
 
 **I7 — Pipeline with a model attached (a preview).**
 Build `Pipeline([("preprocess", build_preprocessor()), ("model",
 KNeighborsClassifier())])`, fit it on the training rows and their encoded
 labels, and call `predict` on the *first five training rows only*. Do **not**
 touch the test set, and do not report an accuracy — Week 4 exists for that. Then
-answer: how many times was the scaler fitted, and on what?
+answer: how many times was the scaler fitted, and on what? This is only a
+pipeline preview: import the not-yet-explained classifier with
+`from sklearn.neighbors import KNeighborsClassifier` and use it exactly as
+shown; Week 5 explains how it works.
 
 **I8 — Trees really do not care.**
 Fit a `DecisionTreeClassifier(random_state=42)` twice on the training rows —

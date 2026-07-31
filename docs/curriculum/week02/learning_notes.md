@@ -210,8 +210,8 @@ plot_class_balance(crops, "label") # the same thing as a bar chart
 
 ### A caution about *this* dataset
 
-Exactly 100 rows per crop, no missing values, and no duplicated collection
-artifacts is not what field data looks like. Real records are dominated by
+Exactly 100 rows per crop and no missing values is not what field data looks
+like. Real records are dominated by
 whatever the collecting region grows. This dataset is curated, and probably
 partly synthetic (Week 1, exercise C4, asked you to form this hypothesis; this
 is the evidence). Two consequences:
