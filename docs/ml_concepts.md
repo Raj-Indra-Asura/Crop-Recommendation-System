@@ -137,6 +137,31 @@ Taught in [`docs/curriculum/week04/learning_notes.md`](curriculum/week04/learnin
 
 ---
 
-## Week 5 onwards
+## Week 5 — Classification models
+
+Taught in [`docs/curriculum/week05/learning_notes.md`](curriculum/week05/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **The training loop (`fit`/`predict`)** | `model.fit(X_train, y_train)` learns and stores parameters; `model.predict(X_test)` applies them to unseen rows. Every supervised model reuses it unchanged. | §1 |
+| **Logistic regression** | A linear classifier: one weighted sum of the features per class, turned into probabilities and maximised against the training labels. | §2 |
+| **Softmax** | The function converting a vector of class scores into positive probabilities that sum to 1, by exponentiating and normalising. | §2 |
+| **One-vs-rest (OvR)** | Handling `k` classes with `k` binary "this class or not" models, taking the most confident; the alternative to a single multinomial fit. | §2 |
+| **Linear decision boundary** | The flat surface where two classes' scores are equal — a line, plane or hyperplane. All logistic regression can draw. | §2 |
+| **Regularisation strength `C`** | The inverse penalty on large weights: small `C` shrinks them towards zero, large `C` lets them fit the training data closely. | §2 |
+| **k-nearest neighbours (KNN)** | Predicting by vote among the `k` closest stored training rows, with no boundary equation of its own. | §3 |
+| **Lazy (instance-based) learning** | Learning that stores the training data and defers all work to prediction time. | §3 |
+| **Effect of `k`** | `k = 1` memorises and overfits; very large `k` averages over everything and underfits towards the baseline. | §3 |
+| **Curse of dimensionality** | As columns multiply, distances concentrate and data grows sparse, so "nearest" stops implying "similar". | §3 |
+| **Naive Bayes** | Bayes' rule plus the assumption that features are independent given the class, reducing a joint distribution to a product. | §4 |
+| **Gaussian naive Bayes** | Naive Bayes with each feature modelled as a normal curve per class: one mean and one variance per feature per class. | §4 |
+| **Conditional independence assumption** | The "naive" part; false on this dataset (`P`/`K` correlate at 0.74) and yet harmless to the ranking of classes. | §4 |
+| **Generative vs. discriminative** | Generative models describe how each class's data arises; discriminative models model the boundary between classes directly. | §4 |
+| **Fair model comparison** | Same rows, same folds, same seed, same metric and same preparation for every candidate — otherwise the protocol is part of the result. | §5 |
+| **Results table** | The running record of every model's cross-validated score beside the baseline, extended by later weeks rather than replaced. | §5, §6 |
+
+---
+
+## Week 6 onwards
 
 Not yet written.

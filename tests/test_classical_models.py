@@ -30,6 +30,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 from src.data import (
     DEFAULT_RANDOM_STATE,
@@ -275,7 +276,7 @@ def test_a_large_k_smooths_the_boundary_towards_ignorance(separable_frame):
 
 
 def test_knn_is_sensitive_to_feature_scaling(separable_frame):
-    """Inflating one column's units changes which neighbours count as near."""
+    """Changing a column's units changes which neighbours count as near."""
     X, y = features_and_labels(separable_frame)
     stretched = X.assign(second=X["second"] * 1_000)
 
@@ -285,15 +286,20 @@ def test_knn_is_sensitive_to_feature_scaling(separable_frame):
     assert not np.array_equal(on_raw, on_stretched)
 
 
-def test_naive_bayes_is_insensitive_to_feature_scaling(separable_frame):
-    """A per-column linear rescale moves every class's mean and variance alike."""
+def test_naive_bayes_is_insensitive_to_standardisation(separable_frame):
+    """Standardising moves every class's mean and variance for a column alike.
+
+    The invariance is exact only up to ``var_smoothing``, which scikit-learn
+    scales by the largest feature variance in the data — so a wild rescale can
+    still nudge a few rows, while standardisation cannot.
+    """
     X, y = features_and_labels(separable_frame)
-    stretched = X.assign(second=X["second"] * 1_000)
+    standardised = pd.DataFrame(StandardScaler().fit_transform(X), columns=X.columns)
 
     on_raw = get_naive_bayes().fit(X, y).predict(X)
-    on_stretched = get_naive_bayes().fit(stretched, y).predict(stretched)
+    on_standardised = get_naive_bayes().fit(standardised, y).predict(standardised)
 
-    assert np.array_equal(on_raw, on_stretched)
+    assert np.array_equal(on_raw, on_standardised)
 
 
 def test_knn_degrades_when_meaningless_features_are_added(separable_frame):

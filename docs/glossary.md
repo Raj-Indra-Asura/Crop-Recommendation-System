@@ -62,6 +62,11 @@ triples, with `remainder` deciding whether unnamed columns are dropped or passed
 through. Built here by `build_preprocessor()` in
 `src/preprocessing/preprocessor.py`.
 
+**Conditional independence assumption** *(W5)* — Naive Bayes' "naive" step:
+that within a class, each feature is independent of the others, so their joint
+probability is the product of seven one-dimensional ones. False on this dataset
+(`P` and `K` correlate at 0.74) and yet harmless to which class wins.
+
 **Correlation** *(W2)* — How strongly two numeric features move together, on a
 scale from -1 to +1.
 
@@ -76,6 +81,11 @@ distribution of scores rather than a single number.
 **`cross_val_score`** *(W4)* — scikit-learn's function running that loop. It
 clones the estimator for every fold and returns a NumPy array with one score per
 fold, in fold order — report its mean *and* its standard deviation.
+
+**Curse of dimensionality** *(W5)* — As the number of features grows, data
+becomes sparse and distances between points concentrate, so "nearest" stops
+implying "similar". The reason KNN degrades on wide datasets; with seven
+features this project is unaffected.
 
 **Data leakage** *(W2)* — Training a model with information it would not have
 at prediction time, so its measured performance flatters it and production
@@ -100,6 +110,10 @@ missing values, and exactly the 22 recorded crop names. Enforced by
 **`DatasetValidationError`** *(W1)* — This project's custom exception, raised
 when loaded data violates the dataset contract. Subclasses `ValueError`.
 
+**Decision boundary** *(W5)* — The surface in feature space where a model
+switches from predicting one class to another. Logistic regression's is always
+flat (linear); KNN's takes whatever shape the training rows imply.
+
 **Deep learning** *(W1)* — Machine learning using many-layered neural networks.
 Not used in this project: with 2,200 rows and seven numeric features, classical
 algorithms are both stronger and easier to explain.
@@ -107,6 +121,10 @@ algorithms are both stronger and easier to explain.
 **Descriptive statistic** *(W2)* — A single number summarising a property of a
 whole column — its centre (mean, median), spread (standard deviation, IQR) or
 shape (skewness).
+
+**Discriminative model** *(W5)* — A model of `P(class | features)` — the
+boundary between classes — without describing what each class's data looks
+like. Logistic regression and KNN are discriminative.
 
 **Distribution** *(W2)* — The pattern of which values a feature takes, and how
 often.
@@ -159,9 +177,17 @@ underscore, so an object with none has not been fitted.
 cross-validation, used once as the validation part and `k - 1` times as part of
 the training data.
 
+**Gaussian naive Bayes** *(W5)* — Naive Bayes with every feature modelled as a
+normal curve per class, so fitting reduces to one mean and one variance per
+feature per class (308 numbers here). The best of Week 5's models at 99.49%.
+
 **Generalisation** *(W1)* — Performing well on instances never seen during
 training. The actual goal of machine learning, as opposed to reproducing the
 training data.
+
+**Generative model** *(W5)* — A model of `P(features | class)`: it describes how
+each class's data arises and derives the classification from that. Naive Bayes
+is generative.
 
 **Histogram** *(W2)* — A plot of a distribution: the feature's range is split
 into equal-width bins and each bar counts the rows falling inside one.
@@ -176,6 +202,11 @@ with its target. Also called a sample, observation or row.
 **Interquartile range (IQR)** *(W2)* — `Q3 - Q1`: the width of the middle half
 of the data. The basis of the boxplot box and of the 1.5 IQR outlier rule.
 
+**k-nearest neighbours (KNN)** *(W5)* — A classifier that stores the training
+rows and predicts by majority vote among the `k` closest of them. Small `k`
+overfits, large `k` underfits towards the baseline, and every distance depends
+on the features' units — so it must be preceded by scaling.
+
 **Label** *(W1)* — The target value attached to an instance. Here, the crop
 name; also the literal name of the target column.
 
@@ -184,8 +215,17 @@ alphabetically and losslessly, so an estimator can work with them.
 `LabelEncoder` stores the mapping in `classes_`. The integers are identifiers,
 not quantities.
 
+**Lazy learning** *(W5)* — Learning that does almost nothing at `fit` time and
+defers the work to `predict`. KNN is the standard example: its "model" is the
+training set itself.
+
 **Linting** *(W1)* — Automatic inspection of source code for style violations
 and likely errors. Performed here by `ruff`.
+
+**Logistic regression** *(W5)* — A linear classifier, despite the name: one
+weighted sum of the features per class, converted to probabilities by softmax.
+176 numbers on this dataset, readable, and restricted to flat decision
+boundaries.
 
 **Machine learning** *(W1)* — Building software by supplying examples of the
 desired behaviour and letting an algorithm infer rules that reproduce them and
@@ -212,6 +252,10 @@ unreliable. Tree-based models are largely untroubled by it.
 **Multimodality** *(W2)* — More than one peak in a distribution, usually meaning
 two different populations have been mixed into one column.
 
+**Naive Bayes** *(W5)* — A probabilistic classifier applying Bayes' rule under
+the assumption that features are conditionally independent given the class.
+Cheap, assumption-driven, and a strong baseline even where the assumption fails.
+
 **Normalisation (min-max)** *(W3)* — Rescaling a column with
 `(x - min) / (max - min)` so it lands in [0, 1]. Bounded, but highly sensitive
 to a single extreme value. The word is used loosely in the wild — say which
@@ -221,6 +265,10 @@ operation you mean.
 per category, so no ordering can be inferred from the codes. Needed for
 categorical *inputs*; not needed for a classifier's target, and not needed by
 this dataset, whose seven features are all numeric.
+
+**One-vs-rest (OvR)** *(W5)* — Handling `k` classes by training `k` binary "this
+class or not" models and taking the most confident. The alternative to a single
+multinomial/softmax fit, which is what scikit-learn uses here.
 
 **Outlier** *(W2)* — A value beyond a boxplot's whiskers under the 1.5 IQR rule.
 The output of an arithmetic rule, **not** a verdict that the value is wrong: it
@@ -266,6 +314,11 @@ as strictly read-only so it remains the recoverable source of truth.
 **Regression** *(W1)* — A supervised learning task whose output is a number on
 a continuous scale, such as predicting yield in kilograms.
 
+**Regularisation strength (`C`)** *(W5)* — Logistic regression's *inverse*
+penalty on large weights. Small `C` shrinks the weights and simplifies the
+model; large `C` lets it fit the training data closely. Left at 1.0 until
+Week 6 tunes it.
+
 **Reproducibility** *(W1)* — The property that the same code and data yield the
 same results for any person at any time. The reason this project commits its
 dataset and pins its dependency versions.
@@ -287,6 +340,10 @@ values across columns and therefore need scaling.
 
 **Skewness** *(W2)* — How lopsided a distribution is. Positive means a long
 right tail, negative a long left tail, zero symmetric.
+
+**Softmax** *(W5)* — The function turning a vector of class scores into positive
+probabilities that sum to 1, by exponentiating each and dividing by the total.
+How logistic regression reaches 22 probabilities.
 
 **Standard deviation** *(W2)* — Roughly the typical distance of a value from the
 mean, expressed in the column's own units. Its square is the variance.
@@ -322,6 +379,11 @@ enforced from Week 3 onward; breaking it causes data leakage.
 
 **Training** *(W1)* — The offline process of fitting a model to labelled
 examples. Contrast with inference.
+
+**Training loop (`fit`/`predict`)** *(W5)* — The two calls every supervised
+scikit-learn model shares: `fit(X_train, y_train)` learns parameters from
+labelled rows, `predict(X)` applies them to rows the model has not seen. Named
+in Week 5 because nothing after it changes.
 
 **Training set** *(W1)* — The portion of the dataset a model is fitted on.
 

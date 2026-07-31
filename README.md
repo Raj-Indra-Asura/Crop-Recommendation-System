@@ -35,13 +35,13 @@ ruff check .
 pytest
 
 # 5. Open this week's notebook
-jupyter notebook notebooks/04_baseline_models.ipynb
+jupyter notebook notebooks/05_classification_models.ipynb
 ```
 
 Step 5 starts a local Jupyter server and opens the notebook in your browser;
 stop it with `Ctrl-C` in the terminal when you are done. Earlier weeks are
-`notebooks/01_problem_definition.ipynb`, `notebooks/02_EDA.ipynb` and
-`notebooks/03_data_preparation.ipynb`.
+`notebooks/01_problem_definition.ipynb`, `notebooks/02_EDA.ipynb`,
+`notebooks/03_data_preparation.ipynb` and `notebooks/04_baseline_models.ipynb`.
 
 Load the data from Python:
 
@@ -65,6 +65,11 @@ test = pd.read_csv("data/processed/test.csv")     # 440 rows, 20 per crop
 From Week 4 the number to beat is fixed: a `DummyClassifier` scores **4.55%**
 (1/22) under 5-fold stratified cross-validation, so any real model that does not
 clear that is broken or trivial rather than merely weak.
+
+Week 5 puts the first real models on top of it. On the same folds, Gaussian
+naive Bayes reaches **99.49%**, logistic regression 96.82% and KNN (`k = 5`)
+96.53% — all untuned defaults, and all training-set cross-validation, with
+`data/processed/test.csv` still unopened until Week 8.
 
 If `data/raw/Crop_recommendation.csv` is ever missing, `load_data()` fails with
 a message naming the file and where to obtain it. Restore the committed file —
@@ -102,7 +107,7 @@ Filled in one row per week as the course proceeds.
 | 02 — Exploratory data analysis | ✅ Complete | Statistics, distributions, correlation, outliers and data leakage; helpers in `src/utils/eda.py`, 42 tests passing. [Docs](docs/curriculum/week02/) |
 | 03 — Data preparation | ✅ Complete | Label encoding, stratified 80/20 split and a train-fitted `ColumnTransformer`; helpers in `src/data/split.py` and `src/preprocessing/preprocessor.py`, 74 tests passing. [Docs](docs/curriculum/week03/) |
 | 04 — Baseline models | ✅ Complete | `DummyClassifier` baseline at **4.55%** (1/22) under 5-fold stratified CV; helpers in `src/models/baseline.py` and `src/evaluation/metrics.py`, 112 tests passing. [Docs](docs/curriculum/week04/) |
-| 05 — Classification models | ⬜ Not started | |
+| 05 — Classification models | ✅ Complete | Logistic regression, KNN and Gaussian naive Bayes compared on identical folds; best so far **99.49%** (naive Bayes) against the 4.55% baseline; helpers in `src/models/classical_models.py`, 169 tests passing. [Docs](docs/curriculum/week05/) |
 | 06 — Model selection & tuning | ⬜ Not started | |
 | 07 — Model explainability | ⬜ Not started | |
 | 08 — Pipelines | ⬜ Not started | |
@@ -162,6 +167,19 @@ Filled in one row per week as the course proceeds.
 | `docs/ml_concepts.md` has an entry per new concept | ✅ |
 | `validation.md` commands actually run, real output pasted | ✅ |
 | `notebooks/04_baseline_models.ipynb` committed with executed output | ✅ |
+
+### Week 5 Definition of Done
+
+| Requirement | Status |
+| --- | --- |
+| `docs/curriculum/week05/{syllabus,learning_notes,exercises,validation}.md` exist | ✅ |
+| New code has docstrings and passes lint (`ruff check .`) | ✅ |
+| New behaviour has tests and `pytest` passes | ✅ 169 passed (20 + 22 + 32 + 38 + 57) |
+| `requirements.txt` updated, every dependency pinned | ✅ no change — `scikit-learn` pinned in Week 1 |
+| README progress table updated | ✅ |
+| `docs/ml_concepts.md` has an entry per new concept | ✅ |
+| `validation.md` commands actually run, real output pasted | ✅ |
+| `notebooks/05_classification_models.ipynb` committed with executed output | ✅ |
 
 ---
 
