@@ -97,6 +97,26 @@ wrong rows: `rice -> jute`, where only rainfall separates the crops (237 mm vs
 `notebooks/07_model_explainability.ipynb` then explains a single prediction end
 to end with permutation importance and SHAP.
 
+Week 9 stops experimenting and packages the result. The chosen model plus the
+Week 3 preprocessing become one `Pipeline`, fitted and saved by a script:
+
+```bash
+python -m src.pipelines.training_pipeline     # -> models/crop_model.joblib
+```
+
+```python
+from src.pipelines.predict_pipeline import predict
+
+predict({"N": 90, "P": 42, "K": 43, "temperature": 25,
+         "humidity": 80, "ph": 6.5, "rainfall": 200})    # -> 'jute'
+```
+
+The artifact is **not** committed — it is derived from the committed data, the
+committed code and the pinned `requirements.txt` — so `predict()` trains one on
+demand when it is missing, and a clean clone works with no extra step. That
+example input also shows Week 8's `rice -> jute` confusion pair at the point of
+use: `jute` at 0.7253 with `rice` second at 0.2747.
+
 If `data/raw/Crop_recommendation.csv` is ever missing, `load_data()` fails with
 a message naming the file and where to obtain it. Restore the committed file —
 never substitute randomly generated data, or every later week's results are
@@ -114,6 +134,7 @@ silently invalidated.
 | `data/raw/` | The original dataset — read-only, and deliberately **not** gitignored |
 | `data/processed/` | Anything derived from the raw data — from Week 3, the train/test splits |
 | `src/` | Reusable, tested implementation code |
+| `src/pipelines/` | Runnable entry points — train the model, predict from it (Week 9) |
 | `notebooks/` | Exploratory analysis, importing from `src/` |
 | `models/` | Trained artifacts — generated on demand, never committed |
 | `tests/` | Automated test suite |
@@ -137,7 +158,7 @@ Filled in one row per week as the course proceeds.
 | 06 — Margin-based & tree-based models | ✅ Complete | SVM and decision trees added to the same comparison; overfitting shown directly with a tree-depth sweep (100% train vs 98.52% validation) and decision boundaries drawn on two features; helpers in `src/models/classical_models.py` and `src/utils/visualization.py`, 231 tests passing. [Docs](docs/curriculum/week06/) |
 | 07 — Ensemble models | ✅ Complete | Random forest (**99.26%**) and gradient boosting (**99.09%**, XGBoost with an automatic `GradientBoostingClassifier` fallback) added to the same comparison; bagging vs boosting shown mechanically and `feature_importances_` plotted with its limitations; helpers in `src/models/ensemble_models.py`, 292 tests passing. [Docs](docs/curriculum/week07/) |
 | 08 — Model evaluation & explainability | ✅ Complete | Held-out test set opened once — **99.55%** for both finalists; grid and randomised search, confusion matrices and error analysis of the 2 wrong rows, permutation importance with its correlation trap, and SHAP (optional `shap==0.46.0`, with a documented fallback) explaining one prediction; helpers in `src/evaluation/tuning.py` and `src/evaluation/explainability.py`, 345 tests passing. [Docs](docs/curriculum/week08/) |
-| 09 — Testing & packaging | ⬜ Not started | |
+| 09 — Productionizing the model | ✅ Complete | Notebook experiments turned into runnable code: `python -m src.pipelines.training_pipeline` fits the Week 3 preprocessing plus the Week 8 model as one `Pipeline` (**99.55%**, unchanged) and saves it to the git-ignored `models/crop_model.joblib`; `predict({...})` reloads it — training one on demand if a clean clone has none — and returns a crop label; paths, seed and chosen hyperparameters consolidated in `src/config.py`, 377 tests passing. [Docs](docs/curriculum/week09/) |
 | 10 — Serving an API | ⬜ Not started | |
 | 11 — Streamlit application | ⬜ Not started | |
 | 12 — Containerisation, CI & deployment | ⬜ Not started | |
@@ -248,6 +269,20 @@ Filled in one row per week as the course proceeds.
 | `notebooks/07_model_explainability.ipynb` committed with executed output | ✅ |
 | Test set opened once, after the model decisions | ✅ notebook 06 §12 |
 | Explainer backend recorded in writing | ✅ SHAP used; fallback implemented, tested and demonstrated |
+
+### Week 9 Definition of Done
+
+| Requirement | Status |
+| --- | --- |
+| `docs/curriculum/week09/{syllabus,learning_notes,exercises,validation}.md` exist | ✅ |
+| New code has docstrings and passes lint (`ruff check .`) | ✅ |
+| New behaviour has tests and `pytest` passes | ✅ 377 passed, 1 skipped (345 + 32) |
+| `requirements.txt` updated, every dependency pinned | ✅ `joblib==1.5.3` named explicitly; it was already a scikit-learn dependency |
+| README progress table updated | ✅ |
+| `docs/ml_concepts.md` has an entry per new concept | ✅ |
+| `validation.md` commands actually run, real output pasted | ✅ |
+| Trained artifact rebuilt on demand, never committed | ✅ `.gitignore` line 20; `load_pipeline()` trains when absent |
+| `src/` is notebook-independent | ✅ every module imports without a kernel; no notebook-only logic left |
 
 ---
 

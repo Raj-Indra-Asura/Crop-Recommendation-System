@@ -249,3 +249,33 @@ Taught in [`docs/curriculum/week08/learning_notes.md`](curriculum/week08/learnin
 | **`TreeExplainer` vs `KernelExplainer`** | Fast and exact for tree ensembles vs slow and sampled for anything with `predict_proba`. | §9 |
 | **Local explanation** | An explanation of *one* prediction, naming the deciding measurement and the runner-up class with its probability. | §11 |
 | **The documented fallback** | Without `shap`: per-sample permutation plus the raw `predict_proba` breakdown — fixed in advance, and the `"method"` key always records which ran. | §10 |
+
+---
+
+## Week 9 — Productionizing the model
+
+Taught in [`docs/curriculum/week09/learning_notes.md`](curriculum/week09/learning_notes.md).
+
+| Concept | One-line definition | Section |
+| --- | --- | --- |
+| **Hidden state** | A notebook's variables live in the kernel, not the file, so its displayed output is not evidence that its code produces that output. | §1.1 |
+| **Execution order** | Cells run in whatever order you clicked them; a script has exactly one order, top to bottom, every time. | §1.2 |
+| **No reuse** | A cell cannot be imported by a test, a script or a server — only copied, or re-run whole. | §1.3 |
+| **Research vs production code** | Exploration optimises for looking at things; production optimises for running unattended, identically, elsewhere. | §1 |
+| **`Pipeline` as one estimator** | Named steps chained into a single object: `fit` fits them in order, `predict` applies the fitted ones in order. | §2 |
+| **Preprocessing inside the model object** | Puts the Week 3 `ColumnTransformer` where cross-validation re-fits it per fold and serving cannot forget it. | §2 |
+| **Training/serving skew** | Training transformed the data and serving did not (or differently); the model then answers confidently and wrongly. | §2 |
+| **`step__parameter` naming** | Naming pipeline steps is what makes `model__var_smoothing` addressable by a search — and `named_steps["model"]` readable. | §2 |
+| **Serialization / pickling** | Writing a live Python object to bytes so a later process can rebuild it. | §3 |
+| **`joblib.dump` / `joblib.load`** | Pickle with a fast path for NumPy arrays; the project's 6.3 KB `models/crop_model.joblib`. | §3 |
+| **What an artifact does not carry** | Not the classes' code, not library versions, not the training data, not any metadata — only learned numbers and import paths. | §3 |
+| **Unpickling executes code** | Loading an untrusted `.joblib` is equivalent to running an untrusted script. | §3 |
+| **Reproducibility is four things** | Committed data + fixed seed + versioned code + pinned environment; `joblib` is none of them. | §4 |
+| **Seeded end to end** | One `RANDOM_STATE`, used by every shuffling step; a seed on the split plus an unseeded shuffle later is no seed at all. | §4 |
+| **"Works on my machine"** | The failure of the environment requirement: pinning does not make drift impossible, it makes it diagnosable. | §4 |
+| **Config over hardcoding** | Paths, seed and chosen hyperparameters in one inert module, derived not duplicated, and still overridable per call. | §5 |
+| **Source vs derived artifacts** | `data/raw/` is committed because nothing can regenerate it; `models/*.joblib` is git-ignored because the code can. | §6 |
+| **Train on demand** | A missing artifact is the normal state of a clean clone, so `load_pipeline()` builds one rather than crashing — with an explicit opt-out. | §6 |
+| **Entry point (`python -m`)** | A module runnable as a script with the repository root importable, so the same code serves the shell, the tests and the API. | §7 |
+| **Validation at the boundary** | Missing, unexpected or non-numeric features are rejected before the model sees them, because Week 10 will pass in whatever a stranger sent. | §7.2 |
+| **Runner-up probability at the point of use** | `predict_proba` shows the Week 8 `rice -> jute` ambiguity (0.7253 / 0.2747) where an operational routing rule can act on it. | §7.2 |
