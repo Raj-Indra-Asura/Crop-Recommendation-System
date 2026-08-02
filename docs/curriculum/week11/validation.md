@@ -68,6 +68,15 @@ pytest -q
 Unchanged from Week 10: this week adds no Python code, so it adds no tests. The
 Dockerfile and the workflow are validated by running them, not by `pytest`.
 
+> **Recorded in Week 11; the count has since moved.** The suite now reports
+> **408 passed, 1 skipped**. The four extra tests are
+> [`tests/test_curriculum_links.py`](../../../tests/test_curriculum_links.py),
+> added after Week 12 to keep the roadmap and the navigation footers honest —
+> see [Week 12 §12.4 Step 3](../week12/validation.md#step-3--lint-and-the-whole-suite-from-the-fresh-environment).
+> The output above is left as it was recorded rather than rewritten, which is
+> the same rule the rest of this file follows. Expect `404 + 4` wherever this
+> week quotes 404.
+
 ---
 
 ## Step 2 — Build the image

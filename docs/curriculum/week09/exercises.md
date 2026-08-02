@@ -21,9 +21,20 @@ from src.pipelines.training_pipeline import build_training_pipeline, train_pipel
 
 Write any throwaway files into a temporary directory, not into `models/`.
 
+Do them in order. **Beginner** exercises (1-3) reproduce what the notes and the
+two commands already showed; **intermediate** exercises (4-7) apply the week's
+ideas to a new question; **challenge** exercises (8-10) go beyond the notes by
+extending the pipeline and teaching it back. The numbering is continuous across
+the three tiers, so "Exercise 6" means the same exercise everywhere in the
+curriculum.
+
 ---
 
-## Exercise 1 — Break a notebook on purpose
+## Beginner
+
+*Feel the problems the pipeline modules exist to solve, and read what they save.*
+
+### Exercise 1 — Break a notebook on purpose
 
 **Goal:** feel hidden state rather than read about it.
 
@@ -43,7 +54,7 @@ more cell containing `print(train.shape)` and run it.
 
 ---
 
-## Exercise 2 — Take the pipeline apart
+### Exercise 2 — Take the pipeline apart
 
 **Goal:** see that a fitted pipeline is just the two Week 3 / Week 8 objects.
 
@@ -65,7 +76,7 @@ model = pipeline.named_steps["model"]
 
 ---
 
-## Exercise 3 — What is in the artifact, and what is not
+### Exercise 3 — What is in the artifact, and what is not
 
 **Goal:** state the limits of serialization precisely.
 
@@ -84,7 +95,11 @@ model = pipeline.named_steps["model"]
 
 ---
 
-## Exercise 4 — Reproducibility, four ways to break it
+## Intermediate
+
+*Break reproducibility deliberately and trace the fixes through the code.*
+
+### Exercise 4 — Reproducibility, four ways to break it
 
 **Goal:** separate the four requirements and test three of them.
 
@@ -106,7 +121,7 @@ model = pipeline.named_steps["model"]
 
 ---
 
-## Exercise 5 — Config over hardcoding
+### Exercise 5 — Config over hardcoding
 
 **Goal:** prove the single-source-of-truth claim by changing one line.
 
@@ -128,7 +143,7 @@ model = pipeline.named_steps["model"]
 
 ---
 
-## Exercise 6 — Train on demand
+### Exercise 6 — Train on demand
 
 **Goal:** understand the design forced by not committing the artifact.
 
@@ -144,7 +159,7 @@ model = pipeline.named_steps["model"]
 
 ---
 
-## Exercise 7 — The ambiguous example
+### Exercise 7 — The ambiguous example
 
 **Goal:** connect Week 8's error analysis to the thing users actually call.
 
@@ -166,7 +181,11 @@ ranked = predict_proba(EXAMPLE_INPUT)
 
 ---
 
-## Exercise 8 — Extend the pipeline
+## Challenge
+
+*Extend the pipeline, add what the artifact does not carry, and teach it back.*
+
+### Exercise 8 — Extend the pipeline
 
 **Goal:** add a step without touching anything else.
 
@@ -186,7 +205,7 @@ ranked = predict_proba(EXAMPLE_INPUT)
 
 ---
 
-## Exercise 9 — Write the metadata the artifact lacks
+### Exercise 9 — Write the metadata the artifact lacks
 
 **Goal:** turn §9's "no versioning" from a complaint into code.
 
@@ -203,7 +222,7 @@ ranked = predict_proba(EXAMPLE_INPUT)
 
 ---
 
-## Exercise 10 — Explain it back
+### Exercise 10 — Explain it back
 
 **Goal:** the week's oral exam. No code.
 

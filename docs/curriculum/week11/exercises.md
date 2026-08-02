@@ -20,9 +20,21 @@ Rules for the week:
 * If Docker is not available to you, Exercises 4, 6, 8, 9, 10, 11 and 12 are
   still fully doable — they are about reading, not running.
 
+Do them in order. **Beginner** exercises (1-4) read the build log and the
+Dockerfile you already have; **intermediate** exercises (5-8) break the image
+and CI bindings on purpose and make you derive the project's rules yourself;
+**challenge** exercises (9-12) go beyond the notes by tracing the whole
+workflow, designing a new step and saying the week back in your own words. The
+numbering is continuous across the three tiers, so "Exercise 6" means the same
+exercise everywhere in the curriculum.
+
 ---
 
-## Exercise 1 — Read the build log as a list of layers
+## Beginner
+
+*Read the build log and the Dockerfile you already have.*
+
+### Exercise 1 — Read the build log as a list of layers
 
 **Goal:** connect each line of the Dockerfile to a line of the build output.
 
@@ -44,7 +56,7 @@ Week 8's 0.9955, unchanged because the seed and the data are committed.
 
 ---
 
-## Exercise 2 — Break the cache on purpose
+### Exercise 2 — Break the cache on purpose
 
 **Goal:** see the "first changed layer invalidates everything below" rule.
 
@@ -62,7 +74,7 @@ requirements edit re-runs the `pip install` too (tens of seconds), because the
 
 ---
 
-## Exercise 3 — Put the layers in the wrong order
+### Exercise 3 — Put the layers in the wrong order
 
 **Goal:** measure the cost of the mistake §3.2 warns about.
 
@@ -86,7 +98,7 @@ that is what layer order is worth.
 
 ---
 
-## Exercise 4 — Explain the file to somebody else
+### Exercise 4 — Explain the file to somebody else
 
 **Goal:** the stated Week 11 outcome — *read the Dockerfile and explain what
 each line does*.
@@ -102,7 +114,11 @@ Without looking at the learning notes, write one sentence per instruction in
 
 ---
 
-## Exercise 5 — Break the binding
+## Intermediate
+
+*Break the image/CI bindings on purpose and derive the rules yourself.*
+
+### Exercise 5 — Break the binding
 
 **Goal:** make the `0.0.0.0` rule fail so you never have to memorise it.
 
@@ -122,7 +138,7 @@ container, where 127.0.0.1 is the container's own loopback.
 
 ---
 
-## Exercise 6 — Derive the deployment requirements yourself
+### Exercise 6 — Derive the deployment requirements yourself
 
 **Goal:** the other stated outcome — *explain why the deployment requirements
 file is smaller than the root one*.
@@ -141,7 +157,7 @@ Do not read `deployment/requirements.txt` first.
 
 ---
 
-## Exercise 7 — Ship the wrong requirements file
+### Exercise 7 — Ship the wrong requirements file
 
 **Goal:** feel the difference rather than believe the table.
 
@@ -164,7 +180,7 @@ ways to run code that is not the service.
 
 ---
 
-## Exercise 8 — Read `.dockerignore` as a security control
+### Exercise 8 — Read `.dockerignore` as a security control
 
 **Goal:** understand the third reason from §3.3.
 
@@ -180,7 +196,11 @@ ways to run code that is not the service.
 
 ---
 
-## Exercise 9 — Point CI at the wrong requirements file
+## Challenge
+
+*Trace the whole workflow, design a new step, and say the week back.*
+
+### Exercise 9 — Point CI at the wrong requirements file
 
 **Goal:** the mistake §5.4 predicts.
 
@@ -197,7 +217,7 @@ Then revert the file.
 
 ---
 
-## Exercise 10 — Trace the workflow
+### Exercise 10 — Trace the workflow
 
 **Goal:** the third stated outcome — *explain what the CI workflow will do once
 it runs*.
@@ -217,7 +237,7 @@ Answer from `.github/workflows/ci.yml` alone, without running anything:
 
 ---
 
-## Exercise 11 — Add a step (on paper)
+### Exercise 11 — Add a step (on paper)
 
 **Goal:** understand jobs and steps well enough to extend the workflow.
 
@@ -234,7 +254,7 @@ you leave out until there is a real deployment? Justify it in three sentences.
 
 ---
 
-## Exercise 12 — Read the week back
+### Exercise 12 — Read the week back
 
 **Goal:** state the boundary honestly, which is the whole point of the week.
 

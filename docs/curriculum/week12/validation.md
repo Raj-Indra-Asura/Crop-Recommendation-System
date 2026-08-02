@@ -152,6 +152,21 @@ pytest
 **404 passed, 1 skipped** — identical to Weeks 10 and 11, because Week 12 adds
 no Python code. The skip is Week 8's SHAP test on the documented fallback path.
 
+> **Recorded in Week 12; the count has since moved.** Running the suite today
+> gives **408 passed, 1 skipped**. The four extra tests are
+> [`tests/test_curriculum_links.py`](../../../tests/test_curriculum_links.py),
+> added *after* Week 12 finished, when the per-chapter `README.md` covers and
+> the roadmap's reading order were introduced: with a book-shaped curriculum,
+> a broken link or a footer pointing at the wrong chapter is a real defect, so
+> it is checked mechanically rather than by re-reading. The test is structural
+> only — it resolves every relative link and `#anchor`, checks the roadmap names
+> each document exactly once, and checks each page's previous/next footer
+> against the roadmap's order; it says nothing about the prose. See
+> [the roadmap's "Keeping this order honest"](../README.md#keeping-this-order-honest).
+> The output above is left as recorded rather than rewritten — the same rule
+> every other recorded output in this curriculum follows. Expect `404 + 4`
+> wherever this week quotes 404, and twelve test files rather than eleven.
+
 The whole `tests/` directory, not this week's additions:
 
 ```bash
@@ -176,7 +191,9 @@ pytest --collect-only -q | grep '::' | cut -d: -f1 | sort | uniq -c
 ```
 
 Eleven test files, one per capability the course added, from Week 1's loader to
-Week 10's API. Every week is still checked.
+Week 10's API. Every week is still checked. (A twelfth file,
+`tests/test_curriculum_links.py`, joined them after this was recorded; it checks
+the documentation's navigation, not a capability of the model.)
 
 ---
 
@@ -383,7 +400,7 @@ What you should see, in order:
 | --- | --- |
 | `git clone` | ~1 MB; `data/raw/Crop_recommendation.csv` present, `models/` empty |
 | `pip install` | 148 packages, the pinned versions of Step 2 |
-| `pytest` | `404 passed, 1 skipped` |
+| `pytest` | `404 passed, 1 skipped` (`408` since `tests/test_curriculum_links.py` was added — see Step 3) |
 | `docker build` | The training line printing `Accuracy: 0.9955` |
 | `docker run` | uvicorn on `0.0.0.0:8000`, then `Ctrl-C` to stop it |
 | `curl .../health` | `{"status":"ok","model_loaded":true,"n_classes":22}` |

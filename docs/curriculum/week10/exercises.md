@@ -30,9 +30,21 @@ from src.pipelines.predict_pipeline import EXAMPLE_INPUT, predict, predict_proba
 Never commit a modified `api/` or `app/` from an exercise — use `git diff` and
 `git checkout --` when you are done.
 
+Do them in order. **Beginner** exercises (1-4) reproduce the requests and
+responses the notes already showed; **intermediate** exercises (5-8) apply the
+week's ideas — the API/model boundary, load-once, testing the contract — to new
+questions; **challenge** exercises (9-12) go beyond the notes by re-arguing the
+design, probing out-of-distribution input and extending the contract. The
+numbering is continuous across the three tiers, so "Exercise 6" means the same
+exercise everywhere in the curriculum.
+
 ---
 
-## Exercise 1 — Read one request and one response
+## Beginner
+
+*Send one request, read one response, and watch the schema do its job.*
+
+### Exercise 1 — Read one request and one response
 
 **Goal:** see every part of the HTTP cycle, not just the JSON.
 
@@ -56,7 +68,7 @@ curl -v -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json
 
 ---
 
-## Exercise 2 — Make the schema reject you
+### Exercise 2 — Make the schema reject you
 
 **Goal:** predict Pydantic's behaviour before running it.
 
@@ -82,7 +94,7 @@ which field is named, then check with `curl`.
 
 ---
 
-## Exercise 3 — Change a bound and watch the contract move
+### Exercise 3 — Change a bound and watch the contract move
 
 **Goal:** see that the schema is a single source of truth.
 
@@ -100,7 +112,7 @@ In `api/schemas.py`, change `ph`'s upper bound from `le=14` to `le=9`.
 
 ---
 
-## Exercise 4 — 422 vs 500, deliberately
+### Exercise 4 — 422 vs 500, deliberately
 
 **Goal:** produce both, and never confuse them again.
 
@@ -126,7 +138,11 @@ In `api/schemas.py`, change `ph`'s upper bound from `le=14` to `le=9`.
 
 ---
 
-## Exercise 5 — The API is not the model
+## Intermediate
+
+*Separate the API's job from the model's, and test the boundary between them.*
+
+### Exercise 5 — The API is not the model
 
 **Goal:** prove the layering claim rather than trust it.
 
@@ -151,7 +167,7 @@ In `api/schemas.py`, change `ph`'s upper bound from `le=14` to `le=9`.
 
 ---
 
-## Exercise 6 — Load once, not per request
+### Exercise 6 — Load once, not per request
 
 **Goal:** measure the thing the lifespan handler avoids.
 
@@ -174,7 +190,7 @@ In `api/schemas.py`, change `ph`'s upper bound from `le=14` to `le=9`.
 
 ---
 
-## Exercise 7 — Test the boundary, not the prediction
+### Exercise 7 — Test the boundary, not the prediction
 
 **Goal:** learn what an API test should assert.
 
@@ -193,7 +209,7 @@ In `api/schemas.py`, change `ph`'s upper bound from `le=14` to `le=9`.
 
 ---
 
-## Exercise 8 — Be a different client
+### Exercise 8 — Be a different client
 
 **Goal:** feel the point of a *web* API.
 
@@ -216,7 +232,11 @@ In `api/schemas.py`, change `ph`'s upper bound from `le=14` to `le=9`.
 
 ---
 
-## Exercise 9 — The decision, re-argued
+## Challenge
+
+*Re-argue the design, probe its edges, and extend the contract yourself.*
+
+### Exercise 9 — The decision, re-argued
 
 **Goal:** hold the §5.3 decision up to a case where it flips.
 
@@ -236,7 +256,7 @@ calls the API over HTTP.
 
 ---
 
-## Exercise 10 — Out-of-distribution, on purpose
+### Exercise 10 — Out-of-distribution, on purpose
 
 **Goal:** locate the limit of validation.
 
@@ -252,7 +272,7 @@ calls the API over HTTP.
 
 ---
 
-## Exercise 11 — Extend the contract
+### Exercise 11 — Extend the contract
 
 **Goal:** add an endpoint without disturbing the layers.
 
@@ -269,7 +289,7 @@ Add `GET /crops`, returning the 22 labels the model can predict.
 
 ---
 
-## Exercise 12 — Read the week back
+### Exercise 12 — Read the week back
 
 **Goal:** confirm the week's claims in your own words.
 
