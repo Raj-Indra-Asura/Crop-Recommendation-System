@@ -19,9 +19,21 @@ Rules for the week:
 * Several exercises have no single right answer. They have *defensible* answers,
   and the defence is the deliverable.
 
+Do them in order. **Beginner** exercises (1-4) read the finished repository the
+way a stranger would; **intermediate** exercises (5-9) write the documentation
+the project still needs and trace it against the code; **challenge** exercises
+(10-14) go beyond the notes by designing what this project deliberately did not
+build and taking the habits elsewhere. The numbering is continuous across the
+three tiers, so "Exercise 6" means the same exercise everywhere in the
+curriculum.
+
 ---
 
-## Exercise 1 — The fifteen-minute stranger
+## Beginner
+
+*Read the finished repository the way a stranger would.*
+
+### Exercise 1 — The fifteen-minute stranger
 
 **Goal:** the audit from §2.1 of the notes, run on your own repository.
 
@@ -45,7 +57,7 @@ Now fix every entry, or write down why it is acceptable.
 
 ---
 
-## Exercise 2 — Break the fresh install on purpose
+### Exercise 2 — Break the fresh install on purpose
 
 **Goal:** see what the fresh-install check catches that `pytest` does not.
 
@@ -66,7 +78,7 @@ you can see.
 
 ---
 
-## Exercise 3 — Rewrite the first paragraph for a different reader
+### Exercise 3 — Rewrite the first paragraph for a different reader
 
 **Goal:** §3.1 of the notes, applied.
 
@@ -84,7 +96,7 @@ in one sentence.
 
 ---
 
-## Exercise 4 — Audit the results table
+### Exercise 4 — Audit the results table
 
 **Goal:** check the evidence rather than trusting it.
 
@@ -104,7 +116,11 @@ gives a non-accuracy reason for choosing between them.
 
 ---
 
-## Exercise 5 — Write the model card
+## Intermediate
+
+*Write the documentation the project still needs, and trace it against the code.*
+
+### Exercise 5 — Write the model card
 
 **Goal:** turn §4 of the notes into the standard artifact it is an instance of.
 
@@ -122,7 +138,7 @@ writing.
 
 ---
 
-## Exercise 6 — The disclaimer, three ways
+### Exercise 6 — The disclaimer, three ways
 
 **Goal:** find the line between honest and useless.
 
@@ -141,7 +157,7 @@ uncertainty is noise.
 
 ---
 
-## Exercise 7 — Trace one request through every file
+### Exercise 7 — Trace one request through every file
 
 **Goal:** the end-to-end description, out loud, without notes.
 
@@ -163,7 +179,7 @@ data path at all but decides where everything is.
 
 ---
 
-## Exercise 8 — Find the week
+### Exercise 8 — Find the week
 
 **Goal:** prove the index works.
 
@@ -182,7 +198,7 @@ index, not in you — fix the index.
 
 ---
 
-## Exercise 9 — Add the model version (design only)
+### Exercise 9 — Add the model version (design only)
 
 **Goal:** §5.1 of the notes, made concrete without building it.
 
@@ -201,7 +217,11 @@ useful if somebody can act on it.
 
 ---
 
-## Exercise 10 — Design the drift check
+## Challenge
+
+*Design what this project deliberately did not build, and take it elsewhere.*
+
+### Exercise 10 — Design the drift check
 
 **Goal:** §5.2-5.3, made concrete.
 
@@ -221,7 +241,7 @@ outcomes.
 
 ---
 
-## Exercise 11 — Cost the eight-item list
+### Exercise 11 — Cost the eight-item list
 
 **Goal:** turn §5.6 from a list into a plan.
 
@@ -236,7 +256,7 @@ answerable.
 
 ---
 
-## Exercise 12 — Explain the project in two minutes
+### Exercise 12 — Explain the project in two minutes
 
 **Goal:** the actual portfolio deliverable.
 
@@ -253,7 +273,7 @@ is the entire interesting content of Weeks 4-8.
 
 ---
 
-## Exercise 13 — Audit somebody else's repository
+### Exercise 13 — Audit somebody else's repository
 
 **Goal:** the skill, transferred off this project.
 
@@ -267,7 +287,7 @@ you just applied to a stranger.
 
 ---
 
-## Exercise 14 — Start the next project
+### Exercise 14 — Start the next project
 
 **Goal:** the course was never about crops.
 

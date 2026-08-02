@@ -471,6 +471,36 @@ what it would take instead.
 Withdrawing a promise in writing is not a failure of the plan. Quietly dropping
 it would have been.
 
+### 6.1 Added after Week 12: the chapter covers and the test that guards them
+
+Two things in this repository post-date the twelve weeks, so no week's narrative
+introduced them as it was written. They are named here, because a curriculum
+that leaves parts of its own repository unexplained has the defect §2 tells you
+to look for.
+
+* **Per-chapter `README.md` covers, and the roadmap
+  ([`docs/curriculum/README.md`](../README.md)).** Forty-eight documents in
+  twelve directories is a pile, not a book. Each chapter now opens with a cover
+  that says what to read in what order — notes, then the code and notebooks it
+  describes, then exercises, then validation — and the roadmap lists every
+  document once, in reading order, with previous/next footers on every page.
+  Nothing was rewritten to add them; it is navigation over existing content.
+* **[`tests/test_curriculum_links.py`](../../../tests/test_curriculum_links.py).**
+  Navigation that drifts is worse than none, and a stale link is exactly the
+  kind of defect nobody notices while writing. Four tests check it
+  mechanically: every relative link and `#anchor` in every Markdown file
+  resolves; the roadmap's reading order names each curriculum document exactly
+  once; and each page's previous/next footer agrees with the position the
+  roadmap gives it. They are structural checks — they say nothing about the
+  prose — and they run in CI with everything else.
+
+That is why the suite now reports **408 passed, 1 skipped** where this week's
+recorded output says 404: four tests, none of them about the model. The
+recorded outputs are left as they were run, with the drift noted in
+[§12.4 Step 3](validation.md#step-3--lint-and-the-whole-suite-from-the-fresh-environment) —
+re-recording history to match today is the habit this course spent twelve weeks
+avoiding.
+
 ---
 
 ## 7. What you can now do

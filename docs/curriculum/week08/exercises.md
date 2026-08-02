@@ -6,6 +6,14 @@ Work through these after reading [`learning_notes.md`](learning_notes.md) and
 executing both notebooks. Nothing here needs a new dependency; everything runs
 against the artefacts already in the repository.
 
+Do them in order. **Beginner** exercises (1-3) check that you can reproduce and
+read what the notes and notebooks already produced; **intermediate** exercises
+(4-9) make you apply the week's tools to a question the notes did not answer;
+**challenge** exercises (10-12) deliberately go beyond the notes — removing a
+library, defending the decision against its strongest counter-argument, or
+adding code of your own. The numbering is continuous across the three tiers, so
+"Exercise 6" means the same exercise everywhere in the curriculum.
+
 Reminder before you start: **`data/processed/test.csv` was opened once, in
 `notebooks/06_model_selection.ipynb`, after the model decisions were made.**
 Several exercises below use it. That is fine for learning — but if you change a
@@ -60,7 +68,11 @@ your environment will use before you quote any contribution from it.
 
 ---
 
-## Exercise 1 — Read the matrix out loud
+## Beginner
+
+*Reproduce and read what Week 8's notebooks already produced.*
+
+### Exercise 1 — Read the matrix out loud
 
 Open `notebooks/06_model_selection.ipynb` (§12-§13) and find the tuned forest's
 confusion matrix.
@@ -80,7 +92,7 @@ computed precision. Rows are recall.
 
 ---
 
-## Exercise 2 — Macro and weighted by hand
+### Exercise 2 — Macro and weighted by hand
 
 The classification report prints 22 per-class F1 scores plus both averages.
 
@@ -95,7 +107,7 @@ The classification report prints 22 per-class F1 scores plus both averages.
 
 ---
 
-## Exercise 3 — Cost of a search
+### Exercise 3 — Cost of a search
 
 Using `tune_model()` from `src/evaluation/tuning.py`:
 
@@ -111,7 +123,11 @@ Using `tune_model()` from `src/evaluation/tuning.py`:
 
 ---
 
-## Exercise 4 — Does tuning actually help?
+## Intermediate
+
+*Apply the week's tools to questions the notes left open.*
+
+### Exercise 4 — Does tuning actually help?
 
 1. Cross-validate an untuned `get_random_forest()` pipeline on the training set
    with `cross_validated_accuracy`. Record the mean and the standard deviation.
@@ -123,7 +139,7 @@ Using `tune_model()` from `src/evaluation/tuning.py`:
 
 ---
 
-## Exercise 5 — A hyperparameter that does nothing
+### Exercise 5 — A hyperparameter that does nothing
 
 The notebook searches `var_smoothing` over twelve values from 1e-11 to 1e-6 and
 gets one distinct score.
@@ -139,7 +155,7 @@ gets one distinct score.
 
 ---
 
-## Exercise 6 — Anatomy of the two errors
+### Exercise 6 — Anatomy of the two errors
 
 For each of the two misclassified test rows (the `rice -> jute` field and the
 `blackgram -> maize` field):
@@ -157,7 +173,7 @@ For each of the two misclassified test rows (the `rice -> jute` field and the
 
 ---
 
-## Exercise 7 — MDI against permutation
+### Exercise 7 — MDI against permutation
 
 1. Print the tuned forest's `feature_importances_` on the training data and its
    permutation importances on the test set, side by side, both sorted.
@@ -172,7 +188,7 @@ For each of the two misclassified test rows (the `rice -> jute` field and the
 
 ---
 
-## Exercise 8 — Falling into the correlation trap deliberately
+### Exercise 8 — Falling into the correlation trap deliberately
 
 Week 2 measured a correlation of 0.74 between `P` and `K`.
 
@@ -188,7 +204,7 @@ Week 2 measured a correlation of 0.74 between `P` and `K`.
 
 ---
 
-## Exercise 9 — Explain a prediction to a farmer
+### Exercise 9 — Explain a prediction to a farmer
 
 Pick any **correctly** classified test row.
 
@@ -205,7 +221,11 @@ Pick any **correctly** classified test row.
 
 ---
 
-## Exercise 10 — Live without SHAP
+## Challenge
+
+*Go past the notes: remove a dependency, argue the decision, write code.*
+
+### Exercise 10 — Live without SHAP
 
 `explain_prediction()` takes an explicit backend.
 
@@ -227,7 +247,7 @@ Pick any **correctly** classified test row.
 
 ---
 
-## Exercise 11 — Defend the decision
+### Exercise 11 — Defend the decision
 
 Week 8 ships Gaussian naive Bayes over a tuned random forest that scored
 identically.
@@ -245,7 +265,7 @@ identically.
 
 ---
 
-## Exercise 12 — Extend the tooling
+### Exercise 12 — Extend the tooling
 
 Choose one and implement it, with a test:
 
